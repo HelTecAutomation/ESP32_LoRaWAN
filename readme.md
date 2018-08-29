@@ -67,7 +67,7 @@ When we want to use the ESP32 program in the node, we still need some steps.
 # Contact us
 - [http://www.heltec.cn/](http://www.heltec.cn/)
 # Issue/Bug report template
-Before reporting an issue, make sure you've searched for similar one that was already created. Also make sure to go through all the issues labelled as [for reference](https://github.com/Heltec-Aaron-Lee/WiFi_Kit_series/issues).
+Before reporting an issue, make sure you've searched for similar one that was already created. Also make sure to go through all the issues labelled as [for reference](https://github.com/HelTecAutomation/ESP32_LoRaWAN/issues).     
 # Board Picture
-![](https://github.com/Heltec-Aaron-Lee/WiFi_Kit_series/blob/master/InstallGuide/win-screenshots/WIFI_LoRa_32.png)
+![](https://github.com/Heltec-Aaron-Lee/WiFi_Kit_series/blob/master/InstallGuide/win-screenshots/WIFI_LoRa_32.png)  
   
