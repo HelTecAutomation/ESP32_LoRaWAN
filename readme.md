@@ -38,7 +38,7 @@ The following functions included:
 # Test information
 ----------
 ![](https://github.com/solotaker/Picture/blob/master/TestHardware.jpg)
- - Gateway: ![HT-M01 Mini LoRa Gateway](http://www.heltec.cn/project/ht-m01-lora-gateway/?lang=en) + Raspberry Pi Zero W
+ - Gateway: [HT-M01 Mini LoRa Gateway](http://www.heltec.cn/project/ht-m01-lora-gateway/?lang=en) + Raspberry Pi Zero W
  - Node: WIFI LoRa 32 V2
  - LoRaServer: Aliyun ECS + Ubuntu 16.04 + [loraserver.io](https://www.loraserver.io/)
  - Arudino 18.04
