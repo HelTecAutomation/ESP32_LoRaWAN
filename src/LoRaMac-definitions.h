@@ -12,11 +12,12 @@ License: Revised BSD License, see LICENSE.TXT file include in the project
 
 Maintainer: Miguel Luis and Gregory Cristian
 */
+
 #ifndef __LORAMAC_BOARD_H__
 #define __LORAMAC_BOARD_H__
 
 
-#define  USE_BAND_470
+#define  USE_BAND_915
 #define  CLASS     CLASS_A
 
 /*!
@@ -493,7 +494,7 @@ typedef enum
 /*!
  * LoRaMac maximum number of channels
  */
-#define LORA_MAX_NB_CHANNELS                        72
+#define LORA_MAX_NB_CHANNELS                        16//72
 
 /*!
  * Minimal datarate that can be used by the node

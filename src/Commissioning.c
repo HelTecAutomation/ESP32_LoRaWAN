@@ -1,10 +1,12 @@
 #include "Commissioning.h"
 
+
 RTC_DATA_ATTR enum eDeviceState DeviceState;
 LoRaMacPrimitives_t LoRaMacPrimitives;
 LoRaMacCallback_t LoRaMacCallbacks;
 MibRequestConfirm_t mibReq;
-
+uint8_t isJioned=0;
+uint8_t isAckReceived=0;
 /*!
  * Defines the application data transmission duty cycle. 60s, value in [ms].
  */
@@ -13,8 +15,8 @@ uint8_t AppEui[] = LORAWAN_APPLICATION_EUI;
 uint8_t AppKey[] = LORAWAN_APPLICATION_KEY;
 
 #if( OVER_THE_AIR_ACTIVATION == 0 )
- uint8_t NwkSKey[] = LORAWAN_NWKSKEY;
- uint8_t AppSKey[] = LORAWAN_APPSKEY;
+RTC_DATA_ATTR uint8_t NwkSKey[] = LORAWAN_NWKSKEY;
+RTC_DATA_ATTR uint8_t AppSKey[] = LORAWAN_APPSKEY;
 
 /*!
  * Device address
@@ -121,7 +123,6 @@ bool NextTx = true;
 {
     McpsReq_t mcpsReq;
     LoRaMacTxInfo_t txInfo;
-
     if( LoRaMacQueryTxPossible( AppDataSize, &txInfo ) != LORAMAC_STATUS_OK )
     {
         // Send empty frame in order to flush MAC commands
@@ -150,7 +151,7 @@ bool NextTx = true;
             mcpsReq.Req.Confirmed.Datarate = LORAWAN_DEFAULT_DATARATE;
         }
     }
-//    lora_printf("LoRaMacMcpsRequest( &mcpsReq ) \n");
+
     if( LoRaMacMcpsRequest( &mcpsReq ) == LORAMAC_STATUS_OK )
     {
         return false;
@@ -171,7 +172,7 @@ void OnTxNextPacketTimerEvent( void )
     TimerStop( &TxNextPacketTimer );
 
     mibReq.Type = MIB_NETWORK_JOINED;
-    status = LoRaMacMibGetRequestConfirm( &mibReq );//闂佽法鍠愰弸濠氬箯缁屾挤atus=LORAMAC_STATUS_OK   mibReq.Param.IsNetworkJoined = IsLoRaMacNetworkJoined
+    status = LoRaMacMibGetRequestConfirm( &mibReq );
 
     if( status == LORAMAC_STATUS_OK )
     {
@@ -272,8 +273,10 @@ void OnTxNextPacketTimerEvent( void )
 
     if( mcpsIndication->AckReceived == true )
     {
+//    	lora_printf("UpLinkCounter:%d  DownLinkCounter:%d \n",UpLinkCounter,DownLinkCounter);
     	lora_printf("+SEND:ACK RECEIVED\n");
     	lora_printf("+SEND:DONE\n\n");
+    	isAckReceived++;
     	delay(100);
     }
 
@@ -459,6 +462,7 @@ void OnTxNextPacketTimerEvent( void )
  * \param   [IN] mlmeConfirm - Pointer to the confirm structure,
  *               containing confirm attributes.
  */
+
  void MlmeConfirm( MlmeConfirm_t *mlmeConfirm )
 {
     switch( mlmeConfirm->MlmeRequest )
@@ -468,6 +472,7 @@ void OnTxNextPacketTimerEvent( void )
             if( mlmeConfirm->Status == LORAMAC_EVENT_INFO_STATUS_OK )
             {
             	lora_printf("+JOIN:DONE\n\n");
+            	isJioned++;
                 // Status is OK, node has joined the network
                 DeviceState = DEVICE_STATE_SEND;
             }

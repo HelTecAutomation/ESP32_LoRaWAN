@@ -6,6 +6,7 @@
 #include "board.h"
 #include "Commissioning.h"
 #include "Mcu.h"
+#include "Commissioning.h"
 
 class LoRaClass{
 public:

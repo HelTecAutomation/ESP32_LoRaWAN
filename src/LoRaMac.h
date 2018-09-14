@@ -26,7 +26,7 @@
  *
  * \author    Gregory Cristian ( Semtech )
  *
- * \author    Daniel J闂佺儵鏅濋悘涔瞝e ( STACKFORCE )
+ * \author    Daniel
  *
  * \defgroup  LORAMAC LoRa MAC layer implementation
  *            This module specifies the API implementation of the LoRaMAC layer.
@@ -49,10 +49,13 @@
 extern "C"{
 #endif
 
-extern  bool IsLoRaMacNetworkJoined;
 // Includes board dependent definitions such as channels frequencies
 #include "LoRaMac-definitions.h"
 
+extern uint32_t UpLinkCounter;
+extern uint32_t DownLinkCounter;
+extern TimerTime_t dutyCycleTimeOff;
+extern  bool IsLoRaMacNetworkJoined;
 /*!
  * Beacon interval in ms
  */
@@ -153,19 +156,19 @@ typedef enum eDeviceClass
      *
      * LoRaWAN Specification V1.0.1, chapter 3ff
      */
-    CLASS_A,//濠电偞鍨堕幐鎼佹晝閵娾斂锟戒線骞嬮敃锟界憴锕傚箹閹碱厼鐏ｇ紒锟芥径宀�纾兼慨锝嗙墪濡盯顢撻敓鑺ョ箾閹寸偞灏柛濠冩崌閺屽苯顭ㄩ崼鐔峰壒濡炪倖鎸鹃崰鎰版偩椤栫偞鐓熼柕濞垮劚椤徰呯磼濡わ拷閹虫劙骞冮幍顔绘勃闁诡垎鍐炬Щ闂備胶灏ㄩ幏鐑芥煕閹捐尪鍏岀�规洖鐖奸弻娑樷枎濞嗘垹肖缂備浇椴哥换鍫濐嚕闂堟侗鍚嬮柛娑卞弾濞兼娊姊洪棃鈺冪シ闁告柨鑻敃銏ゎ敂閸繄顦ч梺鍝勭墢閺佹悂鏌ч崒姣綊鎮╂笟顖氭暯缂傚倸绉寸粔鐟邦嚕椤曪拷瀹曞ジ寮撮悤鍌滃惞濠电偞鍨堕幐鎼侇敄閸儯锟戒線骞嬮悙宸殼闂佺粯顭堝▍锝囩礄婵犳碍鐓熼柕濞垮劚椤忣亪鏌￠崱娆忔灈妤犵偞鍨块、姘跺幢濞嗘埈妲烽梻鍌欑贰閸犳稑螞閸曨厽顐介弶鍫氭櫇妞瑰啿顭跨捄铏圭伇闁活厽甯炵槐鎺楀籍閹存繄浠х紓浣诡殔閹冲繒绮欐径鎰櫢闁芥ê顦弸搴ㄦ煃閵夈劌鐨洪柣鐔稿姍閹泛鈽夊Ο缁樻嫳濠碉紕鍋涢崐鍨暦濡警鍚嬮柛娑卞幘瀹�娑㈡⒑閹稿海鈽夐柣顓炲�垮畷鎴﹀川閺夋垵鍞ㄦ俊鐐差儏濞寸兘鎯岄幒鏃傜＜闁哄啯鍨甸悘鈥愁熆瑜忔繛锟介柟铏殜閹稿﹥寰勫Ο娲伙拷宥夋⒑閻氬瓨瀚归梺鍛婃尫閻掞箓鎮鹃柆宥嗙厱闁硅櫣鍋炵�氾拷 -- 闂備礁鎼悧鐐哄箯閻戣姤鐓熸い蹇撳暢閸忓矂鏌℃笟濠冨
+    CLASS_A,
     /*!
      * LoRaWAN device class B
      *
      * LoRaWAN Specification V1.0.1, chapter 8ff
      */
-    CLASS_B,//闂備線娼婚懙褰掑汲婵夌⒓ss A闂備焦鐪归崝宀�锟芥碍婢橀埢鎾诲閵堝懎鐝橀梺缁樺灦閿氬璺虹Ч閺岋繝鏁撴禒瀣濞达絽鎼悙濠囨⒑閸涘﹦鎳曠紒鎻掔仢閳绘捇骞嬮敃锟介弰銉╂煣韫囨凹鍤冮柡锟介妸銉㈡闁圭偓鍓氶悡顓犵磼鏉堛劎绠栨繛鑹邦嚙铻ｉ柛锔诲幘閻涖儵姊洪棃鈺勭闁告柨绉堕敓钘夌仛濮樸劑鏁撻崐鐕佹綈缁炬澘绉撮—鍐磼閻愮补鎷婚梺鍝勵槹閸ㄧ敻寮崼鏇熺厵闁割煈鍋呯亸顓犵磼鏉堛劌鐏︾紒瀣樀閺佹捇鎳為妷褉鏋栧銈呯箰閹冲孩寰勫澶嬬厸闁跨喍绮欏畷婊勬媴閸濆嫮鍊為梻浣告啞閻熻京绱為崶鈺傤潟婵犳洜鎯e闂傚倸鍊稿ù鍕箯閻戣姤鍋￠柡鍥ㄧ椤﹂绱掗鎯ョ紒杈ㄦ楠炲鈹戦崱妤冪☉闂備浇顫夋禍浠嬪磿閺屻儱鏋佺憸鐗堝笒缁秹鏌涢锝嗙闁挎稓鍠栭弻娑橆潩椤掍焦鎷卞銈嗗笧閸嬬偟绮氶柆宥呯伋闁告劖褰冮埢蹇涙⒑閸︻収鐒炬繛璇х畵閹儵路閳侯摟con闂備焦瀵х粙鎴炵附閺冿拷缁绘盯宕堕锟界�氬锟藉箍鍎遍幊搴綖閵堝鐓曢柨婵嗗暙婵¤偐鎲搁弶鍨骇缂佸倹甯℃俊鐤槾闁告瑱鎷烽梻鍌欑贰閸撴岸骞愰崜褍鍨濋柟鎯у閸楁碍銇勯弽銊ょ繁闁告棑鎷烽梻渚�娼荤拹鐔煎礉鎼粹埗娲礃椤旇壈袝闂佽法鍣﹂幏锟�
+    CLASS_B,
     /*!
      * LoRaWAN device class C
      *
      * LoRaWAN Specification V1.0.1, chapter 17ff
      */
-    CLASS_C,//濠电偞鍨堕幖顐﹀箯閻戣姤鐓熼柍杞拌兌閹界姴顭胯缁犳垿顢氶敐澶嬫櫢濞寸姴顑呯粻鎶芥煏婢舵盯妾柡鍡╀簽缁辨帡骞囬褎鐣堕悷婊呭閻╊垶寮鍥︽勃闁芥ê顦伴柨顓㈡⒑闂堚晞绀嬮柛鏂跨焷閵囨劙宕掗悙瀵稿姷婵炶揪绲块崕銈夋偩闁秵鐓熸い鎾楀啫绠哄┑鐐茬墕缁绘﹢骞嗘径鎰垫晢闁告洦鍓ㄧ槐鐢告⒑缁嬭法绠插┑鐐诧工铻為柟缁㈠枛缁犳娊鏌曟径娑㈡闁哄棭浜炵槐鎺楀箛椤撗勭暥閻熸粌搴滈幏锟� -- 闂備礁鎼悧鐐哄箯閻戣姤鐓犻柣妤�鐗滃▓姗�鏌℃担瑙勫�愰柡浣哥Ф娴狅箓鎳栭埡鍏╂垶绻涢幋鐐村碍妞ゆ垵鐗撻妴渚�骞嬮敃锟介弸渚�鏌ｅΔ锟介悧鍡欑矈閿旀拝鎷烽悙鐟帮拷娑㈠春閺嵮屾富闁稿瞼鍋涚�氬鏌ㄩ悢鍓佺煓闁诡垰鐭傞弫鎾绘晸閿燂拷
+    CLASS_C,
 }DeviceClass_t;
 
 /*!
@@ -323,7 +326,7 @@ typedef struct sLoRaMacParams
      */
     uint16_t ChannelsMask[6];
 }LoRaMacParams_t;
-
+extern LoRaMacParams_t LoRaMacParams;
 /*!
  * LoRaMAC multicast channel parameter
  */
@@ -1884,7 +1887,7 @@ LoRaMacStatus_t LoRaMacMlmeRequest( MlmeReq_t *mlmeRequest );
  *          \ref LORAMAC_STATUS_DEVICE_OFF.
  */
 LoRaMacStatus_t LoRaMacMcpsRequest( McpsReq_t *mcpsRequest );
-
+void LoRaMacTestSetDutyCycleOn( bool enable );
 //extern RTC_DATA_ATTR uint8_t LoRaMacNwkSKey[];
 //extern  uint8_t A;
 /*! \} defgroup LORAMAC */

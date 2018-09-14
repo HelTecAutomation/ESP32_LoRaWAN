@@ -14,7 +14,7 @@ Maintainer: Miguel Luis and Gregory Cristian
 */
 #ifndef __RTC_BOARD_H__
 #define __RTC_BOARD_H__
-#include "soc\rtc.h"
+#include "soc/rtc.h"
 extern uint32_t TimeSwitch;
 extern uint64_t preAlarmtimer;
 extern uint64_t nextAlarm;

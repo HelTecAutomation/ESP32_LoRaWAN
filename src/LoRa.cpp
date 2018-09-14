@@ -7,6 +7,7 @@ void LoRaClass::DeviceStateInit()
     LoRaMacPrimitives.MacMlmeConfirm = MlmeConfirm;//
     LoRaMacCallbacks.GetBatteryLevel = BoardGetBatteryLevel;
     LoRaMacInitialization( &LoRaMacPrimitives, &LoRaMacCallbacks );
+
     TimerInit( &TxNextPacketTimer, OnTxNextPacketTimerEvent );//
     mibReq.Type = MIB_ADR;
     mibReq.Param.AdrEnable = LORAWAN_ADR_ON;
@@ -18,7 +19,8 @@ void LoRaClass::DeviceStateInit()
 
 #if defined( USE_BAND_868 )
     LoRaMacTestSetDutyCycleOn( LORAWAN_DUTYCYCLE_ON );
-
+    if(IsLoRaMacNetworkJoined==false)
+    {
 #if( USE_SEMTECH_DEFAULT_CHANNEL_LINEUP == 1 )
     LoRaMacChannelAdd( 3, ( ChannelParams_t )LC4 );
     LoRaMacChannelAdd( 4, ( ChannelParams_t )LC5 );
@@ -36,7 +38,7 @@ void LoRaClass::DeviceStateInit()
     mibReq.Param.Rx2Channel = ( Rx2ChannelParams_t ){ 869525000, DR_3 };
     LoRaMacMibSetRequestConfirm( &mibReq );
 #endif
-
+    }
 #endif
 
 }
@@ -99,7 +101,7 @@ void LoRaClass::DeviceStateSend()
 	{
 		lora_printf("In sending...\r\n");
 		DelayMs(100);
-		NextTx = SendFrame( );//闂備浇娉曢崰鎰板几婵犳艾绠柣鎴ｅГ閺呮悂鏌￠崒妯猴拷鏍拷姘秺閺屻劑鎮㈤崨濠勪紕闂佸綊顥撻崗姗�寮幘璇茬濡炲瀛╅悾閬嶆煟濮橆剛鎽犻悗姘秺閺屻劑鎮㈤崨濠勪紕闂佺懓鍤栭幏锟�
+		NextTx = SendFrame( );
 	}
 	if( ComplianceTest.Running == true )
 	{

@@ -649,6 +649,7 @@ uint32_t SX1276GetTimeOnAir( RadioModems_t modem, uint8_t pktLen )
             // Symbol rate : time for one symbol (secs)
             double rs = bw / ( 1 << SX1276.Settings.LoRa.Datarate );
             double ts = 1 / rs;
+
             // time of preamble
             double tPreamble = ( SX1276.Settings.LoRa.PreambleLen + 4.25 ) * ts;
             // Symbol length of payload and time
@@ -1299,7 +1300,9 @@ void SX1276OnTimeoutIrq( void )
 void SX1276OnDio0Irq( void )
 {
     volatile uint8_t irqFlags = 0;
-    lora_printf("0");
+#if DebugLevel >= 2
+	lora_printf("0");
+#endif
 //	lora_printf("pin26:%d\r\n",digitalRead(26));
     switch( SX1276.Settings.State )
     {
@@ -1503,7 +1506,9 @@ void SX1276OnDio0Irq( void )
 
 void SX1276OnDio1Irq( void )
 {
+#if DebugLevel >= 2
 	lora_printf("1");
+#endif
     switch( SX1276.Settings.State )
     {
         case RF_RX_RUNNING:

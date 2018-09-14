@@ -41,6 +41,13 @@ extern "C"{
 #include "uart-usb-board.h"
 #endif
 
+// Set this to 0 -- Only send and ACK status will be printed;
+// Set this to 1 -- Based on level 0, more TX and RX frequency will be printed;
+// Set this to 2 -- Based on level 1, DIO0, DIO1 interrupt and deep sleep informations will be printed
+//					print message "S": system into deep sleep mode
+//					print message "0": DIO0 interrupt(TX and RX interrupt)
+//					print message "1": DIO1 interrupt(timeout interrupt)
+#define DebugLevel 	2
 /*!
  * Define indicating if an external IO expander is to be used
  */
@@ -56,53 +63,6 @@ extern "C"{
 #ifndef FAIL0
 #define FAIL0   0
 #endif
-
-/*!
- * Board IO Extender pins definitions
- */
-
-/*!
- * Board MCU pins definitions
- */
-
-/*
-#define RADIO_DIO_0                                 PB_0
-#define RADIO_DIO_1                                 PB_1
-#define RADIO_DIO_2                                 PB_2
-#define RADIO_DIO_3                                 PB_3
-//#define RADIO_DIO_4                                 PB_4
-//#define RADIO_DIO_5                                 PB_5
-
-#define RF_RXTX1                                    PB_7 
-#define RF_RXTX2                                    PB_8 
-
-#define RADIO_RESET                                 PB_9
-
-#define RADIO_NSS                                   PB_12
-#define RADIO_SCLK                                  PB_13
-#define RADIO_MISO                                  PB_14
-#define RADIO_MOSI                                  PB_15
-
-#define OSC_LSE_IN                                  PC_14
-#define OSC_LSE_OUT                                 PC_15
-
-#define OSC_HSE_IN                                  PH_0
-#define OSC_HSE_OUT                                 PH_1
-
-#define UART_TX                                     PA_9
-#define UART_RX                                     PA_10
-
-#define SWDIO                                       PA_13
-#define SWCLK                                       PA_14
-*/
-/*!
- * Board MCU unusedpins definitions
- */
-
-/*!
- * MCU objects
- */
-
 
 
 /*!

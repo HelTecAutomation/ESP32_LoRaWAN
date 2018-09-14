@@ -3,8 +3,9 @@
 
 #include <Arduino.h>
 #include "SPI.h"
-#include "soc\rtc.h"
-#include "soc\rtc_cntl_reg.h"
+#include "soc/rtc.h"
+#include "soc/rtc_cntl_reg.h"
+#include "driver/rtc_io.h"
 #include "driver/rtc_io.h"
 //#include "LoRaMac.h"
 #define LORA_DEFAULT_SS_PIN     18
@@ -12,7 +13,7 @@
 #define LORA_DEFAULT_DIO0_PIN   26
 #define LORA_DEFAULT_DIO1_PIN   33
 #define Timer_DEFAULT_DIV       80
-extern uint8_t rtcstart;
+extern uint8_t LoraWanStarted;
 class McuClass{
 public:
   McuClass();
