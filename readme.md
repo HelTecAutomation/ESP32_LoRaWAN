@@ -31,7 +31,8 @@ The ESP32_LoRaWAN library provides a fairly complete LoRaWAN Class A and Class C
 
 The following functions included:
  - LoRaWAN protocol V1.0.2 Class A and Class C;
- - Use RTC and 32.768KHz external crystal oscillator(it means WIFI LoRa 32 old version(no V2 LOGO on board) can't use this library, for the old boards, another ESP32 + LoRaWAN library use RCC avilabe here: xxxxxxxxxxx coming soon );
+ - Use ESP32's internal RTC(15KHz);
+ - All ESP32 + LoRa boards made by Heltec Automation(TM) can use this library;
  - Support deepsleep and stop mode;
  - An unique license ralate to Chip ID is needed, you can check your license here: http://www.heltec.cn/search/
 
@@ -47,8 +48,8 @@ The following functions included:
 | :----------------: | :------------:|
 | EU_433 | not test |
 | CN_470_510 | work well |
-| EU_863_870 | Work with bug |
-| US_902_928 | not test |
+| EU_863_870 | work well |
+| US_902_928 | work with bug |
 
 What certainly works:
  - Sending packets uplink, taking into account duty cycling.
@@ -64,10 +65,10 @@ What has not been tested:
  - ABP mode.
  
 What are the known bugs:
- - EU_863_870: if one upload missed, resend will spend a very long time, or can't resend again.
+ - EU_902_928: In OTAA mode, first join request can't be successfully received in gateway.
 
 # API
-Coming soon.
+Coming soon. Before we release the APIs, user can read the .h files.
 
 # How to use this library
 The only different with a common Arduino library is need a uniqu license. It's ralate to ESP32 Chip ID.
