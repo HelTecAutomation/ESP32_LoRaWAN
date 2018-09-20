@@ -84,7 +84,7 @@ Only the boards made after August 2018 can be checked from this page, if you hav
 
 # Contact us
 - [http://www.heltec.cn/](http://www.heltec.cn/)
-- [support mail](mailto:support@heltec.cn)
+- [support@heltec.cn](mailto:support@heltec.cn)
 
 # Issue/Bug report template
 Before reporting an issue, make sure you've searched for similar one that was already created. Also make sure to go through all the issues labelled as [for reference](https://github.com/HelTecAutomation/ESP32_LoRaWAN/issues).     
