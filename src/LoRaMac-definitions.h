@@ -17,7 +17,7 @@ Maintainer: Miguel Luis and Gregory Cristian
 #define __LORAMAC_BOARD_H__
 
 
-#define  USE_BAND_915
+#define  USE_BAND_470
 #define  CLASS     CLASS_A
 
 /*!
