@@ -29,6 +29,15 @@
  *https://github.com/HelTecAutomation/ESP32_LoRaWAN
 */
 
+
+
+
+
+/*
+If you want to use this routine, please uncomment the external variable in "Commissioning.c" and 'AppData[]' in "void PrepareTxFrame"
+*/
+
+
 #include "Arduino.h"
 
 #include "board.h"
