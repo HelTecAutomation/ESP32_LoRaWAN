@@ -1,15 +1,5 @@
 #include "Commissioning.h"
 
-//extern char Humidity_H;
-//extern char Humidity_L;
-//extern char Temperature_H;
-//extern char Temperature_L;
-
-//unsigned char TEM[5] ={'T','e','m','p',':'};
-//unsigned char HUM[4] ={'H','u','m',':'};
-
-
-
 
 RTC_DATA_ATTR enum eDeviceState DeviceState;
 LoRaMacPrimitives_t LoRaMacPrimitives;
@@ -63,26 +53,22 @@ bool NextTx = true;
     case 2:
         {
 #if defined( USE_BAND_433 ) || defined( USE_BAND_470 ) || defined( USE_BAND_470PREQUEL ) || defined( USE_BAND_780 ) || defined( USE_BAND_868 )
-
-////             	AppData[0] =   TEM[0];
-////              AppData[1] =   TEM[1];
-////              AppData[2] =   TEM[2];
-////              AppData[3] =   TEM[3];
-////              AppData[4]  =  TEM[4];
-////              AppData[5]  =  Temperature_H;
-////              AppData[6]  =  Temperature_L;
-////              AppData[7]  =   ' ';
-////              AppData[8]  =  HUM[0];
-////              AppData[9]  =  HUM[1];
-////              AppData[10] =  HUM[2];
-////              AppData[11] =  HUM[3];
-////              AppData[12] =  Humidity_H;
-////              AppData[13] =  Humidity_L;
-////              AppData[14] =  '%';
-////			      	AppData[15] =  '4';
-
-
-
+            AppData[0] =   'A';
+            AppData[1] =   'B';
+            AppData[2] =   '3';
+            AppData[3] =   '4';
+            AppData[4] =   '.';
+            AppData[5] =   '3';
+            AppData[6] =   '3';
+            AppData[7] =   'C';
+            AppData[8] =   'D';
+            AppData[9] =   '0';
+            AppData[10] =  'E';
+            AppData[11] =  'F';
+            AppData[12] =  '6';
+            AppData[13] =  '5';
+            AppData[14] =  '%';
+            AppData[15] =  '4';
 #elif defined( USE_BAND_915 ) || defined( USE_BAND_915_HYBRID )
             AppData[0] =   '1';
             AppData[1] =   '2';

@@ -8,11 +8,11 @@
  * - Include stop mode and deep sleep mode;
  *
  * - 60S data send cycle;
- * 
+ *
  * - Debug informations can be configed in board.h(Debug_Level);
  *
  * - Informations output via serial(115200);
- * 
+ *
  * - Informations shown in OLED;
  *
  * - Only ESP32 + LoRa series boards can use this library, need a license
@@ -47,7 +47,7 @@
 #define DIO0    26   // GPIO26 -- SX127x's IRQ(Interrupt Request)
 #define DIO1    35   // GPIO33 -- SX127x's IRQ(Interrupt Request)
 
-uint32_t  LICENSE[4] = {0xDC097CFF, 0x7E983A8D, 0xB716C85B, 0x074B478F};
+uint32_t  LICENSE[4] = {0xC1670CF8,0x19C71AD5,0x6CE47540,0x8CF267EC};
 
 #define SDA    4
 #define SCL   15
@@ -101,13 +101,17 @@ void LEDdisplayACKED()
 {
 	display.clear();
 	display.drawString(64, 22, "ACK RECEIVED");
+#if IsLowPowerOn==1
 	display.setFont(ArialMT_Plain_10);
 	display.setTextAlignment(TEXT_ALIGN_LEFT);
 	display.drawString(28, 50, "Into deep sleep in 2S");
+#endif
 	display.display();
-	delay(2000);
-	display.sleep();
-	digitalWrite(Vext,HIGH);
+#if IsLowPowerOn==1
+		delay(2000);
+		display.sleep();
+		digitalWrite(Vext,HIGH);
+#endif
 }
 void LEDdisplaySTART()
 {
@@ -194,7 +198,7 @@ void loop()
 				LEDdisplayACKED();
 			}
 
-			LoRa.DeviceSleep();
+			LoRa.DeviceSleep(IsLowPowerOn,DebugLevel);
 			break;
 		}
 		default:

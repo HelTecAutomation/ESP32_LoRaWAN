@@ -91,7 +91,7 @@ void loop()
     }
     case DEVICE_STATE_SLEEP:
     {
-      LoRa.DeviceSleep();
+      LoRa.DeviceSleep(IsLowPowerOn,DebugLevel);
       break;
     }
     default:

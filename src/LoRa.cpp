@@ -114,9 +114,9 @@ void LoRaClass::DeviceStateSend()
 			TxDutyCycleTime = APP_TX_DUTYCYCLE + randr( -APP_TX_DUTYCYCLE_RND, APP_TX_DUTYCYCLE_RND );
 	}
 }
-void LoRaClass::DeviceSleep()
+void LoRaClass::DeviceSleep(uint8_t isLowPowerOn,uint8_t debuglevel)
 {
-	Mcu.sleep();
+	Mcu.sleep(isLowPowerOn,debuglevel);
 }
 LoRaClass LoRa;
 

@@ -48,6 +48,11 @@ extern "C"{
 //					print message "0": DIO0 interrupt(TX and RX interrupt)
 //					print message "1": DIO1 interrupt(timeout interrupt)
 #define DebugLevel 	2
+
+//set IsLowPowerOn to 1--open lowpower mode;
+//set IsLowPowerOn to 0--close deepsleep mode;
+#define IsLowPowerOn 1
+
 /*!
  * Define indicating if an external IO expander is to be used
  */

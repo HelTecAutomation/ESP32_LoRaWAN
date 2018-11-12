@@ -13,7 +13,7 @@ public:
   void DeviceStateInit();
   void DeviceStateJion();
   void DeviceStateSend();
-  void DeviceSleep();
+  void DeviceSleep(uint8_t isLowPowerOn,uint8_t debuglevel);
 };
 
 

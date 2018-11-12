@@ -1152,18 +1152,18 @@ uint8_t SX127xReadBuffer(uint8_t addr)
 
 	return Value;
 }
-extern void write(uint8_t address, uint8_t value);
-extern uint8_t read(uint8_t address);
+extern void write0(uint8_t address, uint8_t value);
+extern uint8_t read0(uint8_t address);
 extern void writefifo(uint8_t address, uint8_t *buffer, uint8_t size);
 extern void readfifo(uint8_t address, uint8_t *buffer, uint8_t size);
 void SX1276Write( uint8_t addr, uint8_t data )
 {
-	write(addr,data);//write(address, value);
+	write0(addr,data);//write(address, value);
 }
 
 uint8_t SX1276Read( uint8_t addr )
 {
-	return read(addr);//read(address);
+	return read0(addr);//read(address);
 }
 
 void SX1276WriteBuffer( uint8_t addr, uint8_t *buffer, uint8_t size )
