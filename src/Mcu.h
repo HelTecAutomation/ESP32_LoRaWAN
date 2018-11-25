@@ -11,7 +11,7 @@
 #define LORA_DEFAULT_SS_PIN     18
 #define LORA_DEFAULT_RESET_PIN  14
 #define LORA_DEFAULT_DIO0_PIN   26
-#define LORA_DEFAULT_DIO1_PIN   33
+#define LORA_DEFAULT_DIO1_PIN   35
 #define Timer_DEFAULT_DIV       80
 extern uint8_t LoraWanStarted;
 class McuClass{
