@@ -63,14 +63,14 @@ void LoRaClass::DeviceStateJion()
                 DeviceState = DEVICE_STATE_SLEEP;
 #else
                 // Choose a random device address if not already defined in Commissioning.h
-                if( DevAddr == 0 )
-                {
-                    // Random seed initialization
-                    srand1( BoardGetRandomSeed( ) );
-
-                    // Choose a random device address
-                    DevAddr = randr( 0, 0x01FFFFFF );
-                }
+//                if( DevAddr == 0 )
+//                {
+//                    // Random seed initialization
+//                    srand1( BoardGetRandomSeed( ) );
+//
+//                    // Choose a random device address
+//                    DevAddr = randr( 0, 0x01FFFFFF );
+//                }
 
                 mibReq.Type = MIB_NET_ID;
                 mibReq.Param.NetID = LORAWAN_NETWORK_ID;

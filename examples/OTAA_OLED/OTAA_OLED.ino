@@ -46,8 +46,8 @@
 #define RST_SX127x   14   // GPIO14 -- SX127x's RESET
 #define DIO0    26   // GPIO26 -- SX127x's IRQ(Interrupt Request)
 #define DIO1    35   // GPIO33 -- SX127x's IRQ(Interrupt Request)
-
-uint32_t  LICENSE[4] = {0xC1670CF8,0x19C71AD5,0x6CE47540,0x8CF267EC};
+                                                 
+uint32_t  LICENSE[4] = {0xEA180859,0xF95CE52C,0x042B5D29,0xB8406C26};
 
 #define SDA    4
 #define SCL   15

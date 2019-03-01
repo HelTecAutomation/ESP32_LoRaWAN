@@ -80,7 +80,17 @@ bool NextTx = true;
 ////              AppData[13] =  Humidity_L;
 ////              AppData[14] =  '%';
 ////			      	AppData[15] =  '4';
-
+            AppData[0] =   '1';
+            AppData[1] =   '2';
+            AppData[2] =   '3';
+            AppData[3] =   '4';
+            AppData[4] =   '5';
+            AppData[5] =   '6';
+            AppData[6] =   '7';
+            AppData[7] =   '8';
+            AppData[8] =   '9';
+            AppData[9] =   '0';
+            AppData[10] =  'a';
 
 
 #elif defined( USE_BAND_915 ) || defined( USE_BAND_915_HYBRID )
