@@ -54,7 +54,7 @@ extern "C"{
 
 extern uint32_t UpLinkCounter;
 extern uint32_t DownLinkCounter;
-extern TimerTime_t dutyCycleTimeOff;
+
 extern  bool IsLoRaMacNetworkJoined;
 /*!
  * Beacon interval in ms
@@ -1658,7 +1658,7 @@ typedef struct sLoRaMacCallback
  *          \ref LORAMAC_STATUS_OK,
  *          \ref LORAMAC_STATUS_PARAMETER_INVALID.
  */
-LoRaMacStatus_t LoRaMacInitialization( LoRaMacPrimitives_t *primitives, LoRaMacCallback_t *callbacks );
+LoRaMacStatus_t LoRaMacInitialization( LoRaMacPrimitives_t *primitives, LoRaMacCallback_t *callbacks,DeviceClass_t CLASS );
 
 /*!
  * \brief   Queries the LoRaMAC if it is possible to send the next frame with
@@ -1888,6 +1888,7 @@ LoRaMacStatus_t LoRaMacMlmeRequest( MlmeReq_t *mlmeRequest );
  */
 LoRaMacStatus_t LoRaMacMcpsRequest( McpsReq_t *mcpsRequest );
 void LoRaMacTestSetDutyCycleOn( bool enable );
+
 //extern RTC_DATA_ATTR uint8_t LoRaMacNwkSKey[];
 //extern  uint8_t A;
 /*! \} defgroup LORAMAC */

@@ -119,7 +119,7 @@ RTC_DATA_ATTR static uint32_t LoRaMacDevAddr;
 /*!
  * Multicast channels linked list
  */
-static MulticastParams_t *MulticastChannels = NULL;
+RTC_DATA_ATTR MulticastParams_t *MulticastChannels = NULL;
 
 /*!
  * Actual device class
@@ -669,7 +669,7 @@ static uint8_t MaxJoinRequestTrials;
 /*!
  * Structure to hold an MCPS indication data.
  */
-static McpsIndication_t McpsIndication;
+McpsIndication_t McpsIndication;
 
 /*!
  * Structure to hold MCPS confirm data.
@@ -1193,7 +1193,6 @@ static void OnRadioRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t
     TimerStop( &RxWindowTimer2 );
 
     macHdr.Value = payload[pktHeaderLen++];
-
     switch( macHdr.Bits.MType )
     {
         case FRAME_TYPE_JOIN_ACCEPT:
@@ -1279,10 +1278,10 @@ static void OnRadioRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t
                 address |= ( (uint32_t)payload[pktHeaderLen++] << 8 );
                 address |= ( (uint32_t)payload[pktHeaderLen++] << 16 );
                 address |= ( (uint32_t)payload[pktHeaderLen++] << 24 );
-
                 if( address != LoRaMacDevAddr )
                 {
                     curMulticastParams = MulticastChannels;
+
                     while( curMulticastParams != NULL )
                     {
                         if( address == curMulticastParams->Address )
@@ -1310,7 +1309,6 @@ static void OnRadioRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t
                     appSKey = LoRaMacAppSKey;
                     downLinkCounter = DownLinkCounter;
                 }
-
                 fCtrl.Value = payload[pktHeaderLen++];
 
                 sequenceCounter = ( uint16_t )payload[pktHeaderLen++];
@@ -1897,7 +1895,11 @@ static void OnRxWindow1TimerEvent( void )
 
 #if DebugLevel>=1
     lora_printf("\r\nFirst RxWindow Freq: %d\n",LORAMAC_FIRST_RX1_CHANNEL + ( Channel % 48 ) * LORAMAC_STEPWIDTH_RX1_CHANNEL);
-#endif
+    //lora_printf("datarate:%d\r\n",RxWindowsParams[0].Datarate);
+    //lora_printf("bandwidth:%d\r\n",RxWindowsParams[0].Bandwidth);
+    //lora_printf("timeout:%d\r\n",RxWindowsParams[0].RxWindowTimeout);
+    //lora_printf("timeout1:%d\r\n",LoRaMacParams.MaxRxWindow);
+    #endif
 
 #elif ( defined( USE_BAND_915 ) || defined( USE_BAND_915_HYBRID ) )
     RxWindowSetup( LORAMAC_FIRST_RX1_CHANNEL + ( Channel % 8 ) * LORAMAC_STEPWIDTH_RX1_CHANNEL, RxWindowsParams[0].Datarate, RxWindowsParams[0].Bandwidth, RxWindowsParams[0].RxWindowTimeout, false );
@@ -1923,6 +1925,10 @@ static void OnRxWindow2TimerEvent( void )
 
 #if DebugLevel>=1
     lora_printf("\r\nSecond RxWindow Freq: %d\n",LoRaMacParams.Rx2Channel.Frequency);
+//    lora_printf("datarate:%d\r\n",RxWindowsParams[1].Datarate);
+//    lora_printf("bandwidth:%d\r\n",RxWindowsParams[1].Bandwidth);
+//    lora_printf("timeout:%d\r\n",RxWindowsParams[1].RxWindowTimeout);
+//    lora_printf("rxContinuousMode:%d\r\n",rxContinuousMode);
 #endif
 
     if( RxWindowSetup( LoRaMacParams.Rx2Channel.Frequency, RxWindowsParams[1].Datarate, RxWindowsParams[1].Bandwidth, RxWindowsParams[1].RxWindowTimeout, rxContinuousMode ) == true )
@@ -3137,6 +3143,8 @@ static void ResetMacParameters( void )
     SrvAckRequested = false;
     MacCommandsInNextTx = false;
 
+
+
     // Reset Multicast downlink counters
     MulticastParams_t *cur = MulticastChannels;
     while( cur != NULL )
@@ -3347,6 +3355,7 @@ LoRaMacStatus_t SendFrameOnChannel( ChannelParams_t channel )
     }
 #elif defined( USE_BAND_470 ) || defined( USE_BAND_470PREQUEL )
     Radio.SetMaxPayloadLength( MODEM_LORA, LoRaMacBufferPktLen );
+//    lora_printf("txPower:%d\r\n",txPower);
     Radio.SetTxConfig( MODEM_LORA, txPower, 0, 0, datarate, 1, 8, false, true, 0, 0, false, 3e3 );
     TxTimeOnAir = Radio.TimeOnAir( MODEM_LORA, LoRaMacBufferPktLen );
 #else
@@ -3407,7 +3416,7 @@ LoRaMacStatus_t SetTxContinuousWave1( uint16_t timeout, uint32_t frequency, uint
 }
 
 
-LoRaMacStatus_t LoRaMacInitialization( LoRaMacPrimitives_t *primitives, LoRaMacCallback_t *callbacks )
+LoRaMacStatus_t LoRaMacInitialization( LoRaMacPrimitives_t *primitives, LoRaMacCallback_t *callbacks,DeviceClass_t CLASS)
 {
 
 

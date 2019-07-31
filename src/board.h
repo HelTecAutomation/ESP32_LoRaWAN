@@ -41,22 +41,25 @@ extern "C"{
 #include "uart-usb-board.h"
 #endif
 
+#define SCK     5    // GPIO5  -- SX127x's SCK
+#define MISO    19   // GPIO19 -- SX127x's MISO
+#define MOSI    27   // GPIO27 -- SX127x's MOSI
+#define SS      18   // GPIO18 -- SX127x's CS
+#define RST_SX127x   14   // GPIO14 -- SX127x's RESET
+#define DIO0    26   // GPIO26 -- SX127x's IRQ(Interrupt Request)
+#define SDA    4
+#define SCL   15
+#define RST_LED   16 //RST must be set by software
+
 // Set this to 0 -- Only send and ACK status will be printed;
 // Set this to 1 -- Based on level 0, more TX and RX frequency will be printed;
 // Set this to 2 -- Based on level 1, DIO0, DIO1 interrupt and deep sleep informations will be printed
 //					print message "S": system into deep sleep mode
 //					print message "0": DIO0 interrupt(TX and RX interrupt)
 //					print message "1": DIO1 interrupt(timeout interrupt)
-#define DebugLevel 	2
+#define DebugLevel 	1
 
-//set IsLowPowerOn to 1--open lowpower mode;
-//set IsLowPowerOn to 0--close deepsleep mode;
-#define IsLowPowerOn 1
 
-/*!
- * Define indicating if an external IO expander is to be used
- */
-//#define BOARD_IOE_EXT
 
 /*!
  * Generic definition

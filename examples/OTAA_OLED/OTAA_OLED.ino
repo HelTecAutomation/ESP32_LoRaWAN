@@ -39,28 +39,24 @@
 #include <Wire.h>  // Only needed for Arduino 1.6.5 and earlier
 #include "SSD1306.h" // alias for `#include "SSD1306Wire.h"`
 
-#define SCK     5    // GPIO5  -- SX127x's SCK
-#define MISO    19   // GPIO19 -- SX127x's MISO
-#define MOSI    27   // GPIO27 -- SX127x's MOSI
-#define SS      18   // GPIO18 -- SX127x's CS
-#define RST_SX127x   14   // GPIO14 -- SX127x's RESET
-#define DIO0    26   // GPIO26 -- SX127x's IRQ(Interrupt Request)
-#define DIO1    35   // GPIO33 -- SX127x's IRQ(Interrupt Request)
-                                                 
-uint32_t  LICENSE[4] = {0xEA180859,0xF95CE52C,0x042B5D29,0xB8406C26};
 
-#define SDA    4
-#define SCL   15
-#define RST_LED   16 //RST must be set by software
+#define  V2
+#define  CLASS  CLASS_A
 
-#define V2     1
+
 
 #ifdef V2 //WIFI Kit series V1 not support Vext control
-  #define Vext  21
+	#define DIO1    35   // GPIO35 -- SX127x's IRQ(Interrupt Request) V2
+#else
+	#define DIO1    33   // GPIO33 -- SX127x's IRQ(Interrupt Request) V1
 #endif
-SSD1306  display(0x3c, SDA, SCL, RST_LED);
 
-RTC_DATA_ATTR uint32_t Counter=0;
+#define Vext  21
+
+uint32_t  LICENSE[4] = {0x6899A6F1,0xD6A04116,0x7EDEA042,0x7E7218C3};//470v2
+
+SSD1306  display(0x3c, SDA, SCL, RST_LED);
+extern McpsIndication_t McpsIndication;
 
 void LEDdisplayJOINING()
 {
@@ -100,18 +96,21 @@ void LEDdisplaySENDING()
 void LEDdisplayACKED()
 {
 	display.clear();
-	display.drawString(64, 22, "ACK RECEIVED");
-#if IsLowPowerOn==1
+	display.drawString(64, 10, "ACK RECEIVED");
 	display.setFont(ArialMT_Plain_10);
-	display.setTextAlignment(TEXT_ALIGN_LEFT);
-	display.drawString(28, 50, "Into deep sleep in 2S");
-#endif
+	display.setTextAlignment(TEXT_ALIGN_CENTER);
+	display.drawString(64, 40,"rssi="+String(McpsIndication.Rssi)+
+			",datarate="+String(McpsIndication.RxDatarate));
+	if(CLASS==CLASS_A)
+	{
+		display.drawString(64, 50, "Into deep sleep in 2S");
+	}
 	display.display();
-#if IsLowPowerOn==1
-		delay(2000);
+	if(CLASS==CLASS_A)
+	{	delay(2000);
 		display.sleep();
 		digitalWrite(Vext,HIGH);
-#endif
+	}
 }
 void LEDdisplaySTART()
 {
@@ -147,19 +146,20 @@ void setup()
 
 }
 
+
+
 void loop()
 {
 	switch( DeviceState )
 	{
 		case DEVICE_STATE_INIT:
 		{
-			LoRa.DeviceStateInit();
+			LoRa.DeviceStateInit(CLASS);
 			if(IsLoRaMacNetworkJoined==false)
 			{DeviceState = DEVICE_STATE_JOIN;}
 			else
 			{DeviceState = DEVICE_STATE_SEND;}
 			break;
-
 		}
 		case DEVICE_STATE_JOIN:
 		{
@@ -196,9 +196,9 @@ void loop()
 			{
 				isAckReceived--;
 				LEDdisplayACKED();
-			}
 
-			LoRa.DeviceSleep(IsLowPowerOn,DebugLevel);
+			}
+			LoRa.DeviceSleep(CLASS,DebugLevel);
 			break;
 		}
 		default:
@@ -208,3 +208,5 @@ void loop()
 		}
 	}
 }
+
+
