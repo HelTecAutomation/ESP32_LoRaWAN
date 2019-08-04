@@ -55,14 +55,14 @@ bool NextTx = true;
     case 2:
         {
 #if defined( USE_BAND_433 ) || defined( USE_BAND_470 ) || defined( USE_BAND_470PREQUEL ) || defined( USE_BAND_780 ) || defined( USE_BAND_868 )
-            float a=10.1234;
-            unsigned char *puc;
-            puc = (unsigned char *)(&a);
-        	AppData[0] =   puc[0];
-            AppData[1] =   puc[1];
-            AppData[2] =   puc[2];
-            AppData[3] =   puc[3];
-            lora_printf("%f %x  %x  %x  %x",a,puc[0],puc[1],puc[2],puc[3]);
+            //float a=10.1234;
+//            unsigned char *puc;
+//            puc = (unsigned char *)(&a);
+            AppData[0] =   'A';
+            AppData[1] =   'B';
+            AppData[2] =   'C';
+            AppData[3] =   'D';
+//            lora_printf("%f %x  %x  %x  %x",a,puc[0],puc[1],puc[2],puc[3]);
             AppData[4] =   '.';
             AppData[5] =   '3';
             AppData[6] =   '3';
