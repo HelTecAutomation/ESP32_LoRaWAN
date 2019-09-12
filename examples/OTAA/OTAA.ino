@@ -35,14 +35,18 @@
 #include <LoRa.h>
 #include <Mcu.h>
 
-#define SCK     5    // GPIO5  -- SX127x's SCK
-#define MISO    19   // GPIO19 -- SX127x's MISO
-#define MOSI    27   // GPIO27 -- SX127x's MOSI
-#define SS      18   // GPIO18 -- SX127x's CS
-#define RST     14   // GPIO14 -- SX127x's RESET
-#define DIO0    26   // GPIO26 -- SX127x's IRQ(Interrupt Request)
-#define DIO1    35   // GPIO33 -- SX127x's IRQ(Interrupt Request)
-uint32_t  LICENSE[4] = {0xDD251C39,0x44C5F937,0xBB160873,0x072EB7C8};
+#define  V2
+#define  CLASS  CLASS_A
+
+#ifdef V2 //WIFI Kit series V1 not support Vext control
+  #define DIO1    35   // GPIO35 -- SX127x's IRQ(Interrupt Request) V2
+#else
+  #define DIO1    33   // GPIO33 -- SX127x's IRQ(Interrupt Request) V1
+#endif
+
+#define Vext  21
+
+uint32_t  LICENSE[4] = {0xC1670CF8,0x19C71AD5,0x6CE47540,0x8CF267EC};//470v2
 
 void setup()
 {
@@ -50,7 +54,7 @@ void setup()
   Serial.begin(115200);
   while (!Serial);
   SPI.begin(SCK,MISO,MOSI,SS);
-  Mcu.begin(SS,RST,DIO0,DIO1,LICENSE);
+  Mcu.begin(SS,RST_SX127x,DIO0,DIO1,LICENSE);
   DeviceState = DEVICE_STATE_INIT;
 }
 
@@ -61,7 +65,7 @@ void loop()
   {
     case DEVICE_STATE_INIT:
     {
-      LoRa.DeviceStateInit();
+      LoRa.DeviceStateInit(CLASS);
       if(IsLoRaMacNetworkJoined==false)
       {DeviceState = DEVICE_STATE_JOIN;}
       else
@@ -91,7 +95,7 @@ void loop()
     }
     case DEVICE_STATE_SLEEP:
     {
-      LoRa.DeviceSleep(IsLowPowerOn,DebugLevel);
+      LoRa.DeviceSleep(CLASS,DebugLevel);
       break;
     }
     default:
@@ -101,4 +105,3 @@ void loop()
     }
   }
 }
-

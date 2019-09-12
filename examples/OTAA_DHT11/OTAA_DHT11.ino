@@ -57,26 +57,21 @@ unsigned char Humidity_L;
 dht11 DHT11;
 
 
-#define SCK     5    // GPIO5  -- SX127x's SCK
-#define MISO    19   // GPIO19 -- SX127x's MISO
-#define MOSI    27   // GPIO27 -- SX127x's MOSI
-#define SS      18   // GPIO18 -- SX127x's CS
-#define RST_SX127x   14   // GPIO14 -- SX127x's RESET
-#define DIO0    26   // GPIO26 -- SX127x's IRQ(Interrupt Request)
-#define DIO1    35   // GPIO33 -- SX127x's IRQ(Interrupt Request)
-
-uint32_t  LICENSE[4] = {0x246C98DD,0x2C40F582,0xFBAFE85D,0xC7745723};
-
-#define SDA    4
-#define SCL   15
-#define RST_LED   16 //RST must be set by software
-
-#define V2     1
+#define  V2
+#define  CLASS  CLASS_A
 
 #ifdef V2 //WIFI Kit series V1 not support Vext control
-  #define Vext  21
+  #define DIO1    35   // GPIO35 -- SX127x's IRQ(Interrupt Request) V2
+#else
+  #define DIO1    33   // GPIO33 -- SX127x's IRQ(Interrupt Request) V1
 #endif
+
+#define Vext  21
+
+uint32_t  LICENSE[4] = {0xC1670CF8,0x19C71AD5,0x6CE47540,0x8CF267EC};//470v2
+
 SSD1306  display(0x3c, SDA, SCL, RST_LED);
+extern McpsIndication_t McpsIndication;
 
 RTC_DATA_ATTR uint32_t Counter=0;
 
@@ -176,7 +171,7 @@ void loop()
   {
     case DEVICE_STATE_INIT:
     {
-      LoRa.DeviceStateInit();
+      LoRa.DeviceStateInit(CLASS);
       if(IsLoRaMacNetworkJoined==false)
       {DeviceState = DEVICE_STATE_JOIN;}
       else
@@ -221,7 +216,7 @@ void loop()
         LEDdisplayACKED();
       }
 
-      LoRa.DeviceSleep(IsLowPowerOn,DebugLevel);
+      LoRa.DeviceSleep(CLASS,DebugLevel);
       break;
     }
     default:
@@ -231,4 +226,3 @@ void loop()
     }
   }
 }
-

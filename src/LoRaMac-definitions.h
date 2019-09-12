@@ -17,7 +17,7 @@ Maintainer: Miguel Luis and Gregory Cristian
 #define __LORAMAC_BOARD_H__
 
 
-#define  USE_BAND_868
+#define  USE_BAND_470
 
 
 /*!
@@ -151,8 +151,8 @@ Maintainer: Miguel Luis and Gregory Cristian
 /*!
  * LoRaMac maximum number of channels
  */
-//这里使用自定义的8个上行信道，从471.5开始，信道间隔20KHz，472.9MHz结束
-#define LORA_MAX_NB_CHANNELS                        8
+//这里使用自定义的96个上行信道，从471.5开始，信道间隔20KHz，默认使用前8个信道，入网后由服务器adr决定使用哪些信道
+#define LORA_MAX_NB_CHANNELS                        96
 
 /*!
  * Minimal datarate that can be used by the node
