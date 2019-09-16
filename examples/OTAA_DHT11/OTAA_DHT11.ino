@@ -53,7 +53,8 @@ unsigned char Temperature_H;
 unsigned char Temperature_L;
 unsigned char Humidity_H;
 unsigned char Humidity_L;
-
+unsigned char TEM[5] ={'T','e','m','p',':'};
+unsigned char HUM[4] ={'H','u','m',':'};
 dht11 DHT11;
 
 
