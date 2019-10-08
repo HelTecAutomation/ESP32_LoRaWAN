@@ -3494,11 +3494,11 @@ LoRaMacStatus_t LoRaMacInitialization( LoRaMacPrimitives_t *primitives, LoRaMacC
 #elif defined( USE_BAND_868 )
     LoRaMacParamsDefaults.ChannelsMask[0] = LC( 1 ) + LC( 2 ) + LC( 3 );
 #elif defined( USE_BAND_915 )
-    LoRaMacParamsDefaults.ChannelsMask[0] = 0xFFFF;
-    LoRaMacParamsDefaults.ChannelsMask[1] = 0xFFFF;
-    LoRaMacParamsDefaults.ChannelsMask[2] = 0xFFFF;
-    LoRaMacParamsDefaults.ChannelsMask[3] = 0xFFFF;
-    LoRaMacParamsDefaults.ChannelsMask[4] = 0x00FF;
+    LoRaMacParamsDefaults.ChannelsMask[0] = 0x00FF;
+    LoRaMacParamsDefaults.ChannelsMask[1] = 0x0000;
+    LoRaMacParamsDefaults.ChannelsMask[2] = 0x0000;
+    LoRaMacParamsDefaults.ChannelsMask[3] = 0x0000;
+    LoRaMacParamsDefaults.ChannelsMask[4] = 0x0000;
     LoRaMacParamsDefaults.ChannelsMask[5] = 0x0000;
 #elif defined( USE_BAND_915_HYBRID )
     LoRaMacParamsDefaults.ChannelsMask[0] = 0x00FF;
