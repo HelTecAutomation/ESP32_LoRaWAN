@@ -17,7 +17,7 @@ Maintainer: Miguel Luis and Gregory Cristian
 #define __LORAMAC_BOARD_H__
 
 
-#define  USE_BAND_868
+#define  USE_BAND_915
 
 
 /*!
@@ -487,7 +487,7 @@ typedef enum
 /*!
  * LoRaMac channels which are allowed for the join procedure
  */
-#define JOIN_CHANNELS      ( uint16_t )( LC( 1 ) )//| LC( 2 ) | LC( 3 ) )
+#define JOIN_CHANNELS      ( uint16_t )( LC( 1 ) )| LC( 2 ) | LC( 3 ) )
 
 #elif defined( USE_BAND_915 ) || defined( USE_BAND_915_HYBRID )
 
