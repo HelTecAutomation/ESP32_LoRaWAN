@@ -629,7 +629,7 @@ void LoRaClass::DeviceStateJion()
                 if( DevAddr == 0 )
                 {
                     // Random seed initialization
-                    srand1( BoardGetRandomSeed( ) );
+                    //srand1( BoardGetRandomSeed( ) );
 
                     // Choose a random device address
                     DevAddr = randr( 0, 0x01FFFFFF );
