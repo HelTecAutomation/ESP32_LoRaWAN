@@ -29,7 +29,7 @@ RTC_DATA_ATTR uint8_t AppSKey[] = LORAWAN_APPSKEY;
 /*!
  * Device address
  */
- uint32_t DevAddr = LORAWAN_DEVICE_ADDRESS;
+uint32_t DevAddr = LORAWAN_DEVICE_ADDRESS;
 
 #endif
 
@@ -111,6 +111,7 @@ bool NextTx = true;
             AppData[9] =   '0';
             AppData[10] =  'a';
 #endif
+            AppDataSize = LORAWAN_APP_DATA_MAX_SIZE;
         }
         break;
     case 224:
@@ -141,6 +142,23 @@ bool NextTx = true;
     default:
         break;
     }
+}
+
+/*!
+ * \brief   Prepares the custom payload of the frame
+ */
+void PrepareMsgFrame( uint8_t port, uint8_t Msg2Send[], uint8_t length ) {
+    if ( port == 2 )
+    {
+      if (length > LORAWAN_APP_DATA_MAX_SIZE)
+	 length = LORAWAN_APP_DATA_MAX_SIZE;
+      lora_printf("message: ");
+      for (int i = 0; i < length; i++) {
+            AppData[i] =   Msg2Send[i];
+            lora_printf("message:%c\r\n",AppData[i]);
+	}   // end for
+      AppDataSize = length;
+     }  // end if (port == 2)
 }
 
 /*!
