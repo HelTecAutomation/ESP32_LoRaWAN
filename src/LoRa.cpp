@@ -152,10 +152,9 @@ void PrepareMsgFrame( uint8_t port, uint8_t Msg2Send[], uint8_t length ) {
     {
       if (length > LORAWAN_APP_DATA_MAX_SIZE)
 	 length = LORAWAN_APP_DATA_MAX_SIZE;
-      lora_printf("message: ");
+   //   lora_printf("length: %d\n",length);    // debug
       for (int i = 0; i < length; i++) {
             AppData[i] =   Msg2Send[i];
-            lora_printf("message:%c\r\n",AppData[i]);
 	}   // end for
       AppDataSize = length;
      }  // end if (port == 2)
