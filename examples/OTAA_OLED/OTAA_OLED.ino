@@ -53,7 +53,7 @@
 
 #define Vext  21
 
-uint32_t  LICENSE[4] = {0x6899A6F1,0xD6A04116,0x7EDEA042,0x7E7218C3};//470v2
+uint32_t  LICENSE[4] = {0x01325A7B,0xE35A787E,0xEE6D8604,0xD3530898};//470v2
 
 SSD1306  display(0x3c, SDA, SCL, RST_LED);
 extern McpsIndication_t McpsIndication;
@@ -141,7 +141,7 @@ void setup()
 		LEDdisplaySTART();
 	}
 	Mcu.begin(SS,RST_SX127x,DIO0,DIO1,LICENSE);
-
+  
 	DeviceState = DEVICE_STATE_INIT;
 
 }
@@ -177,8 +177,13 @@ void loop()
 			//lora_printf("LoRaMacParams.ChannelsMask[0]:%d\r\n",LoRaMacParams.ChannelsMask[0]);
 			LEDdisplaySENDING();
 			lora_printf("Into send state\n");
-			PrepareTxFrame( AppPort );
+		// PrepareTxFrame( AppPort );
+      uint8_t msg[] = "Msg test 43";
+      PrepareMsgFrame( AppPort, msg , sizeof(msg)-1);
 			LoRa.DeviceStateSend();
+
+
+     
 			DeviceState = DEVICE_STATE_CYCLE;
 			break;
 		}
@@ -197,6 +202,12 @@ void loop()
 				isAckReceived--;
 				LEDdisplayACKED();
 
+      lora_printf("DownLink msg : %s\n", msgRx.isDwn ? "true" : "false");    // debug
+      if ( msgRx.isDwn == true ) // something received
+      { 
+         lora_printf("Msg received: %s\n", msgRx.msg);
+      } 
+      
 			}
 			LoRa.DeviceSleep(CLASS,DebugLevel);
 			break;
@@ -208,5 +219,3 @@ void loop()
 		}
 	}
 }
-
-
