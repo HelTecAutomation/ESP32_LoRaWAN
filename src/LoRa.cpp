@@ -50,6 +50,12 @@ bool NextTx = true;
 
  struct ComplianceTest_s ComplianceTest;
 
+/*!
+ * LoRaWAN message received structure
+ */    // received
+
+ struct MsgRx msgRx = {false, 0, "" };    // received
+
 
 /*!
  * \brief   Prepares the payload of the frame
@@ -375,7 +381,9 @@ static void McpsConfirm( McpsConfirm_t *mcpsConfirm )
                 mcpsIndication->RxSlot?"RXWIN2":"RXWIN1",
                 mcpsIndication->BufferSize,
                 temp1);
-
+        msgRx.isDwn = true;    // received
+	msgRx.length = mcpsIndication->BufferSize;   // received
+        strcpy((char*) msgRx.msg,(char*) temp1 );   // received
 
         switch( mcpsIndication->Port )
         {
@@ -583,6 +591,7 @@ static void MlmeConfirm( MlmeConfirm_t *mlmeConfirm )
 
 void LoRaClass::DeviceStateInit(DeviceClass_t CLASS)
 {
+    msgRx.isDwn = false;    // received
     LoRaMacPrimitives.MacMcpsConfirm = McpsConfirm;//
     LoRaMacPrimitives.MacMcpsIndication = McpsIndication;//
     LoRaMacPrimitives.MacMlmeConfirm = MlmeConfirm;//
@@ -679,6 +688,7 @@ void LoRaClass::DeviceStateSend()
 {
 	if( NextTx == true )
 	{
+                msgRx.isDwn = false;    // received
 		lora_printf("In sending...\r\n");
 		DelayMs(100);
 		NextTx = SendFrame( );

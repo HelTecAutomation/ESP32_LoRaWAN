@@ -94,5 +94,6 @@ public:
 
 extern LoRaClass LoRa;
 
+extern struct MsgRx msgRx;
 
 #endif
