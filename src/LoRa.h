@@ -80,6 +80,7 @@ extern struct ComplianceTest_s ComplianceTest;
 
 extern "C" void OnTxNextPacketTimerEvent( void );
 extern "C" void PrepareTxFrame( uint8_t port );
+extern "C" void PrepareMsgFrame( uint8_t port, uint8_t AppData[], uint8_t lenght );
 
 
 class LoRaClass{
@@ -93,5 +94,6 @@ public:
 
 extern LoRaClass LoRa;
 
+extern struct MsgRx msgRx;
 
 #endif

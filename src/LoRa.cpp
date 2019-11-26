@@ -29,7 +29,7 @@ RTC_DATA_ATTR uint8_t AppSKey[] = LORAWAN_APPSKEY;
 /*!
  * Device address
  */
- uint32_t DevAddr = LORAWAN_DEVICE_ADDRESS;
+uint32_t DevAddr = LORAWAN_DEVICE_ADDRESS;
 
 #endif
 
@@ -49,6 +49,12 @@ bool NextTx = true;
  */
 
  struct ComplianceTest_s ComplianceTest;
+
+/*!
+ * LoRaWAN message received structure
+ */    // received
+
+ struct MsgRx msgRx = {false, 0, "" };    // received
 
 
 /*!
@@ -111,6 +117,7 @@ bool NextTx = true;
             AppData[9] =   '0';
             AppData[10] =  'a';
 #endif
+            AppDataSize = LORAWAN_APP_DATA_MAX_SIZE;
         }
         break;
     case 224:
@@ -141,6 +148,22 @@ bool NextTx = true;
     default:
         break;
     }
+}
+
+/*!
+ * \brief   Prepares the custom payload of the frame
+ */
+void PrepareMsgFrame( uint8_t port, uint8_t Msg2Send[], uint8_t length ) {
+    if ( port == 2 )
+    {
+      if (length > LORAWAN_APP_DATA_MAX_SIZE)
+	 length = LORAWAN_APP_DATA_MAX_SIZE;
+   //   lora_printf("length: %d\n",length);    // debug
+      for (int i = 0; i < length; i++) {
+            AppData[i] =   Msg2Send[i];
+	}   // end for
+      AppDataSize = length;
+     }  // end if (port == 2)
 }
 
 /*!
@@ -358,7 +381,9 @@ static void McpsConfirm( McpsConfirm_t *mcpsConfirm )
                 mcpsIndication->RxSlot?"RXWIN2":"RXWIN1",
                 mcpsIndication->BufferSize,
                 temp1);
-
+        msgRx.isDwn = true;    // received
+	msgRx.length = mcpsIndication->BufferSize;   // received
+        strcpy((char*) msgRx.msg,(char*) temp1 );   // received
 
         switch( mcpsIndication->Port )
         {
@@ -566,6 +591,7 @@ static void MlmeConfirm( MlmeConfirm_t *mlmeConfirm )
 
 void LoRaClass::DeviceStateInit(DeviceClass_t CLASS)
 {
+    msgRx.isDwn = false;    // received
     LoRaMacPrimitives.MacMcpsConfirm = McpsConfirm;//
     LoRaMacPrimitives.MacMcpsIndication = McpsIndication;//
     LoRaMacPrimitives.MacMlmeConfirm = MlmeConfirm;//
@@ -662,6 +688,7 @@ void LoRaClass::DeviceStateSend()
 {
 	if( NextTx == true )
 	{
+                msgRx.isDwn = false;    // received
 		lora_printf("In sending...\r\n");
 		DelayMs(100);
 		NextTx = SendFrame( );

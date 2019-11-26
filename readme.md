@@ -19,7 +19,6 @@
 ----------
 To install this library:
 
-- install it using the Arduino Library manager ("Sketch" -> "Include Library" -> "Manage Libraries..."), or
 - download a zip file from GitHub using the "Download ZIP" button and install it using the IDE ("Sketch" -> "Include Library" -> "Add .ZIP Library..."
 - clone this git repository into your sketchbook/libraries folder.
 
