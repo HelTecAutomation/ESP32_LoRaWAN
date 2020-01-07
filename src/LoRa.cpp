@@ -8,7 +8,6 @@ extern char Temperature_L;
 extern unsigned char TEM[5];
 extern unsigned char HUM[4];
 
-#define LEDPin 25
 RTC_DATA_ATTR enum eDeviceState DeviceState;
 LoRaMacPrimitives_t LoRaMacPrimitives;
 LoRaMacCallback_t LoRaMacCallbacks;
@@ -18,21 +17,26 @@ uint8_t isAckReceived=0;
 /*!
  * Defines the application data transmission duty cycle. 60s, value in [ms].
  */
-uint8_t DevEui[] = LORAWAN_DEVICE_EUI;
-uint8_t AppEui[] = LORAWAN_APPLICATION_EUI;
-uint8_t AppKey[] = LORAWAN_APPLICATION_KEY;
+// uint8_t DevEui[] = LORAWAN_DEVICE_EUI;
+// uint8_t AppEui[] = LORAWAN_APPLICATION_EUI;
+// uint8_t AppKey[] = LORAWAN_APPLICATION_KEY;
 
-#if( OVER_THE_AIR_ACTIVATION == 0 )
-RTC_DATA_ATTR uint8_t NwkSKey[] = LORAWAN_NWKSKEY;
-RTC_DATA_ATTR uint8_t AppSKey[] = LORAWAN_APPSKEY;
+// #if( OVER_THE_AIR_ACTIVATION == 0 )
+// RTC_DATA_ATTR uint8_t NwkSKey[] = LORAWAN_NWKSKEY;
+// RTC_DATA_ATTR uint8_t AppSKey[] = LORAWAN_APPSKEY;
 
-/*!
- * Device address
- */
-uint32_t DevAddr = LORAWAN_DEVICE_ADDRESS;
+// /*!
+//  * Device address
+//  */
+// uint32_t DevAddr = LORAWAN_DEVICE_ADDRESS;
 
-#endif
-
+// #endif
+extern uint8_t DevEui[];
+extern uint8_t AppEui[];
+extern uint8_t AppKey[];
+extern RTC_DATA_ATTR uint8_t ABP_NwkSKey[] ;
+extern RTC_DATA_ATTR uint8_t ABP_AppSKey[] ;
+extern uint32_t ABP_DevAddr ;
 
 uint8_t AppPort = LORAWAN_APP_PORT;
 uint8_t AppDataSize = LORAWAN_APP_DATA_SIZE;
@@ -285,33 +289,34 @@ static void McpsConfirm( McpsConfirm_t *mcpsConfirm )
  *               containing indication attributes.
  */
  extern MulticastParams_t *MulticastChannels;
- void app(uint8_t data)
- {
-	 lora_printf("data:%d\r\n",data);
-	 switch(data)
-     {
- 		case 49:
- 		{
- 			pinMode(LEDPin,OUTPUT);
- 			digitalWrite(LEDPin, HIGH);
- 			break;
- 		}
- 		case 50:
- 		{
- 			pinMode(LEDPin,OUTPUT);
- 			digitalWrite(LEDPin, LOW);
- 			break;
- 		}
- 		case 51:
- 		{
- 			break;
- 		}
- 		default:
- 		{
- 			break;
- 		}
-     }
- }
+ extern void app(uint8_t data) ;
+//  void app(uint8_t data)
+//  {
+// 	 lora_printf("data:%d\r\n",data);
+// 	 switch(data)
+//      {
+//  		case 49:
+//  		{
+//  			pinMode(LEDPin,OUTPUT);
+//  			digitalWrite(LEDPin, HIGH);
+//  			break;
+//  		}
+//  		case 50:
+//  		{
+//  			pinMode(LEDPin,OUTPUT);
+//  			digitalWrite(LEDPin, LOW);
+//  			break;
+//  		}
+//  		case 51:
+//  		{
+//  			break;
+//  		}
+//  		default:
+//  		{
+//  			break;
+//  		}
+//      }
+//  }
  static void McpsIndication( McpsIndication_t *mcpsIndication )
 {
     if( mcpsIndication->Status != LORAMAC_EVENT_INFO_STATUS_OK )
@@ -632,9 +637,9 @@ void LoRaClass::DeviceStateInit(DeviceClass_t CLASS)
 #endif
 }
 
-void LoRaClass::DeviceStateJion()
+void LoRaClass::DeviceStateJion(bool OVER_THE_AIR_ACTIVATION)
 {
-#if( OVER_THE_AIR_ACTIVATION != 0 )
+if( OVER_THE_AIR_ACTIVATION  ){
                 MlmeReq_t mlmeReq;
 
                 mlmeReq.Type = MLME_JOIN;
@@ -650,15 +655,17 @@ void LoRaClass::DeviceStateJion()
                     LoRaMacMlmeRequest( &mlmeReq );
                 }
                 DeviceState = DEVICE_STATE_SLEEP;
-#else
+                }
+else { 
                 // Choose a random device address if not already defined in Commissioning.h
-                if( DevAddr == 0 )
+              
+                   if( ABP_DevAddr == 0 )
                 {
                     // Random seed initialization
                     //srand1( BoardGetRandomSeed( ) );
 
                     // Choose a random device address
-                    DevAddr = randr( 0, 0x01FFFFFF );
+                    ABP_DevAddr = randr( 0, 0x01FFFFFF );
                 }
 
                 mibReq.Type = MIB_NET_ID;
@@ -666,15 +673,15 @@ void LoRaClass::DeviceStateJion()
                 LoRaMacMibSetRequestConfirm( &mibReq );
 
                 mibReq.Type = MIB_DEV_ADDR;
-                mibReq.Param.DevAddr = DevAddr;
+                mibReq.Param.DevAddr = ABP_DevAddr;
                 LoRaMacMibSetRequestConfirm( &mibReq );
 
                 mibReq.Type = MIB_NWK_SKEY;
-                mibReq.Param.NwkSKey = NwkSKey;
+                mibReq.Param.NwkSKey = ABP_NwkSKey;
                 LoRaMacMibSetRequestConfirm( &mibReq );
 
                 mibReq.Type = MIB_APP_SKEY;
-                mibReq.Param.AppSKey = AppSKey;
+                mibReq.Param.AppSKey = ABP_AppSKey;
                 LoRaMacMibSetRequestConfirm( &mibReq );
 
                 mibReq.Type = MIB_NETWORK_JOINED;
@@ -682,8 +689,9 @@ void LoRaClass::DeviceStateJion()
                 LoRaMacMibSetRequestConfirm( &mibReq );
 
                 DeviceState = DEVICE_STATE_SEND;
-#endif
+                }
 }
+
 void LoRaClass::DeviceStateSend()
 {
 	if( NextTx == true )

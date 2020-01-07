@@ -48,7 +48,7 @@ extern uint8_t AppDataSize;
 /*!
 * User application data
 */
-extern uint8_t AppData[LORAWAN_APP_DATA_MAX_SIZE];//Ҫ���͵�����
+extern uint8_t AppData[LORAWAN_APP_DATA_MAX_SIZE];
 
 /*!
 * Indicates if the node is sending confirmed or unconfirmed messages
@@ -86,7 +86,7 @@ extern "C" void PrepareMsgFrame( uint8_t port, uint8_t AppData[], uint8_t lenght
 class LoRaClass{
 public:
   void DeviceStateInit(DeviceClass_t CLASS);
-  void DeviceStateJion();
+  void DeviceStateJion(bool OVER_THE_AIR_ACTIVATION);
   void DeviceStateSend();
   void DeviceSleep(DeviceClass_t CLASS,uint8_t debuglevel);
 };
