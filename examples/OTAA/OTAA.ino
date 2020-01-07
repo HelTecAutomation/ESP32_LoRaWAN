@@ -20,7 +20,7 @@
  *
  * HelTec AutoMation, Chengdu, China.
  * 成都惠利特自动化科技有限公司
- * www.heltec.cn
+ * https://heltec.org
  * support@heltec.cn
  *
  *this project also release in GitHub:
@@ -31,6 +31,7 @@
 #include "board.h"
 #include "LoRaMac.h"
 #include "Commissioning.h"
+
 #include <SPI.h>
 #include <LoRa.h>
 #include <Mcu.h>
@@ -45,9 +46,22 @@
 #endif
 
 #define Vext  21
-
-uint32_t  LICENSE[4] = {0xC1670CF8,0x19C71AD5,0x6CE47540,0x8CF267EC};//470v2
-
+bool OVER_THE_AIR_ACTIVATION = true;
+//OTAA
+uint8_t DevEui[] =  { 0x22,0x32,0x33,  0x00, 0x00, 0x88, 0x88, 0x33 };
+uint8_t AppEui[] =   { 0x66, 0x66, 0x66, 0x66, 0x66, 0x66, 0x66, 0x04 };
+uint8_t AppKey[] =  { 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x66, 0x01 };
+//ABP
+uint32_t ABP_DevAddr =     ( uint32_t )0x26011713 ;
+RTC_DATA_ATTR uint8_t  ABP_NwkSKey[] =  { 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x66, 0x02 };
+RTC_DATA_ATTR uint8_t  ABP_AppSKey[] =  { 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x66, 0x01 };
+//LICENSE
+uint32_t  LICENSE[4] = {0xB4C6B30A,0x4AE94785,0xDCCD9893,0x2D2775D8};//470v2
+//Delivery of data on port 2
+void app(uint8_t data)
+ {
+	 lora_printf("data:%d\r\n",data);
+ }
 void setup()
 {
 // Add your initialization code here
@@ -74,7 +88,7 @@ void loop()
     }
     case DEVICE_STATE_JOIN:
     {
-      LoRa.DeviceStateJion();
+      LoRa.DeviceStateJion(OVER_THE_AIR_ACTIVATION);
       break;
     }
     case DEVICE_STATE_SEND:

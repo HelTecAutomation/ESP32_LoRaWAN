@@ -22,7 +22,7 @@
  *
  * HelTec AutoMation, Chengdu, China.
  * 成都惠利特自动化科技有限公司
- * www.heltec.cn
+ * https://heltec.org
  * support@heltec.cn
  *
  *this project also release in GitHub:
@@ -52,12 +52,25 @@
 #endif
 
 #define Vext  21
-
-uint32_t  LICENSE[4] = {0x01325A7B,0xE35A787E,0xEE6D8604,0xD3530898};//470v2
+bool OVER_THE_AIR_ACTIVATION = true;
+//OTAA
+uint8_t DevEui[] =  { 0x22,0x32,0x33,  0x00, 0x00, 0x88, 0x88, 0x33 };
+uint8_t AppEui[] =   { 0x66, 0x66, 0x66, 0x66, 0x66, 0x66, 0x66, 0x04 };
+uint8_t AppKey[] =  { 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x66, 0x01 };
+//ABP
+uint32_t ABP_DevAddr =     ( uint32_t )0x26011713 ;
+RTC_DATA_ATTR uint8_t  ABP_NwkSKey[] =  { 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x66, 0x02 };
+RTC_DATA_ATTR uint8_t  ABP_AppSKey[] =  { 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x66, 0x01 };
+//LICENSE
+uint32_t  LICENSE[4] = {0xB4C6B30A,0x4AE94785,0xDCCD9893,0x2D2775D8};//470v2
 
 SSD1306  display(0x3c, SDA, SCL, RST_LED);
 extern McpsIndication_t McpsIndication;
-
+//Delivery of data on port 2
+void app(uint8_t data)
+ {
+	 lora_printf("data:%d\r\n",data);
+ }
 void LEDdisplayJOINING()
 {
 	digitalWrite(Vext,LOW);
@@ -164,7 +177,7 @@ void loop()
 		case DEVICE_STATE_JOIN:
 		{
 			LEDdisplayJOINING();
-			LoRa.DeviceStateJion();
+			LoRa.DeviceStateJion(OVER_THE_AIR_ACTIVATION);
 			break;
 		}
 		case DEVICE_STATE_SEND:
