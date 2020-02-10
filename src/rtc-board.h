@@ -15,6 +15,12 @@ Maintainer: Miguel Luis and Gregory Cristian
 #ifndef __RTC_BOARD_H__
 #define __RTC_BOARD_H__
 #include "soc/rtc.h"
+#include "timer.h"
+
+#ifdef __cplusplus
+extern "C"{
+#endif
+
 extern uint32_t TimeSwitch;
 extern uint64_t preAlarmtimer;
 extern uint64_t nextAlarm;
@@ -85,5 +91,10 @@ void RtcEnterLowPowerStopMode( void );
  * \brief Restore the MCU to its normal operation mode
  */
 void RtcRecoverMcuStatus( void );
+
+
+#ifdef __cplusplus
+} // extern "C"
+#endif
 
 #endif // __RTC_BOARD_H__

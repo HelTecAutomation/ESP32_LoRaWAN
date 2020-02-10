@@ -15,6 +15,9 @@ Maintainer: Miguel Luis and Gregory Cristian
 #ifndef __DELAY_H__
 #define __DELAY_H__
 
+#ifdef __cplusplus
+extern "C"{
+#endif
 /*! 
  * Blocking delay of "s" seconds
  */
@@ -24,6 +27,10 @@ void Delay( float s );
  * Blocking delay of "ms" milliseconds
  */
 void DelayMs( uint32_t ms );
+
+#ifdef __cplusplus
+} // extern "C"
+#endif
 
 #endif // __DELAY_H__
 

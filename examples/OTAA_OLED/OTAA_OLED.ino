@@ -3,17 +3,13 @@
  *
  * Function summary:
  *
- * - use internal RTC(15KHz);
+ * - use internal RTC(150KHz);
  *
  * - Include stop mode and deep sleep mode;
  *
- * - 60S data send cycle;
- *
- * - Debug informations can be configed in board.h(Debug_Level);
+ * - 15S data send cycle;
  *
  * - Informations output via serial(115200);
- *
- * - Informations shown in OLED;
  *
  * - Only ESP32 + LoRa series boards can use this library, need a license
  *   to make the code run(check you license here: http://www.heltec.cn/search/);
@@ -21,214 +17,156 @@
  * You can change some definition in "Commissioning.h" and "LoRaMac-definitions.h"
  *
  * HelTec AutoMation, Chengdu, China.
- * 成都惠利特自动化科技有限公司
- * https://heltec.org
+ * 锟缴讹拷锟斤拷锟斤拷锟斤拷锟皆讹拷锟斤拷锟狡硷拷锟斤拷锟睫癸拷司
+ * www.heltec.cn
  * support@heltec.cn
  *
  *this project also release in GitHub:
  *https://github.com/HelTecAutomation/ESP32_LoRaWAN
 */
 
+#include <ESP32_LoRaWAN.h>
 #include "Arduino.h"
 
-#include "board.h"
-#include "LoRaMac.h"
-#include <SPI.h>
-#include <LoRa.h>
-#include <Mcu.h>
-#include <Wire.h>  // Only needed for Arduino 1.6.5 and earlier
-#include "SSD1306.h" // alias for `#include "SSD1306Wire.h"`
+/*license for Heltec ESP32 loraWan*/
+uint32_t  license[4] = {0xD5397DF0, 0x8573F814, 0x7A38C73D, 0x48E68607};
+
+/* OTAA para*/
+uint8_t DevEui[] = { 0x22, 0x32, 0x33, 0x00, 0x00, 0x88, 0x88, 0x02 };
+uint8_t AppEui[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+uint8_t AppKey[] = { 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x66, 0x01 };
+
+/* ABP para*/
+uint8_t NwkSKey[] = { 0x15, 0xb1, 0xd0, 0xef, 0xa4, 0x63, 0xdf, 0xbe, 0x3d, 0x11, 0x18, 0x1e, 0x1e, 0xc7, 0xda,0x85 };
+uint8_t AppSKey[] = { 0xd7, 0x2c, 0x78, 0x75, 0x8c, 0xdc, 0xca, 0xbf, 0x55, 0xee, 0x4a, 0x77, 0x8d, 0x16, 0xef,0x67 };
+uint32_t DevAddr =  ( uint32_t )0x007e6ae1;
+
+/*LoraWan Class, Class A and Class C are supported*/
+DeviceClass_t  loraWanClass = CLASS_A;
+
+/*the application data transmission duty cycle.  value in [ms].*/
+uint32_t appTxDutyCycle = 15000;
+
+/*OTAA or ABP*/
+bool overTheAirActivation = true;
+
+/*ADR enable*/
+bool loraWanAdr = true;
+
+/* Indicates if the node is sending confirmed or unconfirmed messages */
+bool isTxConfirmed = true;
+
+/* Application port */
+uint8_t appPort = 2;
+
+/*!
+* Number of trials to transmit the frame, if the LoRaMAC layer did not
+* receive an acknowledgment. The MAC performs a datarate adaptation,
+* according to the LoRaWAN Specification V1.0.2, chapter 18.4, according
+* to the following table:
+*
+* Transmission nb | Data Rate
+* ----------------|-----------
+* 1 (first)       | DR
+* 2               | DR
+* 3               | max(DR-1,0)
+* 4               | max(DR-1,0)
+* 5               | max(DR-2,0)
+* 6               | max(DR-2,0)
+* 7               | max(DR-3,0)
+* 8               | max(DR-3,0)
+*
+* Note, that if NbTrials is set to 1 or 2, the MAC will not decrease
+* the datarate, in case the LoRaMAC layer did not receive an acknowledgment
+*/
+uint8_t confirmedNbTrials = 8;
+
+/*LoraWan debug level, select in arduino IDE tools.
+* None : print basic info.
+* Freq : print Tx and Rx freq, DR info.
+* Freq && DIO : print Tx and Rx freq, DR, DIO0 interrupt and DIO1 interrupt info.
+* Freq && DIO && PW: print Tx and Rx freq, DR, DIO0 interrupt, DIO1 interrupt, MCU sleep and MCU wake info.
+*/
+uint8_t debugLevel = LoRaWAN_DEBUG_LEVEL;
+
+/*LoraWan region, select in arduino IDE tools*/
+LoRaMacRegion_t loraWanRegion = ACTIVE_REGION;
 
 
-#define  V2
-#define  CLASS  CLASS_A
-
-
-
-#ifdef V2 //WIFI Kit series V1 not support Vext control
-	#define DIO1    35   // GPIO35 -- SX127x's IRQ(Interrupt Request) V2
-#else
-	#define DIO1    33   // GPIO33 -- SX127x's IRQ(Interrupt Request) V1
-#endif
-
-#define Vext  21
-bool OVER_THE_AIR_ACTIVATION = true;
-//OTAA
-uint8_t DevEui[] =  { 0x22,0x32,0x33,  0x00, 0x00, 0x88, 0x88, 0x33 };
-uint8_t AppEui[] =   { 0x66, 0x66, 0x66, 0x66, 0x66, 0x66, 0x66, 0x04 };
-uint8_t AppKey[] =  { 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x66, 0x01 };
-//ABP
-uint32_t ABP_DevAddr =     ( uint32_t )0x26011713 ;
-RTC_DATA_ATTR uint8_t  ABP_NwkSKey[] =  { 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x66, 0x02 };
-RTC_DATA_ATTR uint8_t  ABP_AppSKey[] =  { 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x66, 0x01 };
-//LICENSE
-uint32_t  LICENSE[4] = {0xB4C6B30A,0x4AE94785,0xDCCD9893,0x2D2775D8};//470v2
-
-SSD1306  display(0x3c, SDA, SCL, RST_LED);
-extern McpsIndication_t McpsIndication;
-//Delivery of data on port 2
-void app(uint8_t data)
- {
-	 lora_printf("data:%d\r\n",data);
- }
-void LEDdisplayJOINING()
+static void prepareTxFrame( uint8_t port )
 {
-	digitalWrite(Vext,LOW);
-	delay(50);
-	display.wakeup();
-	display.clear();
-	display.drawString(58, 22, "JOINING...");
-	display.display();
-}
-void LEDdisplayJOINED()
-{
-	digitalWrite(Vext,LOW);
-	delay(50);
-	display.wakeup();
-	display.clear();
-	display.drawString(64, 22, "JOINED");
-	display.display();
-	delay(1000);
-	display.sleep();
-	digitalWrite(Vext,HIGH);
-}
-void LEDdisplaySENDING()
-{
-	digitalWrite(Vext,LOW);
-	delay(10);
-	display.wakeup();
-	display.init();
-	delay(50);
-	display.flipScreenVertically();
-	display.setFont(ArialMT_Plain_16);
-	display.setTextAlignment(TEXT_ALIGN_CENTER);
-	display.clear();
-	display.drawString(58, 22, "SENDING...");
-	display.display();
-}
-void LEDdisplayACKED()
-{
-	display.clear();
-	display.drawString(64, 10, "ACK RECEIVED");
-	display.setFont(ArialMT_Plain_10);
-	display.setTextAlignment(TEXT_ALIGN_CENTER);
-	display.drawString(64, 40,"rssi="+String(McpsIndication.Rssi)+
-			",datarate="+String(McpsIndication.RxDatarate));
-	if(CLASS==CLASS_A)
-	{
-		display.drawString(64, 50, "Into deep sleep in 2S");
-	}
-	display.display();
-	if(CLASS==CLASS_A)
-	{	delay(2000);
-		display.sleep();
-		digitalWrite(Vext,HIGH);
-	}
-}
-void LEDdisplaySTART()
-{
-	display.wakeup();
-	display.init();
-	delay(100);
-	display.flipScreenVertically();
-	display.setFont(ArialMT_Plain_16);
-	display.setTextAlignment(TEXT_ALIGN_CENTER);
-	display.clear();
-	display.drawString(64, 11, "LORAWAN");
-	display.drawString(64, 33, "STARTING");
-	display.display();
+    appDataSize = 4;//AppDataSize max value is 64
+    appData[0] = 0x00;
+    appData[1] = 0x01;
+    appData[2] = 0x02;
+    appData[3] = 0x03;
 }
 
+// Add your initialization code here
 void setup()
 {
-	pinMode(Vext,OUTPUT);
-	digitalWrite(Vext, LOW);    // OLED USE Vext as power supply, must turn ON Vext before OLED init
-
-	Serial.begin(115200);
-	while (!Serial);
-	delay(100);
-
-	SPI.begin(SCK,MISO,MOSI,SS);
-	if(LoraWanStarted==0)
-	{
-		LEDdisplaySTART();
-	}
-	Mcu.begin(SS,RST_SX127x,DIO0,DIO1,LICENSE);
-  
-	DeviceState = DEVICE_STATE_INIT;
-
+  if(mcuStarted==0)
+  {
+    LoRaWAN.displayMcuInit();
+  }
+  Serial.begin(115200);
+  while (!Serial);
+  SPI.begin(SCK,MISO,MOSI,SS);
+  Mcu.init(SS,RST_LoRa,DIO0,DIO1,license);
+  deviceState = DEVICE_STATE_INIT;
 }
 
-
-
+// The loop function is called in an endless loop
 void loop()
 {
-	switch( DeviceState )
-	{
-		case DEVICE_STATE_INIT:
-		{
-			LoRa.DeviceStateInit(CLASS);
-			if(IsLoRaMacNetworkJoined==false)
-			{DeviceState = DEVICE_STATE_JOIN;}
-			else
-			{DeviceState = DEVICE_STATE_SEND;}
-			break;
-		}
-		case DEVICE_STATE_JOIN:
-		{
-			LEDdisplayJOINING();
-			LoRa.DeviceStateJion(OVER_THE_AIR_ACTIVATION);
-			break;
-		}
-		case DEVICE_STATE_SEND:
-		{
-			if(isJioned == 1)
-			{
-				isJioned--;
-				LEDdisplayJOINED();
-			}
-			//lora_printf("LoRaMacParams.ChannelsMask[0]:%d\r\n",LoRaMacParams.ChannelsMask[0]);
-			LEDdisplaySENDING();
-			lora_printf("Into send state\n");
-		// PrepareTxFrame( AppPort );
-      uint8_t msg[] = "Msg test 43";
-      PrepareMsgFrame( AppPort, msg , sizeof(msg)-1);
-			LoRa.DeviceStateSend();
-
-
-     
-			DeviceState = DEVICE_STATE_CYCLE;
-			break;
-		}
-		case DEVICE_STATE_CYCLE:
-		{
-			// Schedule next packet transmission
-			TimerSetValue( &TxNextPacketTimer, TxDutyCycleTime );
-			TimerStart( &TxNextPacketTimer );
-			DeviceState = DEVICE_STATE_SLEEP;
-			break;
-		}
-		case DEVICE_STATE_SLEEP:
-		{
-			if(isAckReceived==1)
-			{
-				isAckReceived--;
-				LEDdisplayACKED();
-
-      lora_printf("DownLink msg : %s\n", msgRx.isDwn ? "true" : "false");    // debug
-      if ( msgRx.isDwn == true ) // something received
-      { 
-         lora_printf("Msg received: %s\n", msgRx.msg);
-      } 
-      
-			}
-			LoRa.DeviceSleep(CLASS,DebugLevel);
-			break;
-		}
-		default:
-		{
-			DeviceState = DEVICE_STATE_INIT;
-			break;
-		}
-	}
+  switch( deviceState )
+  {
+    case DEVICE_STATE_INIT:
+    {
+      LoRaWAN.init(loraWanClass,loraWanRegion);
+      break;
+    }
+    case DEVICE_STATE_JOIN:
+    {
+      LoRaWAN.displayJoining();
+      LoRaWAN.join();
+      break;
+    }
+    case DEVICE_STATE_SEND:
+    {
+      if(displayJoined)
+      {
+        LoRaWAN.displayJoined();
+        displayJoined--;
+      }
+      LoRaWAN.displaySending();
+      prepareTxFrame( appPort );
+      LoRaWAN.send(loraWanClass);
+      deviceState = DEVICE_STATE_CYCLE;
+      break;
+    }
+    case DEVICE_STATE_CYCLE:
+    {
+      // Schedule next packet transmission
+      txDutyCycleTime = appTxDutyCycle + randr( -APP_TX_DUTYCYCLE_RND, APP_TX_DUTYCYCLE_RND );
+      LoRaWAN.cycle(txDutyCycleTime);
+      deviceState = DEVICE_STATE_SLEEP;
+      break;
+    }
+    case DEVICE_STATE_SLEEP:
+    {
+      if(displayAck)
+      {
+        LoRaWAN.displayAck();
+        displayAck--;
+      }
+      LoRaWAN.sleep(loraWanClass,debugLevel);
+      break;
+    }
+    default:
+    {
+      deviceState = DEVICE_STATE_INIT;
+      break;
+    }
+  }
 }

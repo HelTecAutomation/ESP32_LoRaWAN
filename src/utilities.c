@@ -15,7 +15,7 @@ Maintainer: Miguel Luis and Gregory Cristian
 #include <stdlib.h>
 #include <stdio.h>
 #include "board.h"
-#include "utilities.h"
+//#include "utilities.h"
 
 /*!
  * Redefinition of rand() and srand() standard C functions.

@@ -1,24 +1,37 @@
-/*
- / _____)             _              | |
-( (____  _____ ____ _| |_ _____  ____| |__
- \____ \| ___ |    (_   _) ___ |/ ___)  _ \
- _____) ) ____| | | || |_| ____( (___| | | |
-(______/|_____)_|_|_| \__)_____)\____)_| |_|
-    (C)2013 Semtech
-
-Description: Generic SX1276 driver implementation
-
-License: Revised BSD License, see LICENSE.TXT file include in the project
-
-Maintainer: Miguel Luis and Gregory Cristian
-*/
+/*!
+ * \file      sx1276.h
+ *
+ * \brief     SX1276 driver implementation
+ *
+ * \copyright Revised BSD License, see section \ref LICENSE.
+ *
+ * \code
+ *                ______                              _
+ *               / _____)             _              | |
+ *              ( (____  _____ ____ _| |_ _____  ____| |__
+ *               \____ \| ___ |    (_   _) ___ |/ ___)  _ \
+ *               _____) ) ____| | | || |_| ____( (___| | | |
+ *              (______/|_____)_|_|_| \__)_____)\____)_| |_|
+ *              (C)2013-2017 Semtech
+ *
+ * \endcode
+ *
+ * \author    Miguel Luis ( Semtech )
+ *
+ * \author    Gregory Cristian ( Semtech )
+ */
 #ifndef __SX1276_H__
 #define __SX1276_H__
 
-
-//#include <LoRa.h>
+#include <stdint.h>
+#include <stdbool.h>
+#include "debug.h"
+#include "gpio.h"
+#include "lorawan_spi.h"
+#include "radio.h"
 #include "sx1276Regs-Fsk.h"
 #include "sx1276Regs-LoRa.h"
+
 /*!
  * Radio wake-up time from sleep
  */
@@ -119,59 +132,6 @@ typedef struct
 /*!
  * Radio hardware and global parameters
  */
-typedef enum
-{
-    MCU_PINS,
-    IOE_PINS,
-
-    // Not connected
-    NC = (int)0xFFFFFFFF
-}PinNames;
-
-typedef enum
-{
-    PIN_NO_PULL = 0,
-    PIN_PULL_UP,
-    PIN_PULL_DOWN
-}PinTypes;
-
-typedef struct __SPI_HandleTypeDef
-{
-
-  uint8_t                    *pTxBuffPtr;  /* Pointer to SPI Tx transfer Buffer */
-
-  uint16_t                   TxXferSize;   /* SPI Tx transfer size */
-
-  uint8_t                    *pRxBuffPtr;  /* Pointer to SPI Rx transfer Buffer */
-
-  uint16_t                   RxXferSize;   /* SPI Rx transfer size */
-
-  void                       (*RxISR)(struct __SPI_HandleTypeDef * hspi); /* function pointer on Rx ISR */
-
-  void                       (*TxISR)(struct __SPI_HandleTypeDef * hspi); /* function pointer on Tx ISR */
-
-
-}SPI_HandleTypeDef;
-
-typedef struct
-{
-    PinNames  pin;
-    uint16_t pinIndex;
-    void *port;
-    uint16_t portIndex;
-    PinTypes pull;
-}Gpio_t;
-
-struct Spi_s
-{
-    SPI_HandleTypeDef Spi;
-    Gpio_t Mosi;
-    Gpio_t Miso;
-    Gpio_t Sclk;
-    Gpio_t Nss;
-};
-typedef struct Spi_s Spi_t;
-
 typedef struct SX1276_s
 {
     Gpio_t        Reset;
@@ -185,7 +145,6 @@ typedef struct SX1276_s
     RadioSettings_t Settings;
 }SX1276_t;
 
-extern SX1276_t SX1276;
 /*!
  * Hardware IO IRQ callback function definition
  */
@@ -234,15 +193,16 @@ void SX1276SetModem( RadioModems_t modem );
 void SX1276SetChannel( uint32_t freq );
 
 /*!
- * \brief Sets the channels configuration
+ * \brief Checks if the channel is free for the given time
  *
  * \param [IN] modem      Radio modem to be used [0: FSK, 1: LoRa]
  * \param [IN] freq       Channel RF frequency
  * \param [IN] rssiThresh RSSI threshold
+ * \param [IN] maxCarrierSenseTime Max time while the RSSI is measured
  *
  * \retval isFree         [true: Channel is free, false: Channel is not free]
  */
-bool SX1276IsChannelFree( RadioModems_t modem, uint32_t freq, int16_t rssiThresh );
+bool SX1276IsChannelFree( RadioModems_t modem, uint32_t freq, int16_t rssiThresh, uint32_t maxCarrierSenseTime );
 
 /*!
  * \brief Generates a 32 bits random value based on the RSSI readings
@@ -285,10 +245,10 @@ uint32_t SX1276Random( void );
  * \param [IN] fixLen       Fixed length packets [0: variable, 1: fixed]
  * \param [IN] payloadLen   Sets payload length when fixed length is used
  * \param [IN] crcOn        Enables/Disables the CRC [0: OFF, 1: ON]
- * \param [IN] FreqHopOn    Enables disables the intra-packet frequency hopping
+ * \param [IN] freqHopOn    Enables disables the intra-packet frequency hopping
  *                          FSK : N/A ( set to 0 )
  *                          LoRa: [0: OFF, 1: ON]
- * \param [IN] HopPeriod    Number of symbols between each hop
+ * \param [IN] hopPeriod    Number of symbols between each hop
  *                          FSK : N/A ( set to 0 )
  *                          LoRa: Number of symbols
  * \param [IN] iqInverted   Inverts IQ signals (LoRa only)
@@ -302,7 +262,7 @@ void SX1276SetRxConfig( RadioModems_t modem, uint32_t bandwidth,
                          uint32_t bandwidthAfc, uint16_t preambleLen,
                          uint16_t symbTimeout, bool fixLen,
                          uint8_t payloadLen,
-                         bool crcOn, bool FreqHopOn, uint8_t HopPeriod,
+                         bool crcOn, bool freqHopOn, uint8_t hopPeriod,
                          bool iqInverted, bool rxContinuous );
 
 /*!
@@ -331,10 +291,10 @@ void SX1276SetRxConfig( RadioModems_t modem, uint32_t bandwidth,
  *                          LoRa: Length in symbols (the hardware adds 4 more symbols)
  * \param [IN] fixLen       Fixed length packets [0: variable, 1: fixed]
  * \param [IN] crcOn        Enables disables the CRC [0: OFF, 1: ON]
- * \param [IN] FreqHopOn    Enables disables the intra-packet frequency hopping
+ * \param [IN] freqHopOn    Enables disables the intra-packet frequency hopping
  *                          FSK : N/A ( set to 0 )
  *                          LoRa: [0: OFF, 1: ON]
- * \param [IN] HopPeriod    Number of symbols between each hop
+ * \param [IN] hopPeriod    Number of symbols between each hop
  *                          FSK : N/A ( set to 0 )
  *                          LoRa: Number of symbols
  * \param [IN] iqInverted   Inverts IQ signals (LoRa only)
@@ -345,8 +305,8 @@ void SX1276SetRxConfig( RadioModems_t modem, uint32_t bandwidth,
 void SX1276SetTxConfig( RadioModems_t modem, int8_t power, uint32_t fdev,
                         uint32_t bandwidth, uint32_t datarate,
                         uint8_t coderate, uint16_t preambleLen,
-                        bool fixLen, bool crcOn, bool FreqHopOn,
-                        uint8_t HopPeriod, bool iqInverted, uint32_t timeout );
+                        bool fixLen, bool crcOn, bool freqHopOn,
+                        uint8_t hopPeriod, bool iqInverted, uint32_t timeout );
 
 /*!
  * \brief Computes the packet time on air in ms for the given payload
@@ -412,7 +372,7 @@ int16_t SX1276ReadRssi( RadioModems_t modem );
  * \param [IN]: addr Register address
  * \param [IN]: data New register value
  */
-void SX1276Write( uint8_t addr, uint8_t data );
+void SX1276Write( uint16_t addr, uint8_t data );
 
 /*!
  * \brief Reads the radio register at the specified address
@@ -420,7 +380,7 @@ void SX1276Write( uint8_t addr, uint8_t data );
  * \param [IN]: addr Register address
  * \retval data Register value
  */
-uint8_t SX1276Read( uint8_t addr );
+uint8_t SX1276Read( uint16_t addr );
 
 /*!
  * \brief Writes multiple radio registers starting at address
@@ -429,7 +389,7 @@ uint8_t SX1276Read( uint8_t addr );
  * \param [IN] buffer Buffer containing the new register's values
  * \param [IN] size   Number of registers to be written
  */
-void SX1276WriteBuffer( uint8_t addr, uint8_t *buffer, uint8_t size );
+void SX1276WriteBuffer( uint16_t addr, uint8_t *buffer, uint8_t size );
 
 /*!
  * \brief Reads multiple radio registers starting at address
@@ -438,7 +398,7 @@ void SX1276WriteBuffer( uint8_t addr, uint8_t *buffer, uint8_t size );
  * \param [OUT] buffer Buffer where to copy the registers data
  * \param [IN] size Number of registers to be read
  */
-void SX1276ReadBuffer( uint8_t addr, uint8_t *buffer, uint8_t size );
+void SX1276ReadBuffer( uint16_t addr, uint8_t *buffer, uint8_t size );
 
 /*!
  * \brief Sets the maximum payload length.
@@ -457,92 +417,11 @@ void SX1276SetMaxPayloadLength( RadioModems_t modem, uint8_t max );
  */
 void SX1276SetPublicNetwork( bool enable );
 
-/*
- * Private functions prototypes
- */
-
 /*!
- * Performs the Rx chain calibration for LF and HF bands
- * \remark Must be called just after the reset so all registers are at their
- *         default values
- */
-static void RxChainCalibration( void );
-
-/*!
- * \brief Resets the SX1276
- */
-void SX1276Reset( void );
-
-/*!
- * \brief Sets the SX1276 in transmission mode for the given time
- * \param [IN] timeout Transmission timeout [ms] [0: continuous, others timeout]
- */
-void SX1276SetTx( uint32_t timeout );
-
-/*!
- * \brief Writes the buffer contents to the SX1276 FIFO
+ * \brief Gets the time required for the board plus radio to get out of sleep.[ms]
  *
- * \param [IN] buffer Buffer containing data to be put on the FIFO.
- * \param [IN] size Number of bytes to be written to the FIFO
+ * \retval time Radio plus board wakeup time in ms.
  */
-void SX1276WriteFifo( uint8_t *buffer, uint8_t size );
-
-/*!
- * \brief Reads the contents of the SX1276 FIFO
- *
- * \param [OUT] buffer Buffer where to copy the FIFO read data.
- * \param [IN] size Number of bytes to be read from the FIFO
- */
-void SX1276ReadFifo( uint8_t *buffer, uint8_t size );
-
-/*!
- * \brief Sets the SX1276 operating mode
- *
- * \param [IN] opMode New operating mode
- */
-void SX1276SetOpMode( uint8_t opMode );
-
-/*
- * SX1276 DIO IRQ callback functions prototype
- */
-
-/*!
- * \brief DIO 0 IRQ callback
- */
-void SX1276OnDio0Irq( void );
-
-/*!
- * \brief DIO 1 IRQ callback
- */
-void SX1276OnDio1Irq( void );
-
-/*!
- * \brief DIO 2 IRQ callback
- */
-void SX1276OnDio2Irq( void );
-
-/*!
- * \brief DIO 3 IRQ callback
- */
-void SX1276OnDio3Irq( void );
-
-/*!
- * \brief DIO 4 IRQ callback
- */
-void SX1276OnDio4Irq( void );
-
-/*!
- * \brief DIO 5 IRQ callback
- */
-void SX1276OnDio5Irq( void );
-
-/*!
- * \brief Tx & Rx timeout timer callback
- */
-void SX1276OnTimeoutIrq( void );
-
-/*
- * Private global constants
- */
+uint32_t SX1276GetWakeupTime( void );
 
 #endif // __SX1276_H__

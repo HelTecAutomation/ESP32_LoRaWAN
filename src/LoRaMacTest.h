@@ -1,3 +1,7 @@
+/*
+ * Copyright (C) 2015-2017 Alibaba Group Holding Limited
+ */
+
 /*!
  * \file      LoRaMacTest.h
  *
@@ -26,7 +30,7 @@
  *
  * \author    Gregory Cristian ( Semtech )
  *
- * \author    Daniel Jäckle ( STACKFORCE )
+ * \author    Daniel Jaeckle ( STACKFORCE )
  *
  * \defgroup  LORAMACTEST LoRa MAC layer test function implementation
  *            This module specifies the API implementation of test function of the LoRaMAC layer.
@@ -35,8 +39,6 @@
  */
 #ifndef __LORAMACTEST_H__
 #define __LORAMACTEST_H__
-#include <stdbool.h>
-#include <stdint.h>
 
 /*!
  * \brief   Enabled or disables the reception windows

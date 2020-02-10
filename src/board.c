@@ -103,48 +103,11 @@ uint8_t UARTRxBuffer[FIFO_RX_SIZE];
 
 void BoardInitMcu( void )
 {
-  if( McuInitialized == false )
-  {
-
-  //  BoardUnusedIoInit( );
-//#warning "Commented for test!"
-  }
-  else
-  {
-    SystemClockReConfig( );
-//#warning "Commented for test!"
-  } 
-  
-#if defined( USE_DEBUGGER )  
-    //uart init
-    FifoInit( &Uart1.FifoRx, UARTRxBuffer, FIFO_RX_SIZE );     
-    FifoInit( &Uart1.FifoTx, UARTTxBuffer, FIFO_TX_SIZE );
-    Uart1.IrqNotify = loraMcuIrqNotify;    
-    
-    UartInit( &Uart1, UART_1, UART_TX, UART_RX );
-    UartConfig( &Uart1, RX_TX, 115200, UART_8_BIT, UART_1_STOP_BIT, NO_PARITY, NO_FLOW_CTRL );
-    
-    UartPutBuffer(&Uart1,"Heltec lora node demo\r\n",strlen("Heltec lora node demo\r\n"));    
-#endif
-  
-  //SpiInit( &SX1276.Spi, RADIO_MOSI, RADIO_MISO, RADIO_SCLK, NC );
-  SX1276IoInit( );
-  
-  if( McuInitialized == false )
-  {
-    McuInitialized = true;
- //   if( GetBoardPowerSource( ) == BATTERY_POWER )
- //   {
- //     CalibrateSystemWakeupTime( );
- //   }
-
-  }
 }
 
 void BoardDeInitMcu( void )
 {
 }
-
 
 
 /*!
@@ -197,44 +160,12 @@ uint32_t BoardGetBatteryVoltage( void )
 
 uint8_t BoardGetBatteryLevel( void )
 {
-  uint8_t batteryLevel = 0;
-  
-  BatteryVoltage = BoardBatteryMeasureVolage( );
-  
-  if( GetBoardPowerSource( ) == USB_POWER )
-  {
-    batteryLevel = 0;
-  }
-  else
-  {
-    if( BatteryVoltage >= BATTERY_MAX_LEVEL )
-    {
-      batteryLevel = 254;
-    }
-    else if( ( BatteryVoltage > BATTERY_MIN_LEVEL ) && ( BatteryVoltage < BATTERY_MAX_LEVEL ) )
-    {
-      batteryLevel = ( ( 253 * ( BatteryVoltage - BATTERY_MIN_LEVEL ) ) / ( BATTERY_MAX_LEVEL - BATTERY_MIN_LEVEL ) ) + 1;
-    }
-    else if( ( BatteryVoltage > BATTERY_SHUTDOWN_LEVEL ) && ( BatteryVoltage <= BATTERY_MIN_LEVEL ) )
-    {
-      batteryLevel = 1;
-    }
-    else //if( BatteryVoltage <= BATTERY_SHUTDOWN_LEVEL )
-    {
-      batteryLevel = 255;
-      //GpioInit( &DcDcEnable, DC_DC_EN, PIN_OUTPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
-      //GpioInit( &BoardPowerDown, BOARD_POWER_DOWN, PIN_OUTPUT, PIN_PUSH_PULL, PIN_NO_PULL, 1 );
-    }
-  }
-  return batteryLevel;
+  return 0;
 }
 
 static void BoardUnusedIoInit( void )
 {
 
-#if defined( USE_DEBUGGER )
-#else
-#endif
 }
 
 void SystemClockConfig( void )
