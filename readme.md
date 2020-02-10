@@ -1,36 +1,95 @@
+## Contents
+- [The Overview](#the-overview)
+- [Installing](#installing)
+- [Features](#features)
+- [Test information](#test-information)
+- [How to use this library](#how-to-use-this-library)
+- [Contact us](#contact-us)
+
 # The Overview
-Our LoRaWAN node with ESP32 chip has three working modes. 
-There are class A and classB and classC, respectively, where classA is a low power mode. In classA mode, when the node does not send data, all peripherals except the crystal and the core on the board will be turned off. This greatly reduces the energy consumption of the equipment and greatly improves the endurance.
-
-# How to install ESP32_LoRaWAN library into Arduino
-
-## Before installing the ESP32_LoRaWAN library, we must first build the ESP32 chip in the Arduino compiler environment. This article will describe the ESP32 (Arduino) environment construction method in detail.
-
-### 1. After installing Arduino, first find the storage address of the library in the Arduino software. In my computer, it is on the desktop → library → document → Arduino. When we find this folder we can proceed to the next step.
-### 2. Construction of the ESP32 environmentFirst we locate the address of the Arduino folder above, enter Arduino to create a folder named hardware, and enter the hardware folder.
-### In the pop-up command window, 
-
-```Bash
-type: git clone https://github.com/Heltec-Aaron-Lee/WiFi_Kit_series.git #Download the ESP32 hardware information to the hardware folder.
-```
-
-### After the cloning is finished, return to the hardware folder, the files on Github are cloned locally, find the esp32→tools folder and run the get.exe file in this folder (you need to install python software), after the pop-up command window ends. Restart Arduino and you will find the options for WIFI_LoRa32 and WIFI_kit32 in the development board options under Tools.
-
-#### At this point, the ESP32 chip is built in the compilation environment under Arduino.
-
-### 3. Installation of ESP32_LoRa library
-### Locate the Arduino→libraries folder above, press the right mouse button to select the Git Bash Here option, and in the pop-up command window,
-```Bash
-type：“git clone https://github.com/HelTecAutomation/ESP32_LoRaWAN.git” #put “ESP32_LoRaWAN” The library is cloned locally.
-```
-### Wait for the clone to complete, restart the Arduino, ESP32_LoRaWAN added to the Arduino library is complete.
-
-## When the 1, 2, and 3 in the previous section are completed, the program can be downloaded to the ESP32 device.
-### But when we need to download the ESP32_LoRaWAN program we cloned to the local, we need to obtain the license number of our company (HelTec) product and modify it at the specified location of the program.
-#### How to get the license number, please refer to "How to get your license ID" at the end of the article.
+----------
+- This library is make LoRaWAN 1.0.2 protocol running with ESP32. Only support the ESP32 + LoRa series products made by [HelTec Automation(TM)](heltec.org), and a [LoRa gateway](https://heltec.org/proudct_center/lora/lora-gateway/) is must needed;
+- LoRaWAN relevant parameters are defined in the .ino file;
+- This library is transplanted form https://github.com/Lora-net/LoRaMac-node;
+- Use RTC and deep sleep mode supported, only few millisecond wake up in a cycle;
+- **[Heltec LoRa Node Family](https://docs.heltec.cn/#/en/products/lora/lora_node/heltec_lora_node_list_eu).**
 
 
-## How to get your license ID
+# Installing
+----------
+To install this library:
 
-* If you purchase our company's equipment, each node device has its own serial number ID, you only need to download a program to your node device through Arduino software, it will automatically output the product ID to the serial port connected to it. Copy this product ID into our company's official website: http://www.heltec.cn/search/
-Enter the product ID and click "Confirm". We will find the license serial number of your device based on this product ID.After getting this serial number, copy it to the specified location in the routine we wrote for you.After that you can download the ESP32_LoRaWAN to your node device via Arduino.         
+- install it using the Arduino Library manager ("Sketch" -> "Include Library" -> "Manage Libraries..."), or
+- download a zip file from GitHub using the "Download ZIP" button and install it using the IDE ("Sketch" -> "Include Library" -> "Add .ZIP Library..."
+- clone this git repository into your sketchbook/libraries folder.
+
+For more info, see https://www.arduino.cc/en/Guide/Libraries
+
+# Features
+----------
+The ESP32_LoRaWAN library provides a fairly complete LoRaWAN Class A and Class C implementation, the newest updated February 10th, 2020 already have full region support (KR920, AS923, US915 etc.).
+
+The following functions included:
+ - LoRaWAN protocol V1.0.2 Class A and Class C;
+ - Use ESP32's internal RTC(15KHz);
+ - All [ESP32 + LoRa](https://heltec.org/proudct_center/lora/lora-node/) boards made by [Heltec Automation(TM)](heltec.org) can use this library;
+ - Support deep sleep and stop mode;
+ - Receive and print downlink payload;
+ - Print and OLED show downlink data length and RSSI;
+ - An unique license relate to Chip ID is needed, you can check your license here: http://www.heltec.cn/search/
+
+# Test information
+----------
+![](https://github.com/solotaker/Picture/blob/master/TestHardware.jpg)
+ - Gateway: [HT-M01 Mini LoRa Gateway](http://www.heltec.cn/project/ht-m01-lora-gateway/?lang=en) + Raspberry Pi Zero W
+ - Node: [WIFI LoRa 32 V2](https://heltec.org/project/wifi-lora-32/), [Wireless Stick](https://heltec.org/project/wireless-stick/), [Wireless Stick Lite](https://heltec.org/project/wireless-stick-lite/)
+ - LoRaServer: Aliyun ECS + Ubuntu 16.04 + [loraserver.io](https://www.loraserver.io/)
+ - Arudino 18.8
+
+| working band | status |
+| :----------------: | :------------:|
+| EU_433 | not test |
+| CN_470_510 | work well |
+| EU_863_870 | work well |
+| US_902_928 | work well |
+
+**What certainly works:**
+
+ - Sending packets uplink, taking into account duty cycling.
+ - Encryption and message integrity checking;
+ - Over-the-air activation (OTAA / joining);
+ - Deep sleep and wake up；
+ - Class A operation;
+ - Class C operation;
+ - ABP mode.
+
+**What has not been tested:**
+
+ - Receiving downlink packets in the RX2 window.
+ - Class B operation.
+
+
+
+# How to use this library
+The only different with a common Arduino library is need a unique license. It's relate to ESP32 Chip ID.
+
+## How to get your board's Chip ID?
+ - Use this simple example to read your Chip ID: https://github.com/Heltec-Aaron-Lee/WiFi_Kit_series/tree/master/esp32/libraries/ESP32/examples/ChipID/GetChipID
+
+## How to get the unique license?
+ - http://www.heltec.cn/search/ Open this page and input your ChipID
+
+Only the boards made after August 2018 can be checked from this page, if you have a former version, you can mail to support@heltec.cn and improve you already have a Heltec Automation made board.
+
+
+# Contact us
+- **Website：[https://heltec.org](https://heltec.org/)**
+- **Document Page: [https://docs.heltec.cn](https://docs.heltec.cn)**
+- **Forum: [http://community.heltec.cn/](http://community.heltec.cn/)**
+- **Twitter: [https://twitter.com/HeltecOrg](https://twitter.com/HeltecOrg)**
+- **Face Book: [https://www.facebook.com/heltec.automation.5](https://www.facebook.com/heltec.automation.5)**
+
+# Issue/Bug report template
+Before reporting an issue, make sure you've searched for similar one that was already created. Also make sure to go through all the issues labelled as [for reference](https://github.com/HelTecAutomation/ESP32_LoRaWAN/issues).
+
+Also you can talk in our forum: [http://community.heltec.cn/](http://community.heltec.cn/)
