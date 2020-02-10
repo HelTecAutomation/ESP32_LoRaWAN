@@ -8,6 +8,8 @@
 
 # The Overview
 ----------
+- **This library must work with newest [Heltec_ESP32 development framework](https://github.com/Heltec-Aaron-Lee/WiFi_Kit_series)**
+  - *For now, new features still not included in the release version, must install this framework via Git.*
 - This library is make LoRaWAN 1.0.2 protocol running with ESP32. Only support the ESP32 + LoRa series products made by [HelTec Automation(TM)](heltec.org), and a [LoRa gateway](https://heltec.org/proudct_center/lora/lora-gateway/) is must needed;
 - LoRaWAN relevant parameters are defined in the .ino file;
 - This library is transplanted form https://github.com/Lora-net/LoRaMac-node;
@@ -40,22 +42,30 @@ The following functions included:
 
 # Test information
 ----------
-![](https://github.com/solotaker/Picture/blob/master/TestHardware.jpg)
+![](img/02.png)
  - Gateway: [HT-M01 Mini LoRa Gateway](http://www.heltec.cn/project/ht-m01-lora-gateway/?lang=en) + Raspberry Pi Zero W
  - Node: [WIFI LoRa 32 V2](https://heltec.org/project/wifi-lora-32/), [Wireless Stick](https://heltec.org/project/wireless-stick/), [Wireless Stick Lite](https://heltec.org/project/wireless-stick-lite/)
- - LoRaServer: Aliyun ECS + Ubuntu 16.04 + [loraserver.io](https://www.loraserver.io/)
- - Arudino 18.8
+ - LoRaServer:
+    - Aliyun ECS + Ubuntu 16.04 + [loraserver.io](https://www.loraserver.io/);
+    - [TTN](https://www.thethingsnetwork.org/)
+ - Arudino 1.8.10
 
 | working band | status |
 | :----------------: | :------------:|
-| EU_433 | not test |
-| CN_470_510 | work well |
-| EU_863_870 | work well |
-| US_902_928 | work well |
+| EU433 | not test |
+| CN470 | work well |
+| EU863 | work well |
+| US915 | work well |
+| AU916 | not test |
+| CN779 | not test |
+| AS923 | not test |
+| KR920 | not test |
+| IN865 | not test |
+| US915_HYBRID | not test |
 
 **What certainly works:**
 
- - Sending packets uplink, taking into account duty cycling.
+ - Sending payload to a LoRa gateway via LoRaWAN protocol;
  - Encryption and message integrity checking;
  - Over-the-air activation (OTAA / joining);
  - Deep sleep and wake up；
@@ -66,20 +76,33 @@ The following functions included:
 **What has not been tested:**
 
  - Receiving downlink packets in the RX2 window.
- - Class B operation.
 
-
+&nbsp;
 
 # How to use this library
 The only different with a common Arduino library is need a unique license. It's relate to ESP32 Chip ID.
 
-## How to get your board's Chip ID?
+### How to get your board's Chip ID?
  - Use this simple example to read your Chip ID: https://github.com/Heltec-Aaron-Lee/WiFi_Kit_series/tree/master/esp32/libraries/ESP32/examples/ChipID/GetChipID
 
-## How to get the unique license?
+### How to get the unique license?
  - http://www.heltec.cn/search/ Open this page and input your ChipID
 
 Only the boards made after August 2018 can be checked from this page, if you have a former version, you can mail to support@heltec.cn and improve you already have a Heltec Automation made board.
+
+### Choose the right working band you need
+
+Choose working band you need In the Arduino tools menu: 
+
+![](img/01.png)
+
+
+
+For more details about how to use this library, please refer to this document:
+
+[https://docs.heltec.cn/#/en/user_manual/connect_an_esp32_+_lora_node_to_a_lora_gateway_via_lorawan_protocol](https://docs.heltec.cn/#/en/user_manual/connect_an_esp32_+_lora_node_to_a_lora_gateway_via_lorawan_protocol)
+
+&nbsp;
 
 
 # Contact us
