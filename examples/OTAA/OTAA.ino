@@ -28,7 +28,7 @@
 #include <ESP32_LoRaWAN.h>
 #include "Arduino.h"
 
-/*license for Heltec ESP32 loraWan*/
+/*license for Heltec ESP32 LoRaWan, quary your ChipID relevant license: http://resource.heltec.cn/search */
 uint32_t  license[4] = {0xD5397DF0, 0x8573F814, 0x7A38C73D, 0x48E68607};
 
 /* OTAA para*/

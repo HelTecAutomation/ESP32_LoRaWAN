@@ -12,7 +12,7 @@
  * - Informations output via serial(115200);
  *
  * - Only ESP32 + LoRa series boards can use this library, need a license
- *   to make the code run(check you license here: http://www.heltec.cn/search/);
+ *   to make the code run(check you license here: http://www.heltec.cn/search);
  *
  * You can change some definition in "Commissioning.h" and "LoRaMac-definitions.h"
  *
@@ -28,8 +28,7 @@
 #include <ESP32_LoRaWAN.h>
 #include "Arduino.h"
 
-/*license for Heltec ESP32 loraWan*/
-//uint32_t  license[4] = {0xD5397DF0, 0x8573F814, 0x7A38C73D, 0x48E68607};
+/*license for Heltec ESP32 LoRaWan, quary your ChipID relevant license: http://resource.heltec.cn/search */
 uint32_t  license[4] = {0xC1670CF8, 0x19C71AD5, 0x6CE47540, 0x8CF267EC};
 /* OTAA para*/
 uint8_t DevEui[] = { 0x22, 0x32, 0x33, 0x00, 0x00, 0x88, 0x88, 0x02 };
