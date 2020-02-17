@@ -532,7 +532,6 @@ void LoRaWanClass::displaySending()
     {
       displayJoined();
     }
-    timerAlarmDisable(timer);
 	digitalWrite(Vext,LOW);
 	delay(10);
 	Display.wakeup();
@@ -544,7 +543,6 @@ void LoRaWanClass::displaySending()
 	Display.clear();
 	Display.drawString(58, 22, "SENDING...");
 	Display.display();
-	timerAlarmEnable(timer);
 }
 void LoRaWanClass::displayAck()
 {
