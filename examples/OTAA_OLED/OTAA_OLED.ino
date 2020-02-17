@@ -17,7 +17,7 @@
  * You can change some definition in "Commissioning.h" and "LoRaMac-definitions.h"
  *
  * HelTec AutoMation, Chengdu, China.
- * 锟缴讹拷锟斤拷锟斤拷锟斤拷锟皆讹拷锟斤拷锟狡硷拷锟斤拷锟睫癸拷司
+ * �ɶ��������Զ����Ƽ����޹�˾
  * www.heltec.cn
  * support@heltec.cn
  *
@@ -29,8 +29,8 @@
 #include "Arduino.h"
 
 /*license for Heltec ESP32 loraWan*/
-uint32_t  license[4] = {0xD5397DF0, 0x8573F814, 0x7A38C73D, 0x48E68607};
-
+//uint32_t  license[4] = {0xD5397DF0, 0x8573F814, 0x7A38C73D, 0x48E68607};
+uint32_t  license[4] = {0xC1670CF8, 0x19C71AD5, 0x6CE47540, 0x8CF267EC};
 /* OTAA para*/
 uint8_t DevEui[] = { 0x22, 0x32, 0x33, 0x00, 0x00, 0x88, 0x88, 0x02 };
 uint8_t AppEui[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
@@ -134,11 +134,6 @@ void loop()
     }
     case DEVICE_STATE_SEND:
     {
-      if(displayJoined)
-      {
-        LoRaWAN.displayJoined();
-        displayJoined--;
-      }
       LoRaWAN.displaySending();
       prepareTxFrame( appPort );
       LoRaWAN.send(loraWanClass);
@@ -155,11 +150,7 @@ void loop()
     }
     case DEVICE_STATE_SLEEP:
     {
-      if(displayAck)
-      {
-        LoRaWAN.displayAck();
-        displayAck--;
-      }
+      LoRaWAN.displayAck();
       LoRaWAN.sleep(loraWanClass,debugLevel);
       break;
     }
