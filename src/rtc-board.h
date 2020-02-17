@@ -21,6 +21,7 @@ Maintainer: Miguel Luis and Gregory Cristian
 extern "C"{
 #endif
 
+extern hw_timer_t * timer;
 extern uint32_t TimeSwitch;
 extern uint64_t preAlarmtimer;
 extern uint64_t nextAlarm;

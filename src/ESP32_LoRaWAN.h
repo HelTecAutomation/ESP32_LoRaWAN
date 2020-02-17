@@ -10,6 +10,7 @@
 #include "board-config.h"
 #include "LoRaMac.h"
 #include "Commissioning.h"
+#include "rtc-board.h"
 #include "delay.h"
 #include <Wire.h>  // Only needed for Arduino 1.6.5 and earlier
 #include "SSD1306.h" // alias for `#include "SSD1306Wire.h"`
@@ -59,8 +60,8 @@ extern uint8_t AppKey[];
 extern uint8_t NwkSKey[];
 extern uint8_t AppSKey[];
 extern uint32_t DevAddr;
-extern uint8_t displayJoined;
-extern uint8_t displayAck;
+extern uint8_t idDisplayJoined;
+extern uint8_t ifDisplayAck;
 
 extern LoRaWanClass LoRaWAN;
 extern SSD1306 Display;

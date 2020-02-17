@@ -1,13 +1,7 @@
 #include <ESP32_LoRaWAN.h>
 
-#if defined( WIFI_Kit_32 ) || defined( WIFI_LoRa_32 ) || defined( WIFI_LoRa_32_V2 ) || defined( Wireless_Stick )
-SSD1306 Display(0x3c, SDA_OLED, SCL_OLED, RST_OLED);
-#endif
 
-#if defined( Wireless_Stick_Lite )
-//Wireless Stick Lite and Wireless Shell don't have an OLED assemble default
-SSD1306 Display(0x3c, 4, 15, 16);
-#endif
+SSD1306  Display(0x3c, SDA_OLED, SCL_OLED, RST_OLED);
 
 #ifdef REGION_EU868
 #include "region/RegionEU868.h"
@@ -48,9 +42,8 @@ TimerEvent_t TxNextPacketTimer;
  */
 static bool NextTx = true;
 
-uint8_t displayJoined=0;
-uint8_t displayAck=0;
-
+uint8_t ifDisplayJoined=0;
+uint8_t ifDisplayAck=0;
 enum eDeviceState deviceState;
 
 
@@ -210,7 +203,7 @@ static void McpsIndication( McpsIndication_t *mcpsIndication )
 	{
 		return;
 	}
-	displayAck++;
+	ifDisplayAck=1;
 	lora_printf( "receive data: rssi = %d, snr = %d, datarate = %d\r\n", mcpsIndication->Rssi, (int)mcpsIndication->Snr,(int)mcpsIndication->RxDatarate);
 	delay(10);
 	switch( mcpsIndication->McpsIndication )
@@ -270,7 +263,7 @@ static void MlmeConfirm( MlmeConfirm_t *mlmeConfirm )
 		{
 			if( mlmeConfirm->Status == LORAMAC_EVENT_INFO_STATUS_OK )
 			{
-				displayJoined++;
+				ifDisplayJoined++;
 				lora_printf("joined\r\n");
 
 				// Status is OK, node has joined the network
@@ -340,7 +333,7 @@ static void lwan_dev_params_update( void )
 
 	MibRequestConfirm_t mibReq;
 	uint16_t channelsMaskTemp[6];
-	channelsMaskTemp[0] = 0x00FF;
+	channelsMaskTemp[0] = 0x0001;
 	channelsMaskTemp[1] = 0x0000;
 	channelsMaskTemp[2] = 0x0000;
 	channelsMaskTemp[3] = 0x0000;
@@ -446,8 +439,6 @@ void LoRaWanClass::join()
 	if( overTheAirActivation == true )
 	{
 		Serial.println("joining...");
-		delay(2);
-
 		MlmeReq_t mlmeReq;
 
 		mlmeReq.Type = MLME_JOIN;
@@ -524,6 +515,7 @@ void LoRaWanClass::displayJoining()
 }
 void LoRaWanClass::displayJoined()
 {
+	ifDisplayJoined--;
 	digitalWrite(Vext,LOW);
 	delay(50);
 	Display.wakeup();
@@ -536,6 +528,11 @@ void LoRaWanClass::displayJoined()
 }
 void LoRaWanClass::displaySending()
 {
+    if(ifDisplayJoined)
+    {
+      displayJoined();
+    }
+    timerAlarmDisable(timer);
 	digitalWrite(Vext,LOW);
 	delay(10);
 	Display.wakeup();
@@ -547,9 +544,15 @@ void LoRaWanClass::displaySending()
 	Display.clear();
 	Display.drawString(58, 22, "SENDING...");
 	Display.display();
+	timerAlarmEnable(timer);
 }
 void LoRaWanClass::displayAck()
 {
+    if(ifDisplayAck==0)
+    {
+    	return;
+    }
+    ifDisplayAck--;
 	Display.clear();
 	Display.drawString(64, 22, "ACK RECEIVED");
 	if(loraWanClass==CLASS_A)

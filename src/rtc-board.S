@@ -11,44 +11,44 @@
 TimerGetAdjustedTimeoutValue:
 .LFB21:
 	.file 1 "D:\\\\61722\\\\Documents\\\\Arduino\\\\libraries\\\\ESP32_LoRaWAN_VASR\\\\src\\\\rtc-board.c"
-	.loc 1 65 0
+	.loc 1 63 0
 .LVL0:
 	entry	sp, 32
 .LCFI0:
-	.loc 1 66 0
+	.loc 1 64 0
 	l32r	a8, .LC0
 	memw
 	l32i.n	a9, a8, 0
 	bgeu	a9, a2, .L2
-	.loc 1 68 0
+	.loc 1 66 0
 	l32r	a10, .LC1
 	l8ui	a9, a10, 0
 	extui	a9, a9, 0, 8
 	beqz.n	a9, .L2
-	.loc 1 70 0
+	.loc 1 68 0
 	movi.n	a9, 0
 	memw
 	s8i	a9, a10, 0
-	.loc 1 71 0
+	.loc 1 69 0
 	memw
 	l32i.n	a9, a8, 0
 	sub	a2, a2, a9
 .LVL1:
 .L2:
-	.loc 1 75 0
+	.loc 1 73 0
 	memw
 	l32i.n	a9, a8, 0
-	.loc 1 77 0
+	.loc 1 75 0
 	movi.n	a10, 0x31
 	bgeu	a10, a2, .L3
 	bgeu	a9, a2, .L3
-	.loc 1 84 0
+	.loc 1 82 0
 	memw
 	l32i.n	a8, a8, 0
 	sub	a2, a2, a8
 .LVL2:
 .L3:
-	.loc 1 88 0
+	.loc 1 86 0
 	movi.n	a3, 0
 	retw.n
 .LFE21:
@@ -57,40 +57,39 @@ TimerGetAdjustedTimeoutValue:
 	.section	.text.TimerGetTimerValue,"ax",@progbits
 	.literal_position
 	.literal .LC2, TimeSwitch
-	.literal .LC3, 570425344
-	.literal .LC4, 16777215
+	.literal .LC4, timer
+	.literal .LC5, 16777215
 	.align	4
 	.global	TimerGetTimerValue
 	.type	TimerGetTimerValue, @function
 TimerGetTimerValue:
 .LFB22:
-	.loc 1 91 0
+	.loc 1 89 0
 	entry	sp, 32
 .LCFI1:
-	.loc 1 92 0
+	.loc 1 90 0
 	l32r	a2, .LC2
-	l32r	a9, .LC3
-	l32i.n	a8, a2, 0
-	and	a8, a8, a9
-	beq	a8, a9, .L12
-.L14:
-	j	.L14
+	l32i.n	a3, a2, 0
+	bbsi	a3, 29, .L12
+.L13:
+	j	.L13
 .L12:
-	.loc 1 96 0
-	call8	rtc_time_get
+	.loc 1 94 0
+	l32r	a3, .LC4
+	l32i.n	a10, a3, 0
+	call8	timerRead
 .LVL3:
-	movi	a8, 0x3e8
-	muluh	a9, a8, a10
-	mull	a11, a8, a11
-	l32i.n	a12, a2, 0
-	l32r	a2, .LC4
-	mull	a10, a8, a10
-	and	a12, a12, a2
-	movi.n	a13, 0
-	add.n	a11, a11, a9
-	call8	__udivdi3
+	.loc 1 95 0
+	l32i.n	a10, a3, 0
+	call8	timerRead
 .LVL4:
-	.loc 1 97 0
+	l32i.n	a12, a2, 0
+	l32r	a2, .LC5
+	movi.n	a13, 0
+	and	a12, a12, a2
+	call8	__udivdi3
+.LVL5:
+	.loc 1 96 0
 	mov.n	a2, a10
 	mov.n	a3, a11
 	retw.n
@@ -98,74 +97,74 @@ TimerGetTimerValue:
 	.size	TimerGetTimerValue, .-TimerGetTimerValue
 	.section	.text.TimerSetTime,"ax",@progbits
 	.literal_position
-	.literal .LC5, TimeSwitch
-	.literal .LC6, 285212672
-	.literal .LC7, 16777215
-	.literal .LC8, 32768
-	.literal .LC9, 79999
-	.literal .LC10, -858993459
-	.literal .LC11, preAlarmtimer
-	.literal .LC12, nextAlarm
+	.literal .LC6, TimeSwitch
+	.literal .LC8, timer
+	.literal .LC9, 16777215
+	.literal .LC10, 80000
+	.literal .LC11, 79999
+	.literal .LC12, -8000
+	.literal .LC13, preAlarmtimer
+	.literal .LC14, nextAlarm
 	.align	4
 	.global	TimerSetTime
 	.type	TimerSetTime, @function
 TimerSetTime:
 .LFB20:
-	.loc 1 59 0
-.LVL5:
+	.loc 1 57 0
+.LVL6:
 	entry	sp, 32
 .LCFI2:
-.LVL6:
+.LVL7:
 .LBB6:
 .LBB7:
-	.loc 1 162 0
-	l32r	a4, .LC5
-	l32r	a8, .LC6
-	l32i.n	a9, a4, 0
-	and	a10, a9, a8
-	beq	a10, a8, .L17
-	.loc 1 164 0
-	l32r	a8, .LC7
-	and	a8, a9, a8
-	l32r	a9, .LC8
-	bne	a8, a9, .L17
-	.loc 1 166 0
-	call8	TimerGetTimerValue
-.LVL7:
-	bnez.n	a11, .L21
-	l32r	a8, .LC9
-	bgeu	a8, a10, .L17
-.L21:
-	.loc 1 168 0
-	l32i.n	a10, a4, 0
-	l32r	a8, .LC7
-	l32r	a9, .LC10
-	and	a8, a10, a8
-	muluh	a8, a8, a9
-	srli	a8, a8, 2
-	add.n	a8, a8, a10
-	s32i.n	a8, a4, 0
-.L17:
-	.loc 1 174 0
-	call8	TimerGetTimerValue
+	.loc 1 163 0
+	l32r	a4, .LC6
+	l32i.n	a6, a4, 0
+	bbsi	a6, 28, .L16
+	.loc 1 165 0
+	l32r	a5, .LC8
+	l32i.n	a10, a5, 0
+	call8	timerGetDivider
 .LVL8:
-	.loc 1 176 0
+	l32r	a8, .LC9
+	and	a9, a6, a8
+	l32r	a8, .LC10
+	quos	a10, a8, a10
+	bne	a9, a10, .L16
+	.loc 1 167 0
 	call8	TimerGetTimerValue
 .LVL9:
-	l32r	a4, .LC11
-	.loc 1 177 0
-	movi.n	a8, 1
+	bnez.n	a11, .L20
+	l32r	a6, .LC11
+	bgeu	a6, a10, .L16
+.L20:
+	.loc 1 169 0
+	l32i.n	a10, a5, 0
+	call8	timerGetDivider
+.LVL10:
+	l32r	a5, .LC12
+	quos	a10, a5, a10
+	l32i.n	a5, a4, 0
+	add.n	a10, a10, a5
+	s32i.n	a10, a4, 0
+.L16:
+	.loc 1 175 0
+	call8	TimerGetTimerValue
+.LVL11:
+	l32r	a4, .LC13
 	.loc 1 176 0
+	movi.n	a5, 1
+	.loc 1 175 0
 	s32i.n	a10, a4, 0
 	s32i.n	a11, a4, 4
-	.loc 1 177 0
+	.loc 1 176 0
 	add.n	a10, a2, a10
-	l32r	a4, .LC12
-	bltu	a10, a2, .L20
-	movi.n	a8, 0
-.L20:
+	l32r	a4, .LC14
+	bltu	a10, a2, .L19
+	movi.n	a5, 0
+.L19:
 	add.n	a11, a3, a11
-	add.n	a11, a8, a11
+	add.n	a11, a5, a11
 	s32i.n	a10, a4, 0
 	s32i.n	a11, a4, 4
 	retw.n
@@ -175,78 +174,84 @@ TimerSetTime:
 	.size	TimerSetTime, .-TimerSetTime
 	.section	.text.TimerGetElapsedAlarmTime,"ax",@progbits
 	.literal_position
-	.literal .LC13, preAlarmtimer
-	.literal .LC14, TimeSwitch
-	.literal .LC15, 16777215
-	.literal .LC16, -1000, 4095999
+	.literal .LC15, timer
+	.literal .LC16, preAlarmtimer
+	.literal .LC17, TimeSwitch
+	.literal .LC18, 16777215
+	.literal .LC19, -1, -1
 	.align	4
 	.global	TimerGetElapsedAlarmTime
 	.type	TimerGetElapsedAlarmTime, @function
 TimerGetElapsedAlarmTime:
 .LFB23:
-	.loc 1 100 0
+	.loc 1 99 0
 	entry	sp, 32
 .LCFI3:
-.LVL10:
-	.loc 1 104 0
+.LVL12:
+	.loc 1 102 0
+	l32r	a2, .LC15
+	l32i.n	a10, a2, 0
+	call8	timerRead
+.LVL13:
+	.loc 1 103 0
 	call8	TimerGetTimerValue
-.LVL11:
-	.loc 1 105 0
-	l32r	a3, .LC13
+.LVL14:
 	.loc 1 104 0
+	l32r	a3, .LC16
+	.loc 1 103 0
 	mov.n	a5, a10
-	.loc 1 105 0
+	.loc 1 104 0
 	l32i.n	a2, a3, 0
 	l32i.n	a3, a3, 4
-	.loc 1 104 0
+	.loc 1 103 0
 	mov.n	a4, a11
-.LVL12:
-	.loc 1 107 0
-	bltu	a11, a3, .L29
-	bne	a3, a11, .L23
-	bgeu	a10, a2, .L23
-.L29:
-	.loc 1 109 0
-	l32r	a8, .LC14
-	l32r	a10, .LC16
+.LVL15:
+	.loc 1 106 0
+	bltu	a11, a3, .L28
+	bne	a3, a11, .L22
+	bgeu	a10, a2, .L22
+.L28:
+	.loc 1 108 0
+	l32r	a8, .LC17
+	l32r	a10, .LC19
 	l32i.n	a12, a8, 0
-	l32r	a8, .LC15
-	l32r	a11, .LC16+4
+	l32r	a8, .LC18
+	l32r	a11, .LC19+4
 	and	a12, a12, a8
 	movi.n	a13, 0
 	call8	__udivdi3
-.LVL13:
+.LVL16:
 	sub	a8, a10, a2
 	movi.n	a2, 1
-.LVL14:
-	bltu	a10, a8, .L25
+.LVL17:
+	bltu	a10, a8, .L24
 	movi.n	a2, 0
-.L25:
+.L24:
 	sub	a11, a11, a3
 	sub	a11, a11, a2
 	add.n	a2, a8, a5
 	movi.n	a3, 1
-	bltu	a2, a8, .L26
+	bltu	a2, a8, .L25
 	movi.n	a3, 0
-.L26:
+.L25:
 	add.n	a4, a11, a4
-.LVL15:
+.LVL18:
 	add.n	a3, a3, a4
 	retw.n
-.LVL16:
-.L23:
-	.loc 1 113 0
-	sub	a2, a5, a2
-.LVL17:
-	movi.n	a11, 1
-	bltu	a5, a2, .L28
-	movi.n	a11, 0
-.L28:
-	sub	a4, a4, a3
-.LVL18:
-	sub	a3, a4, a11
 .LVL19:
-	.loc 1 115 0
+.L22:
+	.loc 1 112 0
+	sub	a2, a5, a2
+.LVL20:
+	movi.n	a11, 1
+	bltu	a5, a2, .L27
+	movi.n	a11, 0
+.L27:
+	sub	a4, a4, a3
+.LVL21:
+	sub	a3, a4, a11
+.LVL22:
+	.loc 1 114 0
 	retw.n
 .LFE23:
 	.size	TimerGetElapsedAlarmTime, .-TimerGetElapsedAlarmTime
@@ -256,102 +261,102 @@ TimerGetElapsedAlarmTime:
 	.type	TimerComputeFutureEventTime, @function
 TimerComputeFutureEventTime:
 .LFB24:
-	.loc 1 118 0
-.LVL20:
+	.loc 1 117 0
+.LVL23:
 	entry	sp, 32
 .LCFI4:
-	.loc 1 119 0
+	.loc 1 118 0
 	call8	TimerGetTimerValue
-.LVL21:
+.LVL24:
 	add.n	a2, a10, a2
-.LVL22:
+.LVL25:
 	movi.n	a8, 1
-	bltu	a2, a10, .L31
+	bltu	a2, a10, .L30
 	movi.n	a8, 0
-.L31:
+.L30:
 	add.n	a3, a11, a3
-	.loc 1 120 0
+	.loc 1 119 0
 	add.n	a3, a8, a3
 	retw.n
 .LFE24:
 	.size	TimerComputeFutureEventTime, .-TimerComputeFutureEventTime
 	.section	.text.TimerComputeElapsedTime,"ax",@progbits
 	.literal_position
-	.literal .LC18, TimeSwitch
-	.literal .LC19, 16777215
-	.literal .LC20, -1000, 65535999
+	.literal .LC21, TimeSwitch
+	.literal .LC22, 16777215
+	.literal .LC23, -1, -1
 	.align	4
 	.global	TimerComputeElapsedTime
 	.type	TimerComputeElapsedTime, @function
 TimerComputeElapsedTime:
 .LFB25:
-	.loc 1 123 0
-.LVL23:
+	.loc 1 122 0
+.LVL26:
 	entry	sp, 32
 .LCFI5:
-.LVL24:
-	.loc 1 129 0
+.LVL27:
+	.loc 1 128 0
 	movi.n	a12, 0
-	.loc 1 127 0
+	.loc 1 126 0
 	or	a4, a2, a3
-	.loc 1 129 0
+	.loc 1 128 0
 	mov.n	a9, a12
-	.loc 1 127 0
-	beq	a4, a12, .L33
+	.loc 1 126 0
+	beq	a4, a12, .L32
 	.loc 1 131 0
 	call8	TimerGetTimerValue
-.LVL25:
+.LVL28:
 	mov.n	a4, a10
 	mov.n	a5, a11
-.LVL26:
-	.loc 1 132 0
-	bltu	a11, a3, .L41
-	bne	a3, a11, .L35
-	bgeu	a10, a2, .L35
-.L41:
-	.loc 1 134 0
-	l32r	a8, .LC18
-	l32r	a10, .LC20
+.LVL29:
+	.loc 1 133 0
+	bltu	a11, a3, .L40
+	bne	a3, a11, .L34
+	bgeu	a10, a2, .L34
+.L40:
+	.loc 1 135 0
+	l32r	a8, .LC21
+	l32r	a10, .LC23
 	l32i.n	a12, a8, 0
-	l32r	a8, .LC19
-	l32r	a11, .LC20+4
+	l32r	a8, .LC22
+	l32r	a11, .LC23+4
 	and	a12, a12, a8
 	movi.n	a13, 0
 	call8	__udivdi3
-.LVL27:
+.LVL30:
 	sub	a2, a10, a2
-.LVL28:
+.LVL31:
 	movi.n	a8, 1
-	bltu	a10, a2, .L37
+	bltu	a10, a2, .L36
 	movi.n	a8, 0
-.L37:
+.L36:
 	sub	a11, a11, a3
 	add.n	a4, a2, a4
-.LVL29:
+.LVL32:
 	sub	a11, a11, a8
 	movi.n	a8, 1
-	bltu	a4, a2, .L38
+	bltu	a4, a2, .L37
 	movi.n	a8, 0
-.L38:
+.L37:
 	add.n	a11, a11, a5
 	mov.n	a12, a4
 	add.n	a9, a8, a11
-	j	.L33
-.LVL30:
-.L35:
-	.loc 1 138 0
+	j	.L32
+.LVL33:
+.L34:
+	.loc 1 139 0
 	sub	a8, a4, a2
 	movi.n	a2, 1
-.LVL31:
-	bltu	a4, a8, .L39
+.LVL34:
+	bltu	a4, a8, .L38
 	movi.n	a2, 0
-.L39:
+.L38:
 	sub	a11, a5, a3
 	mov.n	a12, a8
 	sub	a9, a11, a2
-.LVL32:
-.L33:
-	.loc 1 140 0
+.LVL35:
+.L32:
+	.loc 1 141 0
 	mov.n	a2, a12
 	mov.n	a3, a9
 	retw.n
@@ -363,8 +368,8 @@ TimerComputeElapsedTime:
 	.type	BlockLowPowerDuringTask, @function
 BlockLowPowerDuringTask:
 .LFB26:
-	.loc 1 143 0
-.LVL33:
+	.loc 1 144 0
+.LVL36:
 	entry	sp, 32
 .LCFI6:
 	retw.n
@@ -387,8 +392,8 @@ RtcEnterLowPowerStopMode:
 	.type	RtcRecoverMcuStatus, @function
 RtcRecoverMcuStatus:
 .LFB28:
-	.loc 1 156 0
-	.loc 1 156 0
+	.loc 1 157 0
+	.loc 1 157 0
 	entry	sp, 32
 .LCFI8:
 	retw.n
@@ -407,20 +412,7 @@ McuWakeUpTime:
 	.size	NonScheduledWakeUp, 1
 NonScheduledWakeUp:
 	.zero	1
-	.global	TimerListHead
-	.section	.bss.TimerListHead,"aw",@nobits
-	.align	4
-	.type	TimerListHead, @object
-	.size	TimerListHead, 4
-TimerListHead:
-	.zero	4
-	.global	TimeSwitch
-	.section	.rtc.data,"aw",@progbits
-	.align	4
-	.type	TimeSwitch, @object
-	.size	TimeSwitch, 4
-TimeSwitch:
-	.zero	4
+	.comm	TimeSwitch,4,4
 	.global	nextAlarm
 	.section	.bss.nextAlarm,"aw",@nobits
 	.align	8
@@ -562,19 +554,20 @@ preAlarmtimer:
 .Letext0:
 	.file 2 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\newlib\\machine\\_default_types.h"
 	.file 3 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\newlib\\stdint.h"
-	.file 4 "d:\\61722\\documents\\arduino\\libraries\\esp32_lorawan_vasr\\src\\timer.h"
-	.file 5 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\variants\\wifi_lora_32_v2\\pins_arduino.h"
-	.file 6 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\soc\\soc\\rtc.h"
+	.file 4 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\cores\\esp32\\esp32-hal-timer.h"
+	.file 5 "d:\\61722\\documents\\arduino\\libraries\\esp32_lorawan_vasr\\src\\timer.h"
+	.file 6 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\variants\\wifi_lora_32_v2\\pins_arduino.h"
+	.file 7 "d:\\61722\\documents\\arduino\\libraries\\esp32_lorawan_vasr\\src\\rtc-board.h"
 	.section	.debug_info,"",@progbits
 .Ldebug_info0:
-	.4byte	0x5b3
+	.4byte	0x581
 	.2byte	0x4
 	.4byte	.Ldebug_abbrev0
 	.byte	0x4
 	.uleb128 0x1
-	.4byte	.LASF11864
+	.4byte	.LASF11861
 	.byte	0xc
-	.4byte	.LASF11865
+	.4byte	.LASF11862
 	.string	"D:\\"
 	.4byte	.Ldebug_ranges0+0
 	.4byte	0
@@ -639,10 +632,6 @@ preAlarmtimer:
 	.byte	0x4
 	.byte	0x7
 	.4byte	.LASF11812
-	.uleb128 0x5
-	.byte	0x4
-	.4byte	0x9d
-	.uleb128 0x6
 	.uleb128 0x2
 	.byte	0x1
 	.byte	0x8
@@ -678,118 +667,83 @@ preAlarmtimer:
 	.byte	0x1
 	.byte	0x2
 	.4byte	.LASF11820
-	.uleb128 0x7
-	.4byte	.LASF11866
-	.byte	0x14
-	.byte	0x4
-	.byte	0x1b
-	.4byte	0x12b
-	.uleb128 0x8
+	.uleb128 0x4
 	.4byte	.LASF11821
 	.byte	0x4
-	.byte	0x1d
-	.4byte	0xc5
-	.byte	0
-	.uleb128 0x8
-	.4byte	.LASF11822
-	.byte	0x4
-	.byte	0x1e
-	.4byte	0xc5
-	.byte	0x4
-	.uleb128 0x8
-	.4byte	.LASF11823
-	.byte	0x4
 	.byte	0x1f
-	.4byte	0xdb
-	.byte	0x8
-	.uleb128 0x8
-	.4byte	.LASF11824
-	.byte	0x4
-	.byte	0x20
-	.4byte	0x97
-	.byte	0xc
-	.uleb128 0x8
-	.4byte	.LASF11825
-	.byte	0x4
-	.byte	0x21
-	.4byte	0x12b
-	.byte	0x10
-	.byte	0
+	.4byte	0xe6
 	.uleb128 0x5
-	.byte	0x4
-	.4byte	0xe2
+	.4byte	.LASF11863
 	.uleb128 0x4
-	.4byte	.LASF11826
-	.byte	0x4
-	.byte	0x22
-	.4byte	0xe2
-	.uleb128 0x4
-	.4byte	.LASF11827
-	.byte	0x4
+	.4byte	.LASF11822
+	.byte	0x5
 	.byte	0x28
-	.4byte	0xd0
-	.uleb128 0x9
-	.4byte	.LASF11867
+	.4byte	0xc9
+	.uleb128 0x6
+	.4byte	.LASF11864
 	.byte	0x1
-	.byte	0x9b
+	.byte	0x9c
 	.byte	0x1
-	.uleb128 0xa
-	.4byte	.LASF11828
+	.uleb128 0x7
+	.4byte	.LASF11823
 	.byte	0x1
-	.byte	0x40
-	.4byte	0x13c
+	.byte	0x3e
+	.4byte	0xeb
 	.4byte	.LFB21
 	.4byte	.LFE21-.LFB21
 	.uleb128 0x1
 	.byte	0x9c
-	.4byte	0x178
-	.uleb128 0xb
-	.4byte	.LASF11830
+	.4byte	0x127
+	.uleb128 0x8
+	.4byte	.LASF11825
 	.byte	0x1
-	.byte	0x40
-	.4byte	0xc5
+	.byte	0x3e
+	.4byte	0xbe
 	.4byte	.LLST0
 	.byte	0
-	.uleb128 0xc
-	.4byte	.LASF11829
+	.uleb128 0x9
+	.4byte	.LASF11824
 	.byte	0x1
-	.byte	0x5a
-	.4byte	0x13c
+	.byte	0x58
+	.4byte	0xeb
 	.4byte	.LFB22
 	.4byte	.LFE22-.LFB22
 	.uleb128 0x1
 	.byte	0x9c
-	.4byte	0x19b
-	.uleb128 0xd
+	.4byte	0x153
+	.uleb128 0xa
 	.4byte	.LVL3
-	.4byte	0x5aa
+	.4byte	0x56e
+	.uleb128 0xa
+	.4byte	.LVL4
+	.4byte	0x56e
 	.byte	0
-	.uleb128 0xe
-	.4byte	.LASF11868
+	.uleb128 0xb
+	.4byte	.LASF11865
 	.byte	0x1
-	.byte	0x9f
+	.byte	0xa0
 	.byte	0x1
-	.4byte	0x1b3
-	.uleb128 0xf
-	.4byte	.LASF11869
+	.4byte	0x16b
+	.uleb128 0xc
+	.4byte	.LASF11866
 	.byte	0x1
-	.byte	0x9f
-	.4byte	0xd0
+	.byte	0xa0
+	.4byte	0xc9
 	.byte	0
-	.uleb128 0x10
-	.4byte	.LASF11839
+	.uleb128 0xd
+	.4byte	.LASF11834
 	.byte	0x1
-	.byte	0x3a
+	.byte	0x38
 	.4byte	.LFB20
 	.4byte	.LFE20-.LFB20
 	.uleb128 0x1
 	.byte	0x9c
-	.4byte	0x212
-	.uleb128 0x11
-	.4byte	.LASF11830
+	.4byte	0x1d3
+	.uleb128 0xe
+	.4byte	.LASF11825
 	.byte	0x1
-	.byte	0x3a
-	.4byte	0xd0
+	.byte	0x38
+	.4byte	0xc9
 	.uleb128 0x6
 	.byte	0x52
 	.byte	0x93
@@ -797,14 +751,14 @@ preAlarmtimer:
 	.byte	0x53
 	.byte	0x93
 	.uleb128 0x4
-	.uleb128 0x12
-	.4byte	0x19b
+	.uleb128 0xf
+	.4byte	0x153
 	.4byte	.LBB6
 	.4byte	.LBE6-.LBB6
 	.byte	0x1
-	.byte	0x3d
-	.uleb128 0x13
-	.4byte	0x1a7
+	.byte	0x3b
+	.uleb128 0x10
+	.4byte	0x15f
 	.uleb128 0x6
 	.byte	0x52
 	.byte	0x93
@@ -812,466 +766,474 @@ preAlarmtimer:
 	.byte	0x53
 	.byte	0x93
 	.uleb128 0x4
-	.uleb128 0xd
-	.4byte	.LVL7
-	.4byte	0x178
-	.uleb128 0xd
+	.uleb128 0xa
 	.4byte	.LVL8
-	.4byte	0x178
-	.uleb128 0xd
+	.4byte	0x579
+	.uleb128 0xa
 	.4byte	.LVL9
-	.4byte	0x178
+	.4byte	0x127
+	.uleb128 0xa
+	.4byte	.LVL10
+	.4byte	0x579
+	.uleb128 0xa
+	.4byte	.LVL11
+	.4byte	0x127
 	.byte	0
 	.byte	0
-	.uleb128 0xc
-	.4byte	.LASF11831
+	.uleb128 0x9
+	.4byte	.LASF11826
 	.byte	0x1
-	.byte	0x63
-	.4byte	0x13c
+	.byte	0x62
+	.4byte	0xeb
 	.4byte	.LFB23
 	.4byte	.LFE23-.LFB23
 	.uleb128 0x1
 	.byte	0x9c
-	.4byte	0x253
-	.uleb128 0x14
-	.4byte	.LASF11832
+	.4byte	0x21d
+	.uleb128 0x11
+	.4byte	.LASF11827
+	.byte	0x1
+	.byte	0x64
+	.4byte	0xc9
+	.4byte	.LLST1
+	.uleb128 0x11
+	.4byte	.LASF11828
 	.byte	0x1
 	.byte	0x65
-	.4byte	0xd0
-	.4byte	.LLST1
-	.uleb128 0x14
-	.4byte	.LASF11833
-	.byte	0x1
-	.byte	0x66
-	.4byte	0xd0
+	.4byte	0xc9
 	.4byte	.LLST2
-	.uleb128 0xd
-	.4byte	.LVL11
-	.4byte	0x178
-	.byte	0
 	.uleb128 0xa
-	.4byte	.LASF11834
+	.4byte	.LVL13
+	.4byte	0x56e
+	.uleb128 0xa
+	.4byte	.LVL14
+	.4byte	0x127
+	.byte	0
+	.uleb128 0x7
+	.4byte	.LASF11829
 	.byte	0x1
-	.byte	0x75
-	.4byte	0x13c
+	.byte	0x74
+	.4byte	0xeb
 	.4byte	.LFB24
 	.4byte	.LFE24-.LFB24
 	.uleb128 0x1
 	.byte	0x9c
-	.4byte	0x285
-	.uleb128 0xb
-	.4byte	.LASF11835
+	.4byte	0x24f
+	.uleb128 0x8
+	.4byte	.LASF11830
 	.byte	0x1
-	.byte	0x75
-	.4byte	0x13c
+	.byte	0x74
+	.4byte	0xeb
 	.4byte	.LLST3
-	.uleb128 0xd
-	.4byte	.LVL21
-	.4byte	0x178
+	.uleb128 0xa
+	.4byte	.LVL24
+	.4byte	0x127
 	.byte	0
-	.uleb128 0xc
-	.4byte	.LASF11836
+	.uleb128 0x9
+	.4byte	.LASF11831
 	.byte	0x1
-	.byte	0x7a
-	.4byte	0x13c
+	.byte	0x79
+	.4byte	0xeb
 	.4byte	.LFB25
 	.4byte	.LFE25-.LFB25
 	.uleb128 0x1
 	.byte	0x9c
-	.4byte	0x2c6
-	.uleb128 0xb
-	.4byte	.LASF11837
+	.4byte	0x290
+	.uleb128 0x8
+	.4byte	.LASF11832
 	.byte	0x1
-	.byte	0x7a
-	.4byte	0x13c
+	.byte	0x79
+	.4byte	0xeb
 	.4byte	.LLST4
-	.uleb128 0x14
-	.4byte	.LASF11838
+	.uleb128 0x11
+	.4byte	.LASF11833
 	.byte	0x1
-	.byte	0x7c
-	.4byte	0x13c
+	.byte	0x7b
+	.4byte	0xeb
 	.4byte	.LLST5
-	.uleb128 0xd
-	.4byte	.LVL25
-	.4byte	0x178
+	.uleb128 0xa
+	.4byte	.LVL28
+	.4byte	0x127
 	.byte	0
-	.uleb128 0x10
-	.4byte	.LASF11840
+	.uleb128 0xd
+	.4byte	.LASF11835
 	.byte	0x1
-	.byte	0x8e
+	.byte	0x8f
 	.4byte	.LFB26
 	.4byte	.LFE26-.LFB26
 	.uleb128 0x1
 	.byte	0x9c
-	.4byte	0x2e9
-	.uleb128 0x11
-	.4byte	.LASF11841
+	.4byte	0x2b3
+	.uleb128 0xe
+	.4byte	.LASF11836
 	.byte	0x1
-	.byte	0x8e
-	.4byte	0xdb
+	.byte	0x8f
+	.4byte	0xd4
 	.uleb128 0x1
 	.byte	0x52
 	.byte	0
-	.uleb128 0x15
-	.4byte	0x147
+	.uleb128 0x12
+	.4byte	0xf6
 	.4byte	.LFB28
 	.4byte	.LFE28-.LFB28
 	.uleb128 0x1
 	.byte	0x9c
-	.uleb128 0x16
-	.4byte	.LASF11842
-	.byte	0x5
+	.uleb128 0x13
+	.4byte	.LASF11837
+	.byte	0x6
 	.byte	0x12
-	.4byte	0x304
+	.4byte	0x2ce
 	.byte	0x19
-	.uleb128 0x17
-	.4byte	0xba
-	.uleb128 0x16
-	.4byte	.LASF11843
-	.byte	0x5
+	.uleb128 0x14
+	.4byte	0xb3
+	.uleb128 0x13
+	.4byte	.LASF11838
+	.byte	0x6
 	.byte	0x15
-	.4byte	0x304
+	.4byte	0x2ce
 	.byte	0
-	.uleb128 0x18
+	.uleb128 0x15
 	.string	"TX"
-	.byte	0x5
+	.byte	0x6
 	.byte	0x17
-	.4byte	0x304
+	.4byte	0x2ce
 	.byte	0x1
-	.uleb128 0x18
+	.uleb128 0x15
 	.string	"RX"
-	.byte	0x5
+	.byte	0x6
 	.byte	0x18
-	.4byte	0x304
+	.4byte	0x2ce
 	.byte	0x3
-	.uleb128 0x18
+	.uleb128 0x15
 	.string	"SDA"
-	.byte	0x5
+	.byte	0x6
 	.byte	0x1a
-	.4byte	0x304
+	.4byte	0x2ce
 	.byte	0x15
-	.uleb128 0x18
+	.uleb128 0x15
 	.string	"SCL"
-	.byte	0x5
+	.byte	0x6
 	.byte	0x1b
-	.4byte	0x304
+	.4byte	0x2ce
 	.byte	0x16
-	.uleb128 0x18
+	.uleb128 0x15
 	.string	"SS"
-	.byte	0x5
+	.byte	0x6
 	.byte	0x1d
-	.4byte	0x304
+	.4byte	0x2ce
 	.byte	0x12
-	.uleb128 0x16
-	.4byte	.LASF11844
-	.byte	0x5
+	.uleb128 0x13
+	.4byte	.LASF11839
+	.byte	0x6
 	.byte	0x1e
-	.4byte	0x304
+	.4byte	0x2ce
 	.byte	0x1b
-	.uleb128 0x16
-	.4byte	.LASF11845
-	.byte	0x5
+	.uleb128 0x13
+	.4byte	.LASF11840
+	.byte	0x6
 	.byte	0x1f
-	.4byte	0x304
+	.4byte	0x2ce
 	.byte	0x13
-	.uleb128 0x18
+	.uleb128 0x15
 	.string	"SCK"
-	.byte	0x5
+	.byte	0x6
 	.byte	0x20
-	.4byte	0x304
+	.4byte	0x2ce
 	.byte	0x5
-	.uleb128 0x18
+	.uleb128 0x15
 	.string	"A0"
-	.byte	0x5
+	.byte	0x6
 	.byte	0x22
-	.4byte	0x304
+	.4byte	0x2ce
 	.byte	0x24
-	.uleb128 0x18
+	.uleb128 0x15
 	.string	"A3"
-	.byte	0x5
+	.byte	0x6
 	.byte	0x23
-	.4byte	0x304
+	.4byte	0x2ce
 	.byte	0x27
-	.uleb128 0x18
+	.uleb128 0x15
 	.string	"A4"
-	.byte	0x5
+	.byte	0x6
 	.byte	0x24
-	.4byte	0x304
+	.4byte	0x2ce
 	.byte	0x20
-	.uleb128 0x18
+	.uleb128 0x15
 	.string	"A5"
-	.byte	0x5
+	.byte	0x6
 	.byte	0x25
-	.4byte	0x304
+	.4byte	0x2ce
 	.byte	0x21
-	.uleb128 0x18
+	.uleb128 0x15
 	.string	"A6"
-	.byte	0x5
+	.byte	0x6
 	.byte	0x26
-	.4byte	0x304
+	.4byte	0x2ce
 	.byte	0x22
-	.uleb128 0x18
+	.uleb128 0x15
 	.string	"A7"
-	.byte	0x5
+	.byte	0x6
 	.byte	0x27
-	.4byte	0x304
+	.4byte	0x2ce
 	.byte	0x23
-	.uleb128 0x18
+	.uleb128 0x15
 	.string	"A10"
-	.byte	0x5
+	.byte	0x6
 	.byte	0x28
-	.4byte	0x304
+	.4byte	0x2ce
 	.byte	0x4
-	.uleb128 0x18
+	.uleb128 0x15
 	.string	"A11"
-	.byte	0x5
+	.byte	0x6
 	.byte	0x29
-	.4byte	0x304
+	.4byte	0x2ce
 	.byte	0
-	.uleb128 0x18
+	.uleb128 0x15
 	.string	"A12"
-	.byte	0x5
+	.byte	0x6
 	.byte	0x2a
-	.4byte	0x304
+	.4byte	0x2ce
 	.byte	0x2
-	.uleb128 0x18
+	.uleb128 0x15
 	.string	"A13"
-	.byte	0x5
+	.byte	0x6
 	.byte	0x2b
-	.4byte	0x304
+	.4byte	0x2ce
 	.byte	0xf
-	.uleb128 0x18
+	.uleb128 0x15
 	.string	"A14"
-	.byte	0x5
+	.byte	0x6
 	.byte	0x2c
-	.4byte	0x304
+	.4byte	0x2ce
 	.byte	0xd
-	.uleb128 0x18
+	.uleb128 0x15
 	.string	"A15"
-	.byte	0x5
+	.byte	0x6
 	.byte	0x2d
-	.4byte	0x304
+	.4byte	0x2ce
 	.byte	0xc
-	.uleb128 0x18
+	.uleb128 0x15
 	.string	"A16"
-	.byte	0x5
+	.byte	0x6
 	.byte	0x2e
-	.4byte	0x304
+	.4byte	0x2ce
 	.byte	0xe
-	.uleb128 0x18
+	.uleb128 0x15
 	.string	"A17"
-	.byte	0x5
+	.byte	0x6
 	.byte	0x2f
-	.4byte	0x304
+	.4byte	0x2ce
 	.byte	0x1b
-	.uleb128 0x18
+	.uleb128 0x15
 	.string	"A18"
-	.byte	0x5
+	.byte	0x6
 	.byte	0x30
-	.4byte	0x304
+	.4byte	0x2ce
 	.byte	0x19
-	.uleb128 0x18
+	.uleb128 0x15
 	.string	"A19"
-	.byte	0x5
+	.byte	0x6
 	.byte	0x31
-	.4byte	0x304
+	.4byte	0x2ce
 	.byte	0x1a
-	.uleb128 0x18
+	.uleb128 0x15
 	.string	"T0"
-	.byte	0x5
+	.byte	0x6
 	.byte	0x33
-	.4byte	0x304
+	.4byte	0x2ce
 	.byte	0x4
-	.uleb128 0x18
+	.uleb128 0x15
 	.string	"T1"
-	.byte	0x5
+	.byte	0x6
 	.byte	0x34
-	.4byte	0x304
+	.4byte	0x2ce
 	.byte	0
-	.uleb128 0x18
+	.uleb128 0x15
 	.string	"T2"
-	.byte	0x5
+	.byte	0x6
 	.byte	0x35
-	.4byte	0x304
+	.4byte	0x2ce
 	.byte	0x2
-	.uleb128 0x18
+	.uleb128 0x15
 	.string	"T3"
-	.byte	0x5
+	.byte	0x6
 	.byte	0x36
-	.4byte	0x304
+	.4byte	0x2ce
 	.byte	0xf
-	.uleb128 0x18
+	.uleb128 0x15
 	.string	"T4"
-	.byte	0x5
+	.byte	0x6
 	.byte	0x37
-	.4byte	0x304
+	.4byte	0x2ce
 	.byte	0xd
-	.uleb128 0x18
+	.uleb128 0x15
 	.string	"T5"
-	.byte	0x5
+	.byte	0x6
 	.byte	0x38
-	.4byte	0x304
+	.4byte	0x2ce
 	.byte	0xc
-	.uleb128 0x18
+	.uleb128 0x15
 	.string	"T6"
-	.byte	0x5
+	.byte	0x6
 	.byte	0x39
-	.4byte	0x304
+	.4byte	0x2ce
 	.byte	0xe
-	.uleb128 0x18
+	.uleb128 0x15
 	.string	"T7"
-	.byte	0x5
+	.byte	0x6
 	.byte	0x3a
-	.4byte	0x304
+	.4byte	0x2ce
 	.byte	0x1b
-	.uleb128 0x18
+	.uleb128 0x15
 	.string	"T8"
-	.byte	0x5
+	.byte	0x6
 	.byte	0x3b
-	.4byte	0x304
+	.4byte	0x2ce
 	.byte	0x21
-	.uleb128 0x18
+	.uleb128 0x15
 	.string	"T9"
-	.byte	0x5
+	.byte	0x6
 	.byte	0x3c
-	.4byte	0x304
+	.4byte	0x2ce
 	.byte	0x20
-	.uleb128 0x16
-	.4byte	.LASF11846
-	.byte	0x5
+	.uleb128 0x13
+	.4byte	.LASF11841
+	.byte	0x6
 	.byte	0x3e
-	.4byte	0x304
+	.4byte	0x2ce
 	.byte	0x19
-	.uleb128 0x16
-	.4byte	.LASF11847
-	.byte	0x5
+	.uleb128 0x13
+	.4byte	.LASF11842
+	.byte	0x6
 	.byte	0x3f
-	.4byte	0x304
+	.4byte	0x2ce
 	.byte	0x1a
-	.uleb128 0x16
-	.4byte	.LASF11848
-	.byte	0x5
+	.uleb128 0x13
+	.4byte	.LASF11843
+	.byte	0x6
 	.byte	0x41
-	.4byte	0x304
+	.4byte	0x2ce
 	.byte	0x15
-	.uleb128 0x18
+	.uleb128 0x15
 	.string	"LED"
-	.byte	0x5
+	.byte	0x6
 	.byte	0x42
-	.4byte	0x304
+	.4byte	0x2ce
 	.byte	0x19
-	.uleb128 0x16
-	.4byte	.LASF11849
-	.byte	0x5
+	.uleb128 0x13
+	.4byte	.LASF11844
+	.byte	0x6
 	.byte	0x43
-	.4byte	0x304
+	.4byte	0x2ce
 	.byte	0x10
-	.uleb128 0x16
-	.4byte	.LASF11850
-	.byte	0x5
+	.uleb128 0x13
+	.4byte	.LASF11845
+	.byte	0x6
 	.byte	0x44
-	.4byte	0x304
+	.4byte	0x2ce
 	.byte	0xf
+	.uleb128 0x13
+	.4byte	.LASF11846
+	.byte	0x6
+	.byte	0x45
+	.4byte	0x2ce
+	.byte	0x4
+	.uleb128 0x13
+	.4byte	.LASF11847
+	.byte	0x6
+	.byte	0x46
+	.4byte	0x2ce
+	.byte	0xe
+	.uleb128 0x13
+	.4byte	.LASF11848
+	.byte	0x6
+	.byte	0x47
+	.4byte	0x2ce
+	.byte	0x1a
+	.uleb128 0x13
+	.4byte	.LASF11849
+	.byte	0x6
+	.byte	0x48
+	.4byte	0x2ce
+	.byte	0x23
+	.uleb128 0x13
+	.4byte	.LASF11850
+	.byte	0x6
+	.byte	0x49
+	.4byte	0x2ce
+	.byte	0x22
 	.uleb128 0x16
 	.4byte	.LASF11851
-	.byte	0x5
-	.byte	0x45
-	.4byte	0x304
-	.byte	0x4
+	.byte	0x1
+	.byte	0x22
+	.4byte	0xd4
 	.uleb128 0x16
 	.4byte	.LASF11852
-	.byte	0x5
-	.byte	0x46
-	.4byte	0x304
-	.byte	0xe
-	.uleb128 0x16
+	.byte	0x1
+	.byte	0x28
+	.4byte	0xd4
+	.uleb128 0x17
 	.4byte	.LASF11853
-	.byte	0x5
-	.byte	0x47
-	.4byte	0x304
-	.byte	0x1a
-	.uleb128 0x16
-	.4byte	.LASF11854
-	.byte	0x5
-	.byte	0x48
-	.4byte	0x304
-	.byte	0x23
-	.uleb128 0x16
-	.4byte	.LASF11855
-	.byte	0x5
-	.byte	0x49
-	.4byte	0x304
-	.byte	0x22
-	.uleb128 0x19
-	.4byte	.LASF11856
-	.byte	0x1
-	.byte	0x24
-	.4byte	0xdb
-	.uleb128 0x19
-	.4byte	.LASF11857
-	.byte	0x1
-	.byte	0x2a
-	.4byte	0xdb
-	.uleb128 0x1a
-	.4byte	.LASF11858
-	.byte	0x1
+	.byte	0x7
 	.byte	0x18
-	.4byte	0xc5
+	.4byte	0x509
+	.uleb128 0x18
+	.byte	0x4
+	.4byte	0xdb
+	.uleb128 0x19
+	.4byte	.LASF11854
+	.byte	0x1
+	.byte	0x17
+	.4byte	0xbe
 	.uleb128 0x5
 	.byte	0x3
 	.4byte	TimeSwitch
-	.uleb128 0x1a
-	.4byte	.LASF11859
+	.uleb128 0x19
+	.4byte	.LASF11855
 	.byte	0x1
-	.byte	0x16
-	.4byte	0xd0
+	.byte	0x15
+	.4byte	0xc9
 	.uleb128 0x5
 	.byte	0x3
 	.4byte	preAlarmtimer
-	.uleb128 0x1a
-	.4byte	.LASF11860
+	.uleb128 0x19
+	.4byte	.LASF11856
 	.byte	0x1
-	.byte	0x17
-	.4byte	0xd0
+	.byte	0x16
+	.4byte	0xc9
 	.uleb128 0x5
 	.byte	0x3
 	.4byte	nextAlarm
-	.uleb128 0x1a
-	.4byte	.LASF11861
+	.uleb128 0x19
+	.4byte	.LASF11857
 	.byte	0x1
-	.byte	0x1a
-	.4byte	0x578
-	.uleb128 0x5
-	.byte	0x3
-	.4byte	TimerListHead
-	.uleb128 0x5
-	.byte	0x4
-	.4byte	0x131
-	.uleb128 0x1a
-	.4byte	.LASF11862
-	.byte	0x1
-	.byte	0x1e
-	.4byte	0x58f
+	.byte	0x1c
+	.4byte	0x553
 	.uleb128 0x5
 	.byte	0x3
 	.4byte	NonScheduledWakeUp
-	.uleb128 0x1b
-	.4byte	0xdb
 	.uleb128 0x1a
-	.4byte	.LASF11863
+	.4byte	0xd4
+	.uleb128 0x19
+	.4byte	.LASF11858
 	.byte	0x1
-	.byte	0x2f
-	.4byte	0x5a5
+	.byte	0x2d
+	.4byte	0x569
 	.uleb128 0x5
 	.byte	0x3
 	.4byte	McuWakeUpTime
+	.uleb128 0x1a
+	.4byte	0xbe
 	.uleb128 0x1b
-	.4byte	0xc5
-	.uleb128 0x1c
-	.4byte	.LASF11870
-	.4byte	.LASF11870
-	.byte	0x6
-	.2byte	0x20c
+	.4byte	.LASF11859
+	.4byte	.LASF11859
+	.byte	0x4
+	.byte	0x33
+	.uleb128 0x1b
+	.4byte	.LASF11860
+	.4byte	.LASF11860
+	.byte	0x4
+	.byte	0x36
 	.byte	0
 	.section	.debug_abbrev,"",@progbits
 .Ldebug_abbrev0:
@@ -1332,52 +1294,15 @@ preAlarmtimer:
 	.byte	0
 	.byte	0
 	.uleb128 0x5
-	.uleb128 0xf
-	.byte	0
-	.uleb128 0xb
-	.uleb128 0xb
-	.uleb128 0x49
 	.uleb128 0x13
 	.byte	0
-	.byte	0
-	.uleb128 0x6
-	.uleb128 0x15
-	.byte	0
-	.uleb128 0x27
+	.uleb128 0x3
+	.uleb128 0xe
+	.uleb128 0x3c
 	.uleb128 0x19
 	.byte	0
 	.byte	0
-	.uleb128 0x7
-	.uleb128 0x13
-	.byte	0x1
-	.uleb128 0x3
-	.uleb128 0xe
-	.uleb128 0xb
-	.uleb128 0xb
-	.uleb128 0x3a
-	.uleb128 0xb
-	.uleb128 0x3b
-	.uleb128 0xb
-	.uleb128 0x1
-	.uleb128 0x13
-	.byte	0
-	.byte	0
-	.uleb128 0x8
-	.uleb128 0xd
-	.byte	0
-	.uleb128 0x3
-	.uleb128 0xe
-	.uleb128 0x3a
-	.uleb128 0xb
-	.uleb128 0x3b
-	.uleb128 0xb
-	.uleb128 0x49
-	.uleb128 0x13
-	.uleb128 0x38
-	.uleb128 0xb
-	.byte	0
-	.byte	0
-	.uleb128 0x9
+	.uleb128 0x6
 	.uleb128 0x2e
 	.byte	0
 	.uleb128 0x3f
@@ -1394,7 +1319,7 @@ preAlarmtimer:
 	.uleb128 0xb
 	.byte	0
 	.byte	0
-	.uleb128 0xa
+	.uleb128 0x7
 	.uleb128 0x2e
 	.byte	0x1
 	.uleb128 0x3f
@@ -1421,7 +1346,7 @@ preAlarmtimer:
 	.uleb128 0x13
 	.byte	0
 	.byte	0
-	.uleb128 0xb
+	.uleb128 0x8
 	.uleb128 0x5
 	.byte	0
 	.uleb128 0x3
@@ -1436,7 +1361,7 @@ preAlarmtimer:
 	.uleb128 0x17
 	.byte	0
 	.byte	0
-	.uleb128 0xc
+	.uleb128 0x9
 	.uleb128 0x2e
 	.byte	0x1
 	.uleb128 0x3f
@@ -1463,7 +1388,7 @@ preAlarmtimer:
 	.uleb128 0x13
 	.byte	0
 	.byte	0
-	.uleb128 0xd
+	.uleb128 0xa
 	.uleb128 0x4109
 	.byte	0
 	.uleb128 0x11
@@ -1472,7 +1397,7 @@ preAlarmtimer:
 	.uleb128 0x13
 	.byte	0
 	.byte	0
-	.uleb128 0xe
+	.uleb128 0xb
 	.uleb128 0x2e
 	.byte	0x1
 	.uleb128 0x3
@@ -1489,7 +1414,7 @@ preAlarmtimer:
 	.uleb128 0x13
 	.byte	0
 	.byte	0
-	.uleb128 0xf
+	.uleb128 0xc
 	.uleb128 0x5
 	.byte	0
 	.uleb128 0x3
@@ -1502,7 +1427,7 @@ preAlarmtimer:
 	.uleb128 0x13
 	.byte	0
 	.byte	0
-	.uleb128 0x10
+	.uleb128 0xd
 	.uleb128 0x2e
 	.byte	0x1
 	.uleb128 0x3f
@@ -1527,7 +1452,7 @@ preAlarmtimer:
 	.uleb128 0x13
 	.byte	0
 	.byte	0
-	.uleb128 0x11
+	.uleb128 0xe
 	.uleb128 0x5
 	.byte	0
 	.uleb128 0x3
@@ -1542,7 +1467,7 @@ preAlarmtimer:
 	.uleb128 0x18
 	.byte	0
 	.byte	0
-	.uleb128 0x12
+	.uleb128 0xf
 	.uleb128 0x1d
 	.byte	0x1
 	.uleb128 0x31
@@ -1557,7 +1482,7 @@ preAlarmtimer:
 	.uleb128 0xb
 	.byte	0
 	.byte	0
-	.uleb128 0x13
+	.uleb128 0x10
 	.uleb128 0x5
 	.byte	0
 	.uleb128 0x31
@@ -1566,7 +1491,7 @@ preAlarmtimer:
 	.uleb128 0x18
 	.byte	0
 	.byte	0
-	.uleb128 0x14
+	.uleb128 0x11
 	.uleb128 0x34
 	.byte	0
 	.uleb128 0x3
@@ -1581,7 +1506,7 @@ preAlarmtimer:
 	.uleb128 0x17
 	.byte	0
 	.byte	0
-	.uleb128 0x15
+	.uleb128 0x12
 	.uleb128 0x2e
 	.byte	0
 	.uleb128 0x31
@@ -1596,7 +1521,7 @@ preAlarmtimer:
 	.uleb128 0x19
 	.byte	0
 	.byte	0
-	.uleb128 0x16
+	.uleb128 0x13
 	.uleb128 0x34
 	.byte	0
 	.uleb128 0x3
@@ -1611,14 +1536,14 @@ preAlarmtimer:
 	.uleb128 0xb
 	.byte	0
 	.byte	0
-	.uleb128 0x17
+	.uleb128 0x14
 	.uleb128 0x26
 	.byte	0
 	.uleb128 0x49
 	.uleb128 0x13
 	.byte	0
 	.byte	0
-	.uleb128 0x18
+	.uleb128 0x15
 	.uleb128 0x34
 	.byte	0
 	.uleb128 0x3
@@ -1633,7 +1558,7 @@ preAlarmtimer:
 	.uleb128 0xb
 	.byte	0
 	.byte	0
-	.uleb128 0x19
+	.uleb128 0x16
 	.uleb128 0x34
 	.byte	0
 	.uleb128 0x3
@@ -1646,7 +1571,33 @@ preAlarmtimer:
 	.uleb128 0x13
 	.byte	0
 	.byte	0
-	.uleb128 0x1a
+	.uleb128 0x17
+	.uleb128 0x34
+	.byte	0
+	.uleb128 0x3
+	.uleb128 0xe
+	.uleb128 0x3a
+	.uleb128 0xb
+	.uleb128 0x3b
+	.uleb128 0xb
+	.uleb128 0x49
+	.uleb128 0x13
+	.uleb128 0x3f
+	.uleb128 0x19
+	.uleb128 0x3c
+	.uleb128 0x19
+	.byte	0
+	.byte	0
+	.uleb128 0x18
+	.uleb128 0xf
+	.byte	0
+	.uleb128 0xb
+	.uleb128 0xb
+	.uleb128 0x49
+	.uleb128 0x13
+	.byte	0
+	.byte	0
+	.uleb128 0x19
 	.uleb128 0x34
 	.byte	0
 	.uleb128 0x3
@@ -1663,14 +1614,14 @@ preAlarmtimer:
 	.uleb128 0x18
 	.byte	0
 	.byte	0
-	.uleb128 0x1b
+	.uleb128 0x1a
 	.uleb128 0x35
 	.byte	0
 	.uleb128 0x49
 	.uleb128 0x13
 	.byte	0
 	.byte	0
-	.uleb128 0x1c
+	.uleb128 0x1b
 	.uleb128 0x2e
 	.byte	0
 	.uleb128 0x3f
@@ -1684,7 +1635,7 @@ preAlarmtimer:
 	.uleb128 0x3a
 	.uleb128 0xb
 	.uleb128 0x3b
-	.uleb128 0x5
+	.uleb128 0xb
 	.byte	0
 	.byte	0
 	.byte	0
@@ -1702,14 +1653,14 @@ preAlarmtimer:
 	.4byte	0
 	.4byte	0
 .LLST1:
-	.4byte	.LVL10
 	.4byte	.LVL12
+	.4byte	.LVL15
 	.2byte	0xa
 	.byte	0x9e
 	.uleb128 0x8
 	.8byte	0
-	.4byte	.LVL12
 	.4byte	.LVL15
+	.4byte	.LVL18
 	.2byte	0x6
 	.byte	0x55
 	.byte	0x93
@@ -1717,8 +1668,8 @@ preAlarmtimer:
 	.byte	0x54
 	.byte	0x93
 	.uleb128 0x4
-	.4byte	.LVL16
-	.4byte	.LVL18
+	.4byte	.LVL19
+	.4byte	.LVL21
 	.2byte	0x6
 	.byte	0x55
 	.byte	0x93
@@ -1729,22 +1680,13 @@ preAlarmtimer:
 	.4byte	0
 	.4byte	0
 .LLST2:
-	.4byte	.LVL10
 	.4byte	.LVL12
+	.4byte	.LVL15
 	.2byte	0xa
 	.byte	0x9e
 	.uleb128 0x8
 	.8byte	0
-	.4byte	.LVL12
-	.4byte	.LVL14
-	.2byte	0x6
-	.byte	0x52
-	.byte	0x93
-	.uleb128 0x4
-	.byte	0x53
-	.byte	0x93
-	.uleb128 0x4
-	.4byte	.LVL16
+	.4byte	.LVL15
 	.4byte	.LVL17
 	.2byte	0x6
 	.byte	0x52
@@ -1753,8 +1695,17 @@ preAlarmtimer:
 	.byte	0x53
 	.byte	0x93
 	.uleb128 0x4
-	.4byte	.LVL17
 	.4byte	.LVL19
+	.4byte	.LVL20
+	.2byte	0x6
+	.byte	0x52
+	.byte	0x93
+	.uleb128 0x4
+	.byte	0x53
+	.byte	0x93
+	.uleb128 0x4
+	.4byte	.LVL20
+	.4byte	.LVL22
 	.2byte	0xa
 	.byte	0x3
 	.4byte	preAlarmtimer
@@ -1763,7 +1714,7 @@ preAlarmtimer:
 	.byte	0x53
 	.byte	0x93
 	.uleb128 0x4
-	.4byte	.LVL19
+	.4byte	.LVL22
 	.4byte	.LFE23
 	.2byte	0xe
 	.byte	0x3
@@ -1777,8 +1728,8 @@ preAlarmtimer:
 	.4byte	0
 	.4byte	0
 .LLST3:
-	.4byte	.LVL20
-	.4byte	.LVL22
+	.4byte	.LVL23
+	.4byte	.LVL25
 	.2byte	0x6
 	.byte	0x52
 	.byte	0x93
@@ -1786,7 +1737,7 @@ preAlarmtimer:
 	.byte	0x53
 	.byte	0x93
 	.uleb128 0x4
-	.4byte	.LVL22
+	.4byte	.LVL25
 	.4byte	.LFE24
 	.2byte	0x6
 	.byte	0xf3
@@ -1798,8 +1749,8 @@ preAlarmtimer:
 	.4byte	0
 	.4byte	0
 .LLST4:
-	.4byte	.LVL23
-	.4byte	.LVL28
+	.4byte	.LVL26
+	.4byte	.LVL31
 	.2byte	0x6
 	.byte	0x52
 	.byte	0x93
@@ -1807,8 +1758,8 @@ preAlarmtimer:
 	.byte	0x53
 	.byte	0x93
 	.uleb128 0x4
-	.4byte	.LVL28
-	.4byte	.LVL30
+	.4byte	.LVL31
+	.4byte	.LVL33
 	.2byte	0x6
 	.byte	0xf3
 	.uleb128 0x3
@@ -1816,8 +1767,8 @@ preAlarmtimer:
 	.uleb128 0x2
 	.uleb128 0x29
 	.byte	0x9f
-	.4byte	.LVL30
-	.4byte	.LVL31
+	.4byte	.LVL33
+	.4byte	.LVL34
 	.2byte	0x6
 	.byte	0x52
 	.byte	0x93
@@ -1825,7 +1776,7 @@ preAlarmtimer:
 	.byte	0x53
 	.byte	0x93
 	.uleb128 0x4
-	.4byte	.LVL31
+	.4byte	.LVL34
 	.4byte	.LFE25
 	.2byte	0x6
 	.byte	0xf3
@@ -1837,14 +1788,14 @@ preAlarmtimer:
 	.4byte	0
 	.4byte	0
 .LLST5:
-	.4byte	.LVL24
-	.4byte	.LVL26
+	.4byte	.LVL27
+	.4byte	.LVL29
 	.2byte	0xa
 	.byte	0x9e
 	.uleb128 0x8
 	.8byte	0
-	.4byte	.LVL26
 	.4byte	.LVL29
+	.4byte	.LVL32
 	.2byte	0x6
 	.byte	0x54
 	.byte	0x93
@@ -1852,8 +1803,8 @@ preAlarmtimer:
 	.byte	0x55
 	.byte	0x93
 	.uleb128 0x4
-	.4byte	.LVL30
-	.4byte	.LVL32
+	.4byte	.LVL33
+	.4byte	.LVL35
 	.2byte	0x6
 	.byte	0x54
 	.byte	0x93
@@ -1919,60 +1870,60 @@ preAlarmtimer:
 	.byte	0x3
 	.uleb128 0
 	.uleb128 0x1
-	.file 7 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\newlib\\math.h"
+	.file 8 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\newlib\\math.h"
 	.byte	0x3
 	.uleb128 0x10
-	.uleb128 0x7
+	.uleb128 0x8
 	.byte	0x5
 	.uleb128 0x3
 	.4byte	.LASF236
-	.file 8 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\newlib\\sys\\reent.h"
+	.file 9 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\newlib\\sys\\reent.h"
 	.byte	0x3
 	.uleb128 0x5
-	.uleb128 0x8
+	.uleb128 0x9
 	.byte	0x5
 	.uleb128 0xb
 	.4byte	.LASF237
-	.file 9 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\newlib\\_ansi.h"
+	.file 10 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\newlib\\_ansi.h"
 	.byte	0x3
 	.uleb128 0xd
-	.uleb128 0x9
+	.uleb128 0xa
 	.byte	0x5
 	.uleb128 0xd
 	.4byte	.LASF238
-	.file 10 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\newlib\\newlib.h"
+	.file 11 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\newlib\\newlib.h"
 	.byte	0x3
 	.uleb128 0xf
-	.uleb128 0xa
+	.uleb128 0xb
 	.byte	0x7
 	.4byte	.Ldebug_macro2
 	.byte	0x4
-	.file 11 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\newlib\\sys\\config.h"
+	.file 12 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\newlib\\sys\\config.h"
 	.byte	0x3
 	.uleb128 0x10
-	.uleb128 0xb
+	.uleb128 0xc
 	.byte	0x5
 	.uleb128 0x2
 	.4byte	.LASF253
-	.file 12 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\newlib\\machine\\ieeefp.h"
+	.file 13 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\newlib\\machine\\ieeefp.h"
 	.byte	0x3
 	.uleb128 0x4
-	.uleb128 0xc
+	.uleb128 0xd
 	.byte	0x5
 	.uleb128 0x1a6
 	.4byte	.LASF254
 	.byte	0x4
-	.file 13 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\newlib\\sys\\features.h"
+	.file 14 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\newlib\\sys\\features.h"
 	.byte	0x3
 	.uleb128 0x5
-	.uleb128 0xd
+	.uleb128 0xe
 	.byte	0x7
 	.4byte	.Ldebug_macro3
 	.byte	0x4
-	.file 14 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\esp32\\xtensa\\config\\core-isa.h"
+	.file 15 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\esp32\\xtensa\\config\\core-isa.h"
 	.byte	0x3
 	.uleb128 0xbd
-	.uleb128 0xe
+	.uleb128 0xf
 	.byte	0x7
 	.4byte	.Ldebug_macro4
 	.byte	0x4
@@ -1982,24 +1933,24 @@ preAlarmtimer:
 	.byte	0x7
 	.4byte	.Ldebug_macro6
 	.byte	0x4
-	.file 15 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\xtensa-esp32-elf\\lib\\gcc\\xtensa-esp32-elf\\5.2.0\\include\\stddef.h"
+	.file 16 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\xtensa-esp32-elf\\lib\\gcc\\xtensa-esp32-elf\\5.2.0\\include\\stddef.h"
 	.byte	0x3
 	.uleb128 0xe
-	.uleb128 0xf
+	.uleb128 0x10
 	.byte	0x7
 	.4byte	.Ldebug_macro7
 	.byte	0x4
-	.file 16 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\newlib\\sys\\_types.h"
+	.file 17 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\newlib\\sys\\_types.h"
 	.byte	0x3
 	.uleb128 0xf
-	.uleb128 0x10
+	.uleb128 0x11
 	.byte	0x5
 	.uleb128 0xa
 	.4byte	.LASF798
-	.file 17 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\newlib\\machine\\_types.h"
+	.file 18 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\newlib\\machine\\_types.h"
 	.byte	0x3
 	.uleb128 0xc
-	.uleb128 0x11
+	.uleb128 0x12
 	.byte	0x5
 	.uleb128 0x6
 	.4byte	.LASF799
@@ -2010,10 +1961,10 @@ preAlarmtimer:
 	.4byte	.Ldebug_macro8
 	.byte	0x4
 	.byte	0x4
-	.file 18 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\newlib\\sys\\lock.h"
+	.file 19 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\newlib\\sys\\lock.h"
 	.byte	0x3
 	.uleb128 0xd
-	.uleb128 0x12
+	.uleb128 0x13
 	.byte	0x7
 	.4byte	.Ldebug_macro9
 	.byte	0x4
@@ -2021,7 +1972,7 @@ preAlarmtimer:
 	.4byte	.Ldebug_macro10
 	.byte	0x3
 	.uleb128 0x43
-	.uleb128 0xf
+	.uleb128 0x10
 	.byte	0x7
 	.4byte	.Ldebug_macro11
 	.byte	0x4
@@ -2031,19 +1982,19 @@ preAlarmtimer:
 	.byte	0x4
 	.byte	0x3
 	.uleb128 0x6
-	.uleb128 0xc
+	.uleb128 0xd
 	.byte	0x4
 	.byte	0x3
 	.uleb128 0x7
-	.uleb128 0x9
+	.uleb128 0xa
 	.byte	0x4
 	.byte	0x7
 	.4byte	.Ldebug_macro13
 	.byte	0x4
-	.file 19 "d:\\61722\\documents\\arduino\\libraries\\esp32_lorawan_vasr\\src\\board.h"
+	.file 20 "d:\\61722\\documents\\arduino\\libraries\\esp32_lorawan_vasr\\src\\board.h"
 	.byte	0x3
 	.uleb128 0x11
-	.uleb128 0x13
+	.uleb128 0x14
 	.byte	0x5
 	.uleb128 0x18
 	.4byte	.LASF955
@@ -2053,10 +2004,10 @@ preAlarmtimer:
 	.byte	0x5
 	.uleb128 0xa
 	.4byte	.LASF956
-	.file 20 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\newlib\\sys\\_intsup.h"
+	.file 21 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\newlib\\sys\\_intsup.h"
 	.byte	0x3
 	.uleb128 0xd
-	.uleb128 0x14
+	.uleb128 0x15
 	.byte	0x7
 	.4byte	.Ldebug_macro14
 	.byte	0x4
@@ -2065,51 +2016,51 @@ preAlarmtimer:
 	.byte	0x4
 	.byte	0x3
 	.uleb128 0x1b
-	.uleb128 0x4
+	.uleb128 0x5
 	.byte	0x5
 	.uleb128 0x10
 	.4byte	.LASF1033
-	.file 21 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\cores\\esp32\\arduino.h"
+	.file 22 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\cores\\esp32\\arduino.h"
 	.byte	0x3
 	.uleb128 0x12
-	.uleb128 0x15
+	.uleb128 0x16
 	.byte	0x5
 	.uleb128 0x15
 	.4byte	.LASF1034
-	.file 22 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\xtensa-esp32-elf\\lib\\gcc\\xtensa-esp32-elf\\5.2.0\\include\\stdbool.h"
+	.file 23 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\xtensa-esp32-elf\\lib\\gcc\\xtensa-esp32-elf\\5.2.0\\include\\stdbool.h"
 	.byte	0x3
 	.uleb128 0x17
-	.uleb128 0x16
+	.uleb128 0x17
 	.byte	0x7
 	.4byte	.Ldebug_macro16
 	.byte	0x4
-	.file 23 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\xtensa-esp32-elf\\lib\\gcc\\xtensa-esp32-elf\\5.2.0\\include\\stdarg.h"
+	.file 24 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\xtensa-esp32-elf\\lib\\gcc\\xtensa-esp32-elf\\5.2.0\\include\\stdarg.h"
 	.byte	0x3
 	.uleb128 0x19
-	.uleb128 0x17
+	.uleb128 0x18
 	.byte	0x7
 	.4byte	.Ldebug_macro17
 	.byte	0x4
 	.byte	0x3
 	.uleb128 0x1a
-	.uleb128 0xf
+	.uleb128 0x10
 	.byte	0x4
-	.file 24 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\newlib\\stdio.h"
+	.file 25 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\newlib\\stdio.h"
 	.byte	0x3
 	.uleb128 0x1b
-	.uleb128 0x18
+	.uleb128 0x19
 	.byte	0x7
 	.4byte	.Ldebug_macro18
-	.file 25 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\newlib\\sys\\cdefs.h"
+	.file 26 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\newlib\\sys\\cdefs.h"
 	.byte	0x3
 	.uleb128 0x23
-	.uleb128 0x19
+	.uleb128 0x1a
 	.byte	0x5
 	.uleb128 0x29
 	.4byte	.LASF1058
 	.byte	0x3
 	.uleb128 0x2d
-	.uleb128 0xf
+	.uleb128 0x10
 	.byte	0x7
 	.4byte	.Ldebug_macro19
 	.byte	0x4
@@ -2118,217 +2069,217 @@ preAlarmtimer:
 	.byte	0x4
 	.byte	0x3
 	.uleb128 0x24
-	.uleb128 0xf
+	.uleb128 0x10
 	.byte	0x4
 	.byte	0x5
 	.uleb128 0x26
 	.4byte	.LASF1158
-	.file 26 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\newlib\\sys\\types.h"
+	.file 27 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\newlib\\sys\\types.h"
 	.byte	0x3
 	.uleb128 0x30
-	.uleb128 0x1a
+	.uleb128 0x1b
 	.byte	0x7
 	.4byte	.Ldebug_macro21
 	.byte	0x3
 	.uleb128 0x45
-	.uleb128 0xf
+	.uleb128 0x10
 	.byte	0x4
-	.file 27 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\newlib\\machine\\types.h"
+	.file 28 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\newlib\\machine\\types.h"
 	.byte	0x3
 	.uleb128 0x46
-	.uleb128 0x1b
+	.uleb128 0x1c
 	.byte	0x7
 	.4byte	.Ldebug_macro22
 	.byte	0x4
 	.byte	0x7
 	.4byte	.Ldebug_macro23
-	.file 28 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\newlib\\sys\\sched.h"
+	.file 29 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\newlib\\sys\\sched.h"
 	.byte	0x3
 	.uleb128 0x12b
-	.uleb128 0x1c
+	.uleb128 0x1d
 	.byte	0x7
 	.4byte	.Ldebug_macro24
 	.byte	0x4
 	.byte	0x7
 	.4byte	.Ldebug_macro25
 	.byte	0x4
-	.file 29 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\newlib\\sys\\stdio.h"
+	.file 30 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\newlib\\sys\\stdio.h"
 	.byte	0x3
 	.uleb128 0x3f
-	.uleb128 0x1d
+	.uleb128 0x1e
 	.byte	0x7
 	.4byte	.Ldebug_macro26
 	.byte	0x4
 	.byte	0x7
 	.4byte	.Ldebug_macro27
 	.byte	0x4
-	.file 30 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\newlib\\stdlib.h"
+	.file 31 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\newlib\\stdlib.h"
 	.byte	0x3
 	.uleb128 0x1c
-	.uleb128 0x1e
+	.uleb128 0x1f
 	.byte	0x5
 	.uleb128 0x8
 	.4byte	.LASF1266
 	.byte	0x3
 	.uleb128 0xa
-	.uleb128 0xc
+	.uleb128 0xd
 	.byte	0x4
 	.byte	0x7
 	.4byte	.Ldebug_macro28
 	.byte	0x3
 	.uleb128 0x10
-	.uleb128 0xf
+	.uleb128 0x10
 	.byte	0x7
 	.4byte	.Ldebug_macro19
 	.byte	0x4
-	.file 31 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\newlib\\machine\\stdlib.h"
+	.file 32 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\newlib\\machine\\stdlib.h"
 	.byte	0x3
 	.uleb128 0x14
-	.uleb128 0x1f
+	.uleb128 0x20
 	.byte	0x5
 	.uleb128 0x2
 	.4byte	.LASF1268
 	.byte	0x4
-	.file 32 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\newlib\\alloca.h"
+	.file 33 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\newlib\\alloca.h"
 	.byte	0x3
 	.uleb128 0x16
-	.uleb128 0x20
+	.uleb128 0x21
 	.byte	0x7
 	.4byte	.Ldebug_macro29
 	.byte	0x4
 	.byte	0x7
 	.4byte	.Ldebug_macro30
 	.byte	0x4
-	.file 33 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\newlib\\string.h"
+	.file 34 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\newlib\\string.h"
 	.byte	0x3
 	.uleb128 0x1d
-	.uleb128 0x21
+	.uleb128 0x22
 	.byte	0x7
 	.4byte	.Ldebug_macro31
 	.byte	0x3
 	.uleb128 0x11
-	.uleb128 0xf
+	.uleb128 0x10
 	.byte	0x7
 	.4byte	.Ldebug_macro19
 	.byte	0x4
-	.file 34 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\newlib\\sys\\string.h"
+	.file 35 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\newlib\\sys\\string.h"
 	.byte	0x3
 	.uleb128 0xa3
-	.uleb128 0x22
+	.uleb128 0x23
 	.byte	0x4
 	.byte	0x4
-	.file 35 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\newlib\\inttypes.h"
+	.file 36 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\newlib\\inttypes.h"
 	.byte	0x3
 	.uleb128 0x1e
-	.uleb128 0x23
+	.uleb128 0x24
 	.byte	0x7
 	.4byte	.Ldebug_macro32
 	.byte	0x3
 	.uleb128 0x14
-	.uleb128 0xf
+	.uleb128 0x10
 	.byte	0x7
 	.4byte	.Ldebug_macro19
 	.byte	0x4
 	.byte	0x7
 	.4byte	.Ldebug_macro33
 	.byte	0x4
-	.file 36 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\freertos\\freertos\\freertos.h"
+	.file 37 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\freertos\\freertos\\freertos.h"
 	.byte	0x3
 	.uleb128 0x20
-	.uleb128 0x24
+	.uleb128 0x25
 	.byte	0x5
 	.uleb128 0x47
 	.4byte	.LASF1431
 	.byte	0x3
 	.uleb128 0x4c
-	.uleb128 0xf
+	.uleb128 0x10
 	.byte	0x4
-	.file 37 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\freertos\\freertos\\FreeRTOSConfig.h"
+	.file 38 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\freertos\\freertos\\FreeRTOSConfig.h"
 	.byte	0x3
 	.uleb128 0x63
-	.uleb128 0x25
+	.uleb128 0x26
 	.byte	0x5
 	.uleb128 0x47
 	.4byte	.LASF1432
-	.file 38 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\config\\sdkconfig.h"
+	.file 39 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\config\\sdkconfig.h"
 	.byte	0x3
 	.uleb128 0x49
-	.uleb128 0x26
+	.uleb128 0x27
 	.byte	0x7
 	.4byte	.Ldebug_macro34
 	.byte	0x4
 	.byte	0x7
 	.4byte	.Ldebug_macro35
-	.file 39 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\freertos\\freertos\\xtensa_config.h"
+	.file 40 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\freertos\\freertos\\xtensa_config.h"
 	.byte	0x3
 	.uleb128 0x72
-	.uleb128 0x27
+	.uleb128 0x28
 	.byte	0x5
 	.uleb128 0x22
 	.4byte	.LASF1801
-	.file 40 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\esp32\\xtensa\\hal.h"
+	.file 41 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\esp32\\xtensa\\hal.h"
 	.byte	0x3
 	.uleb128 0x28
-	.uleb128 0x28
+	.uleb128 0x29
 	.byte	0x7
 	.4byte	.Ldebug_macro36
 	.byte	0x4
-	.file 41 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\esp32\\xtensa\\config\\core.h"
+	.file 42 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\esp32\\xtensa\\config\\core.h"
 	.byte	0x3
 	.uleb128 0x29
-	.uleb128 0x29
+	.uleb128 0x2a
 	.byte	0x5
 	.uleb128 0x25
 	.4byte	.LASF1927
-	.file 42 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\esp32\\xtensa\\xtensa-versions.h"
+	.file 43 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\esp32\\xtensa\\xtensa-versions.h"
 	.byte	0x3
 	.uleb128 0x2a
-	.uleb128 0x2a
+	.uleb128 0x2b
 	.byte	0x7
 	.4byte	.Ldebug_macro37
 	.byte	0x4
-	.file 43 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\esp32\\xtensa\\config\\core-matmap.h"
+	.file 44 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\esp32\\xtensa\\config\\core-matmap.h"
 	.byte	0x3
 	.uleb128 0x33
-	.uleb128 0x2b
+	.uleb128 0x2c
 	.byte	0x7
 	.4byte	.Ldebug_macro38
 	.byte	0x4
-	.file 44 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\esp32\\xtensa\\config\\tie.h"
+	.file 45 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\esp32\\xtensa\\config\\tie.h"
 	.byte	0x3
 	.uleb128 0x34
-	.uleb128 0x2c
+	.uleb128 0x2d
 	.byte	0x7
 	.4byte	.Ldebug_macro39
 	.byte	0x4
 	.byte	0x7
 	.4byte	.Ldebug_macro40
 	.byte	0x4
-	.file 45 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\esp32\\xtensa\\config\\system.h"
+	.file 46 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\esp32\\xtensa\\config\\system.h"
 	.byte	0x3
 	.uleb128 0x2a
-	.uleb128 0x2d
+	.uleb128 0x2e
 	.byte	0x7
 	.4byte	.Ldebug_macro41
 	.byte	0x4
-	.file 46 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\freertos\\freertos\\xtensa_context.h"
+	.file 47 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\freertos\\freertos\\xtensa_context.h"
 	.byte	0x3
 	.uleb128 0x2c
-	.uleb128 0x2e
+	.uleb128 0x2f
 	.byte	0x5
 	.uleb128 0x26
 	.4byte	.LASF2818
-	.file 47 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\esp32\\xtensa\\corebits.h"
+	.file 48 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\esp32\\xtensa\\corebits.h"
 	.byte	0x3
 	.uleb128 0x2d
-	.uleb128 0x2f
+	.uleb128 0x30
 	.byte	0x7
 	.4byte	.Ldebug_macro42
 	.byte	0x4
-	.file 48 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\esp32\\xtensa\\xtruntime-frames.h"
+	.file 49 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\esp32\\xtensa\\xtruntime-frames.h"
 	.byte	0x3
 	.uleb128 0x2f
-	.uleb128 0x30
+	.uleb128 0x31
 	.byte	0x7
 	.4byte	.Ldebug_macro43
 	.byte	0x4
@@ -2338,31 +2289,31 @@ preAlarmtimer:
 	.byte	0x7
 	.4byte	.Ldebug_macro45
 	.byte	0x4
-	.file 49 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\esp32\\rom\\ets_sys.h"
+	.file 50 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\esp32\\rom\\ets_sys.h"
 	.byte	0x3
 	.uleb128 0x78
-	.uleb128 0x31
-	.byte	0x5
-	.uleb128 0x10
-	.4byte	.LASF2986
-	.file 50 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\soc\\soc\\soc.h"
-	.byte	0x3
-	.uleb128 0x15
 	.uleb128 0x32
 	.byte	0x5
 	.uleb128 0x10
+	.4byte	.LASF2986
+	.file 51 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\soc\\soc\\soc.h"
+	.byte	0x3
+	.uleb128 0x15
+	.uleb128 0x33
+	.byte	0x5
+	.uleb128 0x10
 	.4byte	.LASF2987
-	.file 51 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\esp32\\esp_assert.h"
+	.file 52 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\esp32\\esp_assert.h"
 	.byte	0x3
 	.uleb128 0x14
-	.uleb128 0x33
+	.uleb128 0x34
 	.byte	0x5
 	.uleb128 0xf
 	.4byte	.LASF2988
-	.file 52 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\newlib\\assert.h"
+	.file 53 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\newlib\\assert.h"
 	.byte	0x3
 	.uleb128 0x11
-	.uleb128 0x34
+	.uleb128 0x35
 	.byte	0x7
 	.4byte	.Ldebug_macro46
 	.byte	0x4
@@ -2379,78 +2330,78 @@ preAlarmtimer:
 	.byte	0x7
 	.4byte	.Ldebug_macro49
 	.byte	0x4
-	.file 53 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\freertos\\freertos\\projdefs.h"
+	.file 54 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\freertos\\freertos\\projdefs.h"
 	.byte	0x3
 	.uleb128 0x66
-	.uleb128 0x35
+	.uleb128 0x36
 	.byte	0x7
 	.4byte	.Ldebug_macro50
 	.byte	0x4
-	.file 54 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\freertos\\freertos\\portable.h"
+	.file 55 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\freertos\\freertos\\portable.h"
 	.byte	0x3
 	.uleb128 0x69
-	.uleb128 0x36
+	.uleb128 0x37
 	.byte	0x5
 	.uleb128 0x4b
 	.4byte	.LASF3307
-	.file 55 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\freertos\\freertos\\deprecated_definitions.h"
+	.file 56 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\freertos\\freertos\\deprecated_definitions.h"
 	.byte	0x3
 	.uleb128 0x57
-	.uleb128 0x37
+	.uleb128 0x38
 	.byte	0x5
 	.uleb128 0x47
 	.4byte	.LASF3308
 	.byte	0x4
-	.file 56 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\freertos\\freertos\\portmacro.h"
+	.file 57 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\freertos\\freertos\\portmacro.h"
 	.byte	0x3
 	.uleb128 0x5e
-	.uleb128 0x38
+	.uleb128 0x39
 	.byte	0x5
 	.uleb128 0x43
 	.4byte	.LASF3309
-	.file 57 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\esp32\\xtensa\\xtruntime.h"
+	.file 58 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\esp32\\xtensa\\xtruntime.h"
 	.byte	0x3
 	.uleb128 0x50
-	.uleb128 0x39
+	.uleb128 0x3a
 	.byte	0x5
 	.uleb128 0x1b
 	.4byte	.LASF3310
-	.file 58 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\esp32\\xtensa\\config\\specreg.h"
+	.file 59 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\esp32\\xtensa\\config\\specreg.h"
 	.byte	0x3
 	.uleb128 0x1e
-	.uleb128 0x3a
+	.uleb128 0x3b
 	.byte	0x7
 	.4byte	.Ldebug_macro51
 	.byte	0x4
-	.file 59 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\esp32\\xtensa\\xtruntime-core-state.h"
+	.file 60 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\esp32\\xtensa\\xtruntime-core-state.h"
 	.byte	0x3
 	.uleb128 0x1f
-	.uleb128 0x3b
+	.uleb128 0x3c
 	.byte	0x7
 	.4byte	.Ldebug_macro52
 	.byte	0x4
 	.byte	0x7
 	.4byte	.Ldebug_macro53
 	.byte	0x4
-	.file 60 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\esp32\\esp_crosscore_int.h"
+	.file 61 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\esp32\\esp_crosscore_int.h"
 	.byte	0x3
 	.uleb128 0x51
-	.uleb128 0x3c
+	.uleb128 0x3d
 	.byte	0x5
 	.uleb128 0xf
 	.4byte	.LASF3410
 	.byte	0x4
-	.file 61 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\esp32\\esp_timer.h"
+	.file 62 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\esp32\\esp_timer.h"
 	.byte	0x3
 	.uleb128 0x52
-	.uleb128 0x3d
-	.file 62 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\esp32\\esp_err.h"
+	.uleb128 0x3e
+	.file 63 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\esp32\\esp_err.h"
 	.byte	0x3
 	.uleb128 0x2c
-	.uleb128 0x3e
+	.uleb128 0x3f
 	.byte	0x3
 	.uleb128 0x12
-	.uleb128 0x34
+	.uleb128 0x35
 	.byte	0x7
 	.4byte	.Ldebug_macro54
 	.byte	0x4
@@ -2458,32 +2409,32 @@ preAlarmtimer:
 	.4byte	.Ldebug_macro55
 	.byte	0x4
 	.byte	0x4
-	.file 63 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\heap\\esp_heap_caps.h"
+	.file 64 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\heap\\esp_heap_caps.h"
 	.byte	0x3
 	.uleb128 0x55
-	.uleb128 0x3f
-	.file 64 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\heap\\multi_heap.h"
+	.uleb128 0x40
+	.file 65 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\heap\\multi_heap.h"
 	.byte	0x3
 	.uleb128 0x12
-	.uleb128 0x40
+	.uleb128 0x41
 	.byte	0x4
 	.byte	0x7
 	.4byte	.Ldebug_macro56
 	.byte	0x4
-	.file 65 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\soc\\soc\\soc_memory_layout.h"
+	.file 66 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\soc\\soc\\soc_memory_layout.h"
 	.byte	0x3
 	.uleb128 0x56
-	.uleb128 0x41
+	.uleb128 0x42
 	.byte	0x3
 	.uleb128 0x14
-	.uleb128 0x26
+	.uleb128 0x27
 	.byte	0x7
 	.4byte	.Ldebug_macro34
 	.byte	0x4
-	.file 66 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\esp32\\esp_attr.h"
+	.file 67 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\esp32\\esp_attr.h"
 	.byte	0x3
 	.uleb128 0x15
-	.uleb128 0x42
+	.uleb128 0x43
 	.byte	0x7
 	.4byte	.Ldebug_macro57
 	.byte	0x4
@@ -2492,16 +2443,16 @@ preAlarmtimer:
 	.byte	0x4
 	.byte	0x7
 	.4byte	.Ldebug_macro59
-	.file 67 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\freertos\\freertos\\portbenchmark.h"
+	.file 68 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\freertos\\freertos\\portbenchmark.h"
 	.byte	0x3
 	.uleb128 0x7c
-	.uleb128 0x43
+	.uleb128 0x44
 	.byte	0x7
 	.4byte	.Ldebug_macro60
 	.byte	0x4
 	.byte	0x3
 	.uleb128 0x7e
-	.uleb128 0x26
+	.uleb128 0x27
 	.byte	0x7
 	.4byte	.Ldebug_macro34
 	.byte	0x4
@@ -2510,112 +2461,112 @@ preAlarmtimer:
 	.byte	0x4
 	.byte	0x7
 	.4byte	.Ldebug_macro62
-	.file 68 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\freertos\\freertos\\mpu_wrappers.h"
+	.file 69 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\freertos\\freertos\\mpu_wrappers.h"
 	.byte	0x3
 	.uleb128 0x7d
-	.uleb128 0x44
+	.uleb128 0x45
 	.byte	0x4
-	.file 69 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\esp32\\esp_system.h"
+	.file 70 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\esp32\\esp_system.h"
 	.byte	0x3
 	.uleb128 0x7e
-	.uleb128 0x45
+	.uleb128 0x46
 	.byte	0x5
 	.uleb128 0x10
 	.4byte	.LASF3542
-	.file 70 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\esp32\\esp_sleep.h"
+	.file 71 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\esp32\\esp_sleep.h"
 	.byte	0x3
 	.uleb128 0x15
-	.uleb128 0x46
-	.file 71 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\driver\\driver\\gpio.h"
+	.uleb128 0x47
+	.file 72 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\driver\\driver\\gpio.h"
 	.byte	0x3
 	.uleb128 0x13
-	.uleb128 0x47
+	.uleb128 0x48
 	.byte	0x5
 	.uleb128 0x10
 	.4byte	.LASF3543
-	.file 72 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\esp32\\esp_types.h"
+	.file 73 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\esp32\\esp_types.h"
 	.byte	0x3
 	.uleb128 0x12
-	.uleb128 0x48
+	.uleb128 0x49
 	.byte	0x5
 	.uleb128 0x10
 	.4byte	.LASF3544
 	.byte	0x3
 	.uleb128 0x17
-	.uleb128 0xf
+	.uleb128 0x10
 	.byte	0x4
 	.byte	0x4
-	.file 73 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\soc\\soc\\gpio_reg.h"
+	.file 74 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\soc\\soc\\gpio_reg.h"
 	.byte	0x3
 	.uleb128 0x13
-	.uleb128 0x49
+	.uleb128 0x4a
 	.byte	0x5
 	.uleb128 0xf
 	.4byte	.LASF3545
 	.byte	0x3
 	.uleb128 0x11
-	.uleb128 0x32
+	.uleb128 0x33
 	.byte	0x4
 	.byte	0x7
 	.4byte	.Ldebug_macro63
 	.byte	0x4
-	.file 74 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\soc\\soc\\gpio_struct.h"
+	.file 75 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\soc\\soc\\gpio_struct.h"
 	.byte	0x3
 	.uleb128 0x14
-	.uleb128 0x4a
+	.uleb128 0x4b
 	.byte	0x5
 	.uleb128 0xf
 	.4byte	.LASF8602
 	.byte	0x4
-	.file 75 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\soc\\soc\\rtc_io_reg.h"
+	.file 76 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\soc\\soc\\rtc_io_reg.h"
 	.byte	0x3
 	.uleb128 0x15
-	.uleb128 0x4b
+	.uleb128 0x4c
 	.byte	0x7
 	.4byte	.Ldebug_macro64
 	.byte	0x4
-	.file 76 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\soc\\soc\\io_mux_reg.h"
+	.file 77 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\soc\\soc\\io_mux_reg.h"
 	.byte	0x3
 	.uleb128 0x16
-	.uleb128 0x4c
+	.uleb128 0x4d
 	.byte	0x7
 	.4byte	.Ldebug_macro65
 	.byte	0x4
-	.file 77 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\soc\\soc\\gpio_sig_map.h"
+	.file 78 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\soc\\soc\\gpio_sig_map.h"
 	.byte	0x3
 	.uleb128 0x17
-	.uleb128 0x4d
+	.uleb128 0x4e
 	.byte	0x7
 	.4byte	.Ldebug_macro66
 	.byte	0x4
-	.file 78 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\esp32\\rom\\gpio.h"
+	.file 79 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\esp32\\rom\\gpio.h"
 	.byte	0x3
 	.uleb128 0x18
-	.uleb128 0x4e
+	.uleb128 0x4f
 	.byte	0x5
 	.uleb128 0x10
 	.4byte	.LASF10542
-	.file 79 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\soc\\soc\\gpio_pins.h"
+	.file 80 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\soc\\soc\\gpio_pins.h"
 	.byte	0x3
 	.uleb128 0x17
-	.uleb128 0x4f
+	.uleb128 0x50
 	.byte	0x7
 	.4byte	.Ldebug_macro67
 	.byte	0x4
 	.byte	0x7
 	.4byte	.Ldebug_macro68
 	.byte	0x4
-	.file 80 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\esp32\\esp_intr_alloc.h"
+	.file 81 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\esp32\\esp_intr_alloc.h"
 	.byte	0x3
 	.uleb128 0x1a
-	.uleb128 0x50
+	.uleb128 0x51
 	.byte	0x7
 	.4byte	.Ldebug_macro69
 	.byte	0x4
-	.file 81 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\soc\\soc\\gpio_periph.h"
+	.file 82 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\soc\\soc\\gpio_periph.h"
 	.byte	0x3
 	.uleb128 0x1b
-	.uleb128 0x51
+	.uleb128 0x52
 	.byte	0x5
 	.uleb128 0x10
 	.4byte	.LASF10579
@@ -2623,29 +2574,29 @@ preAlarmtimer:
 	.byte	0x7
 	.4byte	.Ldebug_macro70
 	.byte	0x4
-	.file 82 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\driver\\driver\\touch_pad.h"
-	.byte	0x3
-	.uleb128 0x14
-	.uleb128 0x52
-	.byte	0x5
-	.uleb128 0x10
-	.4byte	.LASF10660
-	.file 83 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\esp32\\esp_intr.h"
+	.file 83 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\driver\\driver\\touch_pad.h"
 	.byte	0x3
 	.uleb128 0x14
 	.uleb128 0x53
 	.byte	0x5
 	.uleb128 0x10
+	.4byte	.LASF10660
+	.file 84 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\esp32\\esp_intr.h"
+	.byte	0x3
+	.uleb128 0x14
+	.uleb128 0x54
+	.byte	0x5
+	.uleb128 0x10
 	.4byte	.LASF10661
-	.file 84 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\esp32\\rom/ets_sys.h"
+	.file 85 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\esp32\\rom/ets_sys.h"
 	.byte	0x3
 	.uleb128 0x12
-	.uleb128 0x54
+	.uleb128 0x55
 	.byte	0x4
-	.file 85 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\freertos\\freertos\\xtensa_api.h"
+	.file 86 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\freertos\\freertos\\xtensa_api.h"
 	.byte	0x3
 	.uleb128 0x13
-	.uleb128 0x55
+	.uleb128 0x56
 	.byte	0x5
 	.uleb128 0x1d
 	.4byte	.LASF10662
@@ -2653,10 +2604,10 @@ preAlarmtimer:
 	.byte	0x7
 	.4byte	.Ldebug_macro71
 	.byte	0x4
-	.file 86 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\soc\\soc\\touch_channel.h"
+	.file 87 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\soc\\soc\\touch_channel.h"
 	.byte	0x3
 	.uleb128 0x17
-	.uleb128 0x56
+	.uleb128 0x57
 	.byte	0x7
 	.4byte	.Ldebug_macro72
 	.byte	0x4
@@ -2673,103 +2624,103 @@ preAlarmtimer:
 	.byte	0x7
 	.4byte	.Ldebug_macro76
 	.byte	0x4
-	.file 87 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\freertos\\freertos\\task.h"
+	.file 88 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\freertos\\freertos\\task.h"
 	.byte	0x3
 	.uleb128 0x21
-	.uleb128 0x57
+	.uleb128 0x58
 	.byte	0x5
 	.uleb128 0x48
 	.4byte	.LASF10854
-	.file 88 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\newlib\\limits.h"
+	.file 89 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\newlib\\limits.h"
 	.byte	0x3
 	.uleb128 0x4e
-	.uleb128 0x58
+	.uleb128 0x59
 	.byte	0x7
 	.4byte	.Ldebug_macro77
-	.file 89 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\xtensa-esp32-elf\\lib\\gcc\\xtensa-esp32-elf\\5.2.0\\include-fixed\\limits.h"
+	.file 90 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\xtensa-esp32-elf\\lib\\gcc\\xtensa-esp32-elf\\5.2.0\\include-fixed\\limits.h"
 	.byte	0x3
 	.uleb128 0x83
-	.uleb128 0x59
+	.uleb128 0x5a
 	.byte	0x7
 	.4byte	.Ldebug_macro78
 	.byte	0x4
 	.byte	0x7
 	.4byte	.Ldebug_macro79
 	.byte	0x4
-	.file 90 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\freertos\\freertos\\list.h"
+	.file 91 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\freertos\\freertos\\list.h"
 	.byte	0x3
 	.uleb128 0x50
-	.uleb128 0x5a
+	.uleb128 0x5b
 	.byte	0x7
 	.4byte	.Ldebug_macro80
 	.byte	0x4
 	.byte	0x7
 	.4byte	.Ldebug_macro81
 	.byte	0x4
-	.file 91 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\freertos\\freertos\\semphr.h"
+	.file 92 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\freertos\\freertos\\semphr.h"
 	.byte	0x3
 	.uleb128 0x22
-	.uleb128 0x5b
+	.uleb128 0x5c
 	.byte	0x5
 	.uleb128 0x47
 	.4byte	.LASF10949
-	.file 92 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\freertos\\freertos\\queue.h"
+	.file 93 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\freertos\\freertos\\queue.h"
 	.byte	0x3
 	.uleb128 0x4d
-	.uleb128 0x5c
+	.uleb128 0x5d
 	.byte	0x7
 	.4byte	.Ldebug_macro82
 	.byte	0x4
 	.byte	0x7
 	.4byte	.Ldebug_macro83
 	.byte	0x4
-	.file 93 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\cores\\esp32\\esp32-hal.h"
+	.file 94 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\cores\\esp32\\esp32-hal.h"
 	.byte	0x3
 	.uleb128 0x23
-	.uleb128 0x5d
+	.uleb128 0x5e
 	.byte	0x5
 	.uleb128 0x15
 	.4byte	.LASF10995
 	.byte	0x3
 	.uleb128 0x23
-	.uleb128 0x26
+	.uleb128 0x27
 	.byte	0x7
 	.4byte	.Ldebug_macro34
 	.byte	0x4
 	.byte	0x7
 	.4byte	.Ldebug_macro84
-	.file 94 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\cores\\esp32\\esp32-hal-log.h"
+	.file 95 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\cores\\esp32\\esp32-hal-log.h"
 	.byte	0x3
 	.uleb128 0x32
-	.uleb128 0x5e
+	.uleb128 0x5f
 	.byte	0x5
 	.uleb128 0xf
 	.4byte	.LASF10999
 	.byte	0x3
 	.uleb128 0x16
-	.uleb128 0x26
+	.uleb128 0x27
 	.byte	0x7
 	.4byte	.Ldebug_macro34
 	.byte	0x4
 	.byte	0x7
 	.4byte	.Ldebug_macro85
-	.file 95 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\log\\esp_log.h"
+	.file 96 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\log\\esp_log.h"
 	.byte	0x3
 	.uleb128 0x80
-	.uleb128 0x5f
+	.uleb128 0x60
 	.byte	0x5
 	.uleb128 0x10
 	.4byte	.LASF11028
 	.byte	0x3
 	.uleb128 0x14
-	.uleb128 0x26
+	.uleb128 0x27
 	.byte	0x7
 	.4byte	.Ldebug_macro34
 	.byte	0x4
-	.file 96 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\log\\esp_log_internal.h"
+	.file 97 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\log\\esp_log_internal.h"
 	.byte	0x3
 	.uleb128 0x6f
-	.uleb128 0x60
+	.uleb128 0x61
 	.byte	0x5
 	.uleb128 0x10
 	.4byte	.LASF11029
@@ -2780,87 +2731,87 @@ preAlarmtimer:
 	.byte	0x7
 	.4byte	.Ldebug_macro87
 	.byte	0x4
-	.file 97 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\cores\\esp32\\esp32-hal-matrix.h"
+	.file 98 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\cores\\esp32\\esp32-hal-matrix.h"
 	.byte	0x3
 	.uleb128 0x33
-	.uleb128 0x61
+	.uleb128 0x62
 	.byte	0x5
 	.uleb128 0x10
 	.4byte	.LASF11078
 	.byte	0x3
 	.uleb128 0x17
-	.uleb128 0x5d
+	.uleb128 0x5e
 	.byte	0x4
 	.byte	0x4
-	.file 98 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\cores\\esp32\\esp32-hal-uart.h"
+	.file 99 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\cores\\esp32\\esp32-hal-uart.h"
 	.byte	0x3
 	.uleb128 0x34
-	.uleb128 0x62
+	.uleb128 0x63
 	.byte	0x7
 	.4byte	.Ldebug_macro88
 	.byte	0x4
-	.file 99 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\cores\\esp32\\esp32-hal-gpio.h"
+	.file 100 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\cores\\esp32\\esp32-hal-gpio.h"
 	.byte	0x3
 	.uleb128 0x35
-	.uleb128 0x63
+	.uleb128 0x64
 	.byte	0x7
 	.4byte	.Ldebug_macro89
 	.byte	0x4
-	.file 100 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\cores\\esp32\\esp32-hal-touch.h"
+	.file 101 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\cores\\esp32\\esp32-hal-touch.h"
 	.byte	0x3
 	.uleb128 0x36
-	.uleb128 0x64
+	.uleb128 0x65
 	.byte	0x5
 	.uleb128 0x15
 	.4byte	.LASF11137
 	.byte	0x4
-	.file 101 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\cores\\esp32\\esp32-hal-dac.h"
+	.file 102 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\cores\\esp32\\esp32-hal-dac.h"
 	.byte	0x3
 	.uleb128 0x37
-	.uleb128 0x65
+	.uleb128 0x66
 	.byte	0x5
 	.uleb128 0x15
 	.4byte	.LASF11138
 	.byte	0x4
-	.file 102 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\cores\\esp32\\esp32-hal-adc.h"
+	.file 103 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\cores\\esp32\\esp32-hal-adc.h"
 	.byte	0x3
 	.uleb128 0x38
-	.uleb128 0x66
+	.uleb128 0x67
 	.byte	0x5
 	.uleb128 0x15
 	.4byte	.LASF11139
 	.byte	0x4
-	.file 103 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\cores\\esp32\\esp32-hal-spi.h"
+	.file 104 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\cores\\esp32\\esp32-hal-spi.h"
 	.byte	0x3
 	.uleb128 0x39
-	.uleb128 0x67
+	.uleb128 0x68
 	.byte	0x7
 	.4byte	.Ldebug_macro90
 	.byte	0x4
-	.file 104 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\cores\\esp32\\esp32-hal-i2c.h"
+	.file 105 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\cores\\esp32\\esp32-hal-i2c.h"
 	.byte	0x3
 	.uleb128 0x3a
-	.uleb128 0x68
+	.uleb128 0x69
 	.byte	0x5
 	.uleb128 0x11
 	.4byte	.LASF11163
-	.file 105 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\freertos\\freertos\\event_groups.h"
+	.file 106 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\freertos\\freertos\\event_groups.h"
 	.byte	0x3
 	.uleb128 0x1a
-	.uleb128 0x69
+	.uleb128 0x6a
 	.byte	0x5
 	.uleb128 0x47
 	.4byte	.LASF11164
-	.file 106 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\freertos\\freertos\\timers.h"
+	.file 107 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\freertos\\freertos\\timers.h"
 	.byte	0x3
 	.uleb128 0x4d
-	.uleb128 0x6a
+	.uleb128 0x6b
 	.byte	0x5
 	.uleb128 0x48
 	.4byte	.LASF11165
 	.byte	0x3
 	.uleb128 0x50
-	.uleb128 0x57
+	.uleb128 0x58
 	.byte	0x4
 	.byte	0x7
 	.4byte	.Ldebug_macro91
@@ -2869,33 +2820,32 @@ preAlarmtimer:
 	.4byte	.Ldebug_macro92
 	.byte	0x4
 	.byte	0x4
-	.file 107 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\cores\\esp32\\esp32-hal-ledc.h"
+	.file 108 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\cores\\esp32\\esp32-hal-ledc.h"
 	.byte	0x3
 	.uleb128 0x3b
-	.uleb128 0x6b
+	.uleb128 0x6c
 	.byte	0x5
 	.uleb128 0x10
 	.4byte	.LASF11191
 	.byte	0x4
-	.file 108 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\cores\\esp32\\esp32-hal-rmt.h"
+	.file 109 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\cores\\esp32\\esp32-hal-rmt.h"
 	.byte	0x3
 	.uleb128 0x3c
-	.uleb128 0x6c
+	.uleb128 0x6d
 	.byte	0x7
 	.4byte	.Ldebug_macro93
 	.byte	0x4
-	.file 109 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\cores\\esp32\\esp32-hal-sigmadelta.h"
+	.file 110 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\cores\\esp32\\esp32-hal-sigmadelta.h"
 	.byte	0x3
 	.uleb128 0x3d
-	.uleb128 0x6d
+	.uleb128 0x6e
 	.byte	0x5
 	.uleb128 0x10
 	.4byte	.LASF11197
 	.byte	0x4
-	.file 110 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\cores\\esp32\\esp32-hal-timer.h"
 	.byte	0x3
 	.uleb128 0x3e
-	.uleb128 0x6e
+	.uleb128 0x4
 	.byte	0x5
 	.uleb128 0x15
 	.4byte	.LASF11198
@@ -2954,26 +2904,26 @@ preAlarmtimer:
 	.4byte	.Ldebug_macro96
 	.byte	0x3
 	.uleb128 0xb9
-	.uleb128 0x5
+	.uleb128 0x6
 	.byte	0x7
 	.4byte	.Ldebug_macro97
 	.byte	0x4
 	.byte	0x4
 	.byte	0x4
 	.byte	0x4
-	.file 117 "d:\\61722\\documents\\arduino\\libraries\\esp32_lorawan_vasr\\src\\rtc-board.h"
 	.byte	0x3
 	.uleb128 0x12
-	.uleb128 0x75
+	.uleb128 0x7
 	.byte	0x5
 	.uleb128 0x10
 	.4byte	.LASF11774
+	.file 117 "d:\\61722\\documents\\arduino\\hardware\\heltec\\esp32\\tools\\sdk\\include\\soc\\soc\\rtc.h"
 	.byte	0x3
 	.uleb128 0x11
-	.uleb128 0x6
+	.uleb128 0x75
 	.byte	0x3
 	.uleb128 0x11
-	.uleb128 0xf
+	.uleb128 0x10
 	.byte	0x4
 	.byte	0x7
 	.4byte	.Ldebug_macro98
@@ -39009,7 +38959,7 @@ preAlarmtimer:
 	.string	"XSHAL_ROM_VADDR 0x50000000"
 .LASF2385:
 	.string	"XCHAL_INTLEVEL_MASK(n) _XCHAL_INTLEVEL_MASK(n)"
-.LASF11868:
+.LASF11865:
 	.string	"TimerStartAlarm"
 .LASF11423:
 	.string	"B110011 51"
@@ -39183,7 +39133,7 @@ preAlarmtimer:
 	.string	"GPIO_PIN19_INT_TYPE 0x00000007"
 .LASF2253:
 	.string	"XCHAL_ITLB_SET0_PPN_CONSTMASK 0xE0000000"
-.LASF11848:
+.LASF11843:
 	.string	"Vext"
 .LASF5806:
 	.string	"GPIO_SIG93_IN_SEL_V 0x1"
@@ -40203,8 +40153,6 @@ preAlarmtimer:
 	.string	"B10101011 171"
 .LASF9338:
 	.string	"RTC_IO_TOUCH_PAD0_FUN_SEL_M ((RTC_IO_TOUCH_PAD0_FUN_SEL_V)<<(RTC_IO_TOUCH_PAD0_FUN_SEL_S))"
-.LASF11826:
-	.string	"TimerEvent_t"
 .LASF7251:
 	.string	"GPIO_FUNC204_IN_INV_SEL (BIT(6))"
 .LASF3708:
@@ -40283,6 +40231,8 @@ preAlarmtimer:
 	.string	"GPIO_FUNC174_IN_SEL_V 0x3F"
 .LASF10753:
 	.string	"traceQUEUE_CREATE(pxNewQueue) "
+.LASF1422:
+	.string	"PRIoPTR __PRIPTR(o)"
 .LASF10020:
 	.string	"IO_MUX_GPIO14_REG PERIPHS_IO_MUX_MTMS_U"
 .LASF5557:
@@ -40329,7 +40279,7 @@ preAlarmtimer:
 	.string	"GPIO_FUNC236_IN_INV_SEL (BIT(6))"
 .LASF7527:
 	.string	"GPIO_FUNC225_IN_INV_SEL_S 6"
-.LASF11856:
+.LASF11851:
 	.string	"RtcTimerEventAllowsLowPower"
 .LASF36:
 	.string	"__WCHAR_TYPE__ short unsigned int"
@@ -40533,8 +40483,8 @@ preAlarmtimer:
 	.string	"ESP_LOG_BUFFER_HEXDUMP(tag,buffer,buff_len,level) do { if ( LOG_LOCAL_LEVEL >= (level) ) { esp_log_buffer_hexdump_internal( tag, buffer, buff_len, level); } } while(0)"
 .LASF3801:
 	.string	"GPIO_PIN3_CONFIG_M ((GPIO_PIN3_CONFIG_V)<<(GPIO_PIN3_CONFIG_S))"
-.LASF2411:
-	.string	"XCHAL_INTLEVEL9_ANDBELOW_MASK XCHAL_INTLEVEL7_ANDBELOW_MASK"
+.LASF968:
+	.string	"__int_fast8_t_defined 1"
 .LASF2526:
 	.string	"XCHAL_EXCCAUSE_COPROCESSOR2_DISABLED 34"
 .LASF9552:
@@ -40869,8 +40819,8 @@ preAlarmtimer:
 	.string	"GPIO_PIN4_PAD_DRIVER_S 2"
 .LASF9626:
 	.string	"RTC_IO_TOUCH_PAD5_START (BIT(22))"
-.LASF1758:
-	.string	"CONFIG_ESP32_WIFI_TX_BUFFER_TYPE 1"
+.LASF3329:
+	.string	"DDR 104"
 .LASF3884:
 	.string	"GPIO_PIN7_CONFIG 0x00000003"
 .LASF528:
@@ -41037,8 +40987,8 @@ preAlarmtimer:
 	.string	"U0CTS_IN_IDX 15"
 .LASF5648:
 	.string	"GPIO_SIG81_IN_SEL (BIT(7))"
-.LASF11823:
-	.string	"IsRunning"
+.LASF6167:
+	.string	"GPIO_FUNC121_IN_SEL_CFG_REG (DR_REG_GPIO_BASE + 0x0314)"
 .LASF7708:
 	.string	"GPIO_FUNC239_IN_INV_SEL_V 0x1"
 .LASF200:
@@ -41127,7 +41077,7 @@ preAlarmtimer:
 	.string	"__SWID 0x2000"
 .LASF1935:
 	.string	"XTENSA_HWVERSION_T1020_2B 102002"
-.LASF11840:
+.LASF11835:
 	.string	"BlockLowPowerDuringTask"
 .LASF9394:
 	.string	"RTC_IO_TOUCH_PAD1_MUX_SEL (BIT(19))"
@@ -41141,7 +41091,7 @@ preAlarmtimer:
 	.string	"GPIO_FUNC208_IN_SEL_S 0"
 .LASF4712:
 	.string	"GPIO_SIG9_IN_SEL (BIT(7))"
-.LASF11849:
+.LASF11844:
 	.string	"RST_OLED"
 .LASF7174:
 	.string	"GPIO_FUNC198_IN_INV_SEL_M (BIT(6))"
@@ -41430,7 +41380,7 @@ preAlarmtimer:
 	.string	"XCHAL_INT15_TYPE XTHAL_INTTYPE_TIMER"
 .LASF913:
 	.string	"isless(x,y) (__extension__ ({__typeof__(x) __x = (x); __typeof__(y) __y = (y); !isunordered(__x,__y) && (__x < __y);}))"
-.LASF11850:
+.LASF11845:
 	.string	"SCL_OLED"
 .LASF9767:
 	.string	"RTC_IO_TOUCH_PAD7_FUN_SEL_S 17"
@@ -41558,8 +41508,6 @@ preAlarmtimer:
 	.string	"ETS_PCNT_INTR_SOURCE 48"
 .LASF8005:
 	.string	"GPIO_FUNC4_OUT_SEL_V 0x1FF"
-.LASF449:
-	.string	"XCHAL_DATAROM0_ECC_PARITY 0"
 .LASF1486:
 	.string	"CONFIG_SPIRAM_USE_CAPS_ALLOC 1"
 .LASF5712:
@@ -42068,8 +42016,6 @@ preAlarmtimer:
 	.string	"GPIO_FUNC158_IN_SEL_S 0"
 .LASF862:
 	.string	"_REENT_MP_RESULT(ptr) ((ptr)->_mp->_result)"
-.LASF11241:
-	.string	"B000100 4"
 .LASF95:
 	.string	"__UINT32_MAX__ 0xffffffffUL"
 .LASF3460:
@@ -42208,7 +42154,7 @@ preAlarmtimer:
 	.string	"GPIO_SIG52_IN_SEL_V 0x1"
 .LASF9509:
 	.string	"RTC_IO_TOUCH_PAD3_TIE_OPT_M (BIT(21))"
-.LASF11865:
+.LASF11862:
 	.string	"D:\\\\61722\\\\Documents\\\\Arduino\\\\libraries\\\\ESP32_LoRaWAN_VASR\\\\src\\\\rtc-board.c"
 .LASF5872:
 	.string	"GPIO_SIG98_IN_SEL_S 7"
@@ -42238,7 +42184,7 @@ preAlarmtimer:
 	.string	"__unused __attribute__((__unused__))"
 .LASF10757:
 	.string	"traceGIVE_MUTEX_RECURSIVE(pxMutex) "
-.LASF11833:
+.LASF11828:
 	.string	"contextTime"
 .LASF7118:
 	.string	"GPIO_SIG194_IN_SEL_M (BIT(7))"
@@ -42296,7 +42242,7 @@ preAlarmtimer:
 	.string	"GPIO_SIG18_IN_SEL_M (BIT(7))"
 .LASF34:
 	.string	"__SIZE_TYPE__ unsigned int"
-.LASF11831:
+.LASF11826:
 	.string	"TimerGetElapsedAlarmTime"
 .LASF9105:
 	.string	"RTC_IO_PDAC1_FUN_SEL 0x00000003"
@@ -42360,8 +42306,8 @@ preAlarmtimer:
 	.string	"GPIO_FUNC2_OUT_SEL 0x000001FF"
 .LASF9716:
 	.string	"RTC_IO_TOUCH_PAD6_SLP_OE_M (BIT(14))"
-.LASF3329:
-	.string	"DDR 104"
+.LASF8196:
+	.string	"GPIO_FUNC16_OEN_INV_SEL_M (BIT(11))"
 .LASF9375:
 	.string	"RTC_IO_TOUCH_PAD1_RUE_M (BIT(27))"
 .LASF7650:
@@ -42494,8 +42440,8 @@ preAlarmtimer:
 	.string	"RTC_IO_TOUCH_PAD8_TIE_OPT_M (BIT(21))"
 .LASF5438:
 	.string	"GPIO_FUNC64_IN_SEL_S 0"
-.LASF11771:
-	.string	"digitalPinToInterrupt(p) (((p)<40)?(p):-1)"
+.LASF11680:
+	.string	"B11011010 218"
 .LASF10897:
 	.string	"LONG_LONG_MIN (-LONG_LONG_MAX - 1LL)"
 .LASF2492:
@@ -42846,7 +42792,7 @@ preAlarmtimer:
 	.string	"RTC_IO_TOUCH_PAD7_MUX_SEL (BIT(19))"
 .LASF3651:
 	.string	"GPIO_STATUS1_W1TS_REG (DR_REG_GPIO_BASE + 0x0054)"
-.LASF11838:
+.LASF11833:
 	.string	"elapsedTime"
 .LASF4731:
 	.string	"GPIO_FUNC10_IN_INV_SEL_V 0x1"
@@ -42862,7 +42808,7 @@ preAlarmtimer:
 	.string	"RTC_GPIO_PIN14_INT_TYPE 0x00000007"
 .LASF2897:
 	.string	"DEBUGCAUSE_IBREAK_SHIFT 1"
-.LASF11843:
+.LASF11838:
 	.string	"KEY_BUILTIN"
 .LASF1093:
 	.string	"__CC_SUPPORTS___INLINE 1"
@@ -42976,8 +42922,6 @@ preAlarmtimer:
 	.string	"DR_REG_TIMERGROUP1_BASE 0x3ff60000"
 .LASF3228:
 	.string	"ETS_T1_WDT_INUM 24"
-.LASF11824:
-	.string	"Callback"
 .LASF4:
 	.string	"__STDC_HOSTED__ 1"
 .LASF4874:
@@ -43250,8 +43194,6 @@ preAlarmtimer:
 	.string	"RTC_IO_PDAC1_MUX_SEL_M (BIT(17))"
 .LASF1226:
 	.string	"__SNLK 0x0001"
-.LASF8555:
-	.string	"GPIO_FUNC37_OEN_INV_SEL_S 11"
 .LASF3605:
 	.string	"GPIO_ENABLE1_DATA_S 0"
 .LASF1604:
@@ -43580,8 +43522,8 @@ preAlarmtimer:
 	.string	"RTC_GPIO_PIN7_PAD_DRIVER_M (BIT(2))"
 .LASF10018:
 	.string	"FUNC_MTCK_MTCK 0"
-.LASF11825:
-	.string	"Next"
+.LASF1031:
+	.string	"INTMAX_C(x) __INTMAX_C(x)"
 .LASF6895:
 	.string	"GPIO_FUNC177_IN_SEL_CFG_REG (DR_REG_GPIO_BASE + 0x03f4)"
 .LASF7741:
@@ -44503,8 +44445,8 @@ preAlarmtimer:
 	.string	"_max(a,b) ((a)>(b)?(a):(b))"
 .LASF2992:
 	.string	"TRY_STATIC_ASSERT(CONDITION,MSG) do { _Static_assert(__builtin_choose_expr(__builtin_constant_p(CONDITION), (CONDITION), 1), #MSG); assert(#MSG && (CONDITION)); } while(0)"
-.LASF11822:
-	.string	"ReloadValue"
+.LASF449:
+	.string	"XCHAL_DATAROM0_ECC_PARITY 0"
 .LASF8814:
 	.string	"RTC_GPIO_PIN12_WAKEUP_ENABLE_S 10"
 .LASF4488:
@@ -44805,7 +44747,7 @@ preAlarmtimer:
 	.string	"GPIO_FUNC226_IN_SEL 0x0000003F"
 .LASF8561:
 	.string	"GPIO_FUNC37_OUT_INV_SEL_M (BIT(9))"
-.LASF11851:
+.LASF11846:
 	.string	"SDA_OLED"
 .LASF725:
 	.string	"_PTR void *"
@@ -45199,6 +45141,8 @@ preAlarmtimer:
 	.string	"FUNC_GPIO22_GPIO22 2"
 .LASF1689:
 	.string	"CONFIG_ENABLE_ARDUINO_DEPENDS 1"
+.LASF11262:
+	.string	"B1000 8"
 .LASF10863:
 	.string	"SCHAR_MIN (-SCHAR_MAX - 1)"
 .LASF6554:
@@ -45539,8 +45483,10 @@ preAlarmtimer:
 	.string	"GPIO_FUNC6_OUT_INV_SEL_S 9"
 .LASF8820:
 	.string	"RTC_GPIO_PIN12_PAD_DRIVER_M (BIT(2))"
-.LASF7944:
-	.string	"GPIO_FUNC1_OEN_SEL (BIT(10))"
+.LASF11863:
+	.string	"hw_timer_s"
+.LASF11821:
+	.string	"hw_timer_t"
 .LASF9355:
 	.string	"RTC_IO_TOUCH_PAD0_FUN_IE_V 0x1"
 .LASF8241:
@@ -45979,6 +45925,8 @@ preAlarmtimer:
 	.string	"GPIO_FUNC4_OUT_SEL_CFG_REG (DR_REG_GPIO_BASE + 0x0540)"
 .LASF9881:
 	.string	"SLP_DRV_M (SLP_DRV_V << SLP_DRV_S)"
+.LASF11859:
+	.string	"timerRead"
 .LASF4588:
 	.string	"GPIO_CALI_RDY_REAL_V 0x1"
 .LASF5635:
@@ -46629,7 +46577,7 @@ preAlarmtimer:
 	.string	"DR_REG_UART1_BASE 0x3ff50000"
 .LASF10522:
 	.string	"PCMFSYNC_OUT_IDX 210"
-.LASF11862:
+.LASF11857:
 	.string	"NonScheduledWakeUp"
 .LASF6523:
 	.string	"GPIO_FUNC148_IN_INV_SEL (BIT(6))"
@@ -46815,8 +46763,8 @@ preAlarmtimer:
 	.string	"GPIO_FUNC57_IN_INV_SEL (BIT(6))"
 .LASF900:
 	.string	"FP_ILOGB0 (-INT_MAX)"
-.LASF10994:
-	.string	"uxSemaphoreGetCount(xSemaphore) uxQueueMessagesWaiting( ( QueueHandle_t ) ( xSemaphore ) )"
+.LASF11241:
+	.string	"B000100 4"
 .LASF4507:
 	.string	"GPIO_PIN36_PAD_DRIVER_V 0x1"
 .LASF956:
@@ -46941,7 +46889,7 @@ preAlarmtimer:
 	.string	"GPIO_FUNC9_IN_INV_SEL_V 0x1"
 .LASF710:
 	.string	"__BUFSIZ__ 128"
-.LASF11869:
+.LASF11866:
 	.string	"timeoutValue"
 .LASF4502:
 	.string	"GPIO_PIN36_INT_TYPE_M ((GPIO_PIN36_INT_TYPE_V)<<(GPIO_PIN36_INT_TYPE_S))"
@@ -47113,7 +47061,7 @@ preAlarmtimer:
 	.string	"GPIO_FUNC74_IN_SEL_M ((GPIO_FUNC74_IN_SEL_V)<<(GPIO_FUNC74_IN_SEL_S))"
 .LASF8498:
 	.string	"GPIO_FUNC33_OUT_SEL_V 0x1FF"
-.LASF11863:
+.LASF11858:
 	.string	"McuWakeUpTime"
 .LASF10432:
 	.string	"I2S0O_DATA_OUT14_IDX 154"
@@ -47141,7 +47089,7 @@ preAlarmtimer:
 	.string	"GPIO_FUNC221_IN_SEL_S 0"
 .LASF11075:
 	.string	"ESP_EARLY_LOGI(tag,...) isr_log_i(__VA_ARGS__)"
-.LASF11841:
+.LASF11836:
 	.string	"status"
 .LASF3920:
 	.string	"GPIO_PIN8_PAD_DRIVER_S 2"
@@ -47267,8 +47215,8 @@ preAlarmtimer:
 	.string	"GPIO_FUNC5_OUT_INV_SEL_V 0x1"
 .LASF9276:
 	.string	"RTC_IO_DBIAS_XTAL_32K_M ((RTC_IO_DBIAS_XTAL_32K_V)<<(RTC_IO_DBIAS_XTAL_32K_S))"
-.LASF6040:
-	.string	"GPIO_SIG111_IN_SEL_V 0x1"
+.LASF8555:
+	.string	"GPIO_FUNC37_OEN_INV_SEL_S 11"
 .LASF1252:
 	.string	"__sputc_raw_r(__ptr,__c,__p) (--(__p)->_w < 0 ? (__p)->_w >= (__p)->_lbfsize ? (*(__p)->_p = (__c)), *(__p)->_p != '\\n' ? (int)*(__p)->_p++ : __swbuf_r(__ptr, '\\n', __p) : __swbuf_r(__ptr, (int)(__c), __p) : (*(__p)->_p = (__c), (int)*(__p)->_p++))"
 .LASF6921:
@@ -47719,8 +47667,6 @@ preAlarmtimer:
 	.string	"RTC_GPIO_PIN0_REG (DR_REG_RTCIO_BASE + 0x28)"
 .LASF9017:
 	.string	"RTC_IO_SENSE4_SLP_SEL_V 0x1"
-.LASF11300:
-	.string	"B0001111 15"
 .LASF6931:
 	.string	"GPIO_FUNC179_IN_SEL_M ((GPIO_FUNC179_IN_SEL_V)<<(GPIO_FUNC179_IN_SEL_S))"
 .LASF10080:
@@ -47795,7 +47741,7 @@ preAlarmtimer:
 	.string	"GPIO_SIG37_IN_SEL_M (BIT(7))"
 .LASF1649:
 	.string	"CONFIG_BOOTLOADER_VDDSDIO_BOOST_1_9V 1"
-.LASF11830:
+.LASF11825:
 	.string	"timeout"
 .LASF7793:
 	.string	"GPIO_SIG246_IN_SEL (BIT(7))"
@@ -47831,7 +47777,7 @@ preAlarmtimer:
 	.string	"GPIO_FUNC18_OUT_SEL_S 0"
 .LASF430:
 	.string	"XCHAL_NUM_DATAROM 1"
-.LASF11867:
+.LASF11864:
 	.string	"RtcRecoverMcuStatus"
 .LASF7932:
 	.string	"GPIO_FUNC0_OUT_INV_SEL_M (BIT(9))"
@@ -48021,8 +47967,8 @@ preAlarmtimer:
 	.string	"GPIO_APPCPU_INT_S 0"
 .LASF10271:
 	.string	"VSPICS2_IN_IDX 70"
-.LASF11870:
-	.string	"rtc_time_get"
+.LASF10586:
+	.string	"GPIO_SEL_6 (BIT(6))"
 .LASF2386:
 	.string	"_XCHAL_INTLEVEL_ANDBELOWMASK(n) XCHAL_INTLEVEL ## n ## _ANDBELOW_MASK"
 .LASF10394:
@@ -48789,7 +48735,7 @@ preAlarmtimer:
 	.string	"GPIO_PIN0_REG (DR_REG_GPIO_BASE + 0x0088)"
 .LASF5903:
 	.string	"GPIO_FUNC100_IN_SEL 0x0000003F"
-.LASF11837:
+.LASF11832:
 	.string	"eventInTime"
 .LASF8993:
 	.string	"RTC_IO_SENSE2_FUN_IE_V 0x1"
@@ -48963,6 +48909,8 @@ preAlarmtimer:
 	.string	"GPIO_FUNC199_IN_SEL_CFG_REG (DR_REG_GPIO_BASE + 0x044c)"
 .LASF5216:
 	.string	"GPIO_FUNC47_IN_SEL_V 0x3F"
+.LASF11853:
+	.string	"timer"
 .LASF9735:
 	.string	"RTC_IO_TOUCH_PAD7_DRV_S 29"
 .LASF6472:
@@ -49083,7 +49031,7 @@ preAlarmtimer:
 	.string	"GPIO_FUNC62_IN_INV_SEL_V 0x1"
 .LASF5946:
 	.string	"GPIO_FUNC104_IN_SEL_CFG_REG (DR_REG_GPIO_BASE + 0x02d0)"
-.LASF11864:
+.LASF11861:
 	.string	"GNU C99 5.2.0 -mlongcalls -g3 -Os -std=gnu99 -fstack-protector -ffunction-sections -fdata-sections -fstrict-volatile-bitfields"
 .LASF10493:
 	.string	"I2S1I_H_SYNC_IDX 193"
@@ -49185,7 +49133,7 @@ preAlarmtimer:
 	.string	"GPIO_FUNC118_IN_INV_SEL_M (BIT(6))"
 .LASF1182:
 	.string	"NFDBITS (sizeof (fd_mask) * NBBY)"
-.LASF11842:
+.LASF11837:
 	.string	"LED_BUILTIN"
 .LASF11320:
 	.string	"B0010100 20"
@@ -49299,9 +49247,9 @@ preAlarmtimer:
 	.string	"B01000000 64"
 .LASF9393:
 	.string	"RTC_IO_TOUCH_PAD1_XPD_S 20"
-.LASF11846:
+.LASF11841:
 	.string	"DAC1"
-.LASF11847:
+.LASF11842:
 	.string	"DAC2"
 .LASF11807:
 	.string	"__uint32_t"
@@ -49691,6 +49639,8 @@ preAlarmtimer:
 	.string	"GPIO_FUNC204_IN_INV_SEL_M (BIT(6))"
 .LASF4341:
 	.string	"GPIO_PIN29_REG (DR_REG_GPIO_BASE + 0x00fc)"
+.LASF9457:
+	.string	"RTC_IO_TOUCH_PAD2_MUX_SEL_V 0x1"
 .LASF9138:
 	.string	"RTC_IO_PDAC2_RDE (BIT(28))"
 .LASF10188:
@@ -49917,7 +49867,7 @@ preAlarmtimer:
 	.string	"__GCC_IEC_559 0"
 .LASF4901:
 	.string	"GPIO_FUNC23_IN_INV_SEL_S 6"
-.LASF11827:
+.LASF11822:
 	.string	"TimerTime_t"
 .LASF11117:
 	.string	"FUNCTION_2 0x20"
@@ -50456,8 +50406,8 @@ preAlarmtimer:
 	.string	"GPIO_FUNC32_OUT_SEL_V 0x1FF"
 .LASF4369:
 	.string	"GPIO_PIN30_CONFIG_V 0x3"
-.LASF11262:
-	.string	"B1000 8"
+.LASF2099:
+	.string	"XTENSA_HWCIDVERS_RF_2015_2 114"
 .LASF7641:
 	.string	"GPIO_FUNC234_IN_INV_SEL (BIT(6))"
 .LASF5961:
@@ -50855,7 +50805,7 @@ preAlarmtimer:
 	.string	"RTC_GPIO_PIN17_WAKEUP_ENABLE (BIT(10))"
 .LASF7391:
 	.string	"GPIO_SIG215_IN_SEL_M (BIT(7))"
-.LASF11858:
+.LASF11854:
 	.string	"TimeSwitch"
 .LASF6337:
 	.string	"GPIO_SIG134_IN_SEL (BIT(7))"
@@ -50915,7 +50865,7 @@ preAlarmtimer:
 	.string	"GPIO_FUNC38_OEN_INV_SEL (BIT(11))"
 .LASF9962:
 	.string	"IO_MUX_GPIO6_REG PERIPHS_IO_MUX_SD_CLK_U"
-.LASF11828:
+.LASF11823:
 	.string	"TimerGetAdjustedTimeoutValue"
 .LASF2323:
 	.string	"XCHAL_DTLB_SET0_E7_PPN_CONST 0xE0000000"
@@ -51123,8 +51073,8 @@ preAlarmtimer:
 	.string	"GPIO_PIN12_WAKEUP_ENABLE_M (BIT(10))"
 .LASF9133:
 	.string	"RTC_IO_PDAC2_DRV_S 30"
-.LASF8600:
-	.string	"GPIO_FUNC39_OUT_SEL_V 0x1FF"
+.LASF1758:
+	.string	"CONFIG_ESP32_WIFI_TX_BUFFER_TYPE 1"
 .LASF4802:
 	.string	"GPIO_FUNC16_IN_SEL_CFG_REG (DR_REG_GPIO_BASE + 0x0170)"
 .LASF296:
@@ -51235,8 +51185,8 @@ preAlarmtimer:
 	.string	"CONFIG_PARTITION_TABLE_MD5 1"
 .LASF1916:
 	.string	"XCHAL_SUCCESS 0"
-.LASF1422:
-	.string	"PRIoPTR __PRIPTR(o)"
+.LASF6041:
+	.string	"GPIO_SIG111_IN_SEL_S 7"
 .LASF1073:
 	.string	"__has_feature(x) 0"
 .LASF10137:
@@ -51345,8 +51295,8 @@ preAlarmtimer:
 	.string	"GPIO_SIG50_IN_SEL_V 0x1"
 .LASF5395:
 	.string	"GPIO_FUNC61_IN_INV_SEL_S 6"
-.LASF2099:
-	.string	"XTENSA_HWCIDVERS_RF_2015_2 114"
+.LASF6014:
+	.string	"GPIO_SIG109_IN_SEL_V 0x1"
 .LASF3324:
 	.string	"WINDOWBASE 72"
 .LASF5083:
@@ -51409,8 +51359,6 @@ preAlarmtimer:
 	.string	"GPIO_FUNC23_OUT_SEL_S 0"
 .LASF5175:
 	.string	"GPIO_FUNC44_IN_SEL 0x0000003F"
-.LASF11861:
-	.string	"TimerListHead"
 .LASF7054:
 	.string	"GPIO_SIG189_IN_SEL_V 0x1"
 .LASF3815:
@@ -51917,7 +51865,7 @@ preAlarmtimer:
 	.string	"GPIO_FUNC39_OEN_INV_SEL_M (BIT(11))"
 .LASF8524:
 	.string	"GPIO_FUNC35_OEN_SEL_V 0x1"
-.LASF11860:
+.LASF11856:
 	.string	"nextAlarm"
 .LASF5559:
 	.string	"GPIO_SIG74_IN_SEL_V 0x1"
@@ -52005,8 +51953,8 @@ preAlarmtimer:
 	.string	"GPIO_FUNC22_OEN_INV_SEL_M (BIT(11))"
 .LASF9645:
 	.string	"RTC_IO_TOUCH_PAD5_FUN_SEL_S 17"
-.LASF7696:
-	.string	"GPIO_FUNC238_IN_INV_SEL_S 6"
+.LASF2411:
+	.string	"XCHAL_INTLEVEL9_ANDBELOW_MASK XCHAL_INTLEVEL7_ANDBELOW_MASK"
 .LASF3584:
 	.string	"GPIO_SDIO_SEL_V 0xFF"
 .LASF1771:
@@ -52197,7 +52145,7 @@ preAlarmtimer:
 	.string	"GPIO_FUNC183_IN_INV_SEL_V 0x1"
 .LASF8986:
 	.string	"RTC_IO_SENSE2_SLP_SEL_S 16"
-.LASF11857:
+.LASF11852:
 	.string	"LowPowerDisableDuringTask"
 .LASF669:
 	.string	"XCHAL_INTLEVEL5_VECOFS 0x00000240"
@@ -52497,7 +52445,7 @@ preAlarmtimer:
 	.string	"RTC_GPIO_PIN5_PAD_DRIVER_V 0x1"
 .LASF7238:
 	.string	"GPIO_FUNC203_IN_INV_SEL (BIT(6))"
-.LASF11829:
+.LASF11824:
 	.string	"TimerGetTimerValue"
 .LASF7780:
 	.string	"GPIO_SIG245_IN_SEL (BIT(7))"
@@ -52717,8 +52665,6 @@ preAlarmtimer:
 	.string	"PCNT_CTRL_CH1_IN4_IDX 58"
 .LASF7138:
 	.string	"GPIO_FUNC195_IN_SEL 0x0000003F"
-.LASF10586:
-	.string	"GPIO_SEL_6 (BIT(6))"
 .LASF2044:
 	.string	"XTENSA_HWCIDSCHEME_RC_2010_1 1100"
 .LASF2401:
@@ -52841,7 +52787,7 @@ preAlarmtimer:
 	.string	"PERIPHS_IO_MUX_SD_DATA1_U (DR_REG_IO_MUX_BASE +0x68)"
 .LASF1700:
 	.string	"CONFIG_TCP_MAXRTX 12"
-.LASF11844:
+.LASF11839:
 	.string	"MOSI"
 .LASF7015:
 	.string	"GPIO_SIG186_IN_SEL_V 0x1"
@@ -53177,6 +53123,8 @@ preAlarmtimer:
 	.string	"TIMERS_H "
 .LASF8267:
 	.string	"GPIO_FUNC20_OEN_SEL (BIT(10))"
+.LASF11771:
+	.string	"digitalPinToInterrupt(p) (((p)<40)?(p):-1)"
 .LASF8953:
 	.string	"RTC_IO_SENSE2_MUX_SEL_V 0x1"
 .LASF4078:
@@ -53205,6 +53153,8 @@ preAlarmtimer:
 	.string	"ESP_EARLY_LOGV(tag,...) isr_log_v(__VA_ARGS__)"
 .LASF4744:
 	.string	"GPIO_FUNC11_IN_INV_SEL_V 0x1"
+.LASF11860:
+	.string	"timerGetDivider"
 .LASF3430:
 	.string	"MALLOC_CAP_8BIT (1<<2)"
 .LASF10956:
@@ -53388,7 +53338,7 @@ preAlarmtimer:
 	.string	"GPIO_FUNC90_IN_INV_SEL_V 0x1"
 .LASF4698:
 	.string	"GPIO_FUNC8_IN_SEL_CFG_REG (DR_REG_GPIO_BASE + 0x0150)"
-.LASF11859:
+.LASF11855:
 	.string	"preAlarmtimer"
 .LASF8767:
 	.string	"RTC_GPIO_PIN8_PAD_DRIVER (BIT(2))"
@@ -54061,7 +54011,7 @@ preAlarmtimer:
 	.string	"GPIO_CALI_RDY_REAL (BIT(30))"
 .LASF9565:
 	.string	"RTC_IO_TOUCH_PAD4_START (BIT(22))"
-.LASF11832:
+.LASF11827:
 	.string	"currentTime"
 .LASF9142:
 	.string	"RTC_IO_PDAC2_RUE (BIT(27))"
@@ -54129,7 +54079,7 @@ preAlarmtimer:
 	.string	"B11011 27"
 .LASF2505:
 	.string	"XCHAL_EXCCAUSE_INSTRUCTION_FETCH_ERROR 2"
-.LASF11834:
+.LASF11829:
 	.string	"TimerComputeFutureEventTime"
 .LASF11224:
 	.string	"B10 2"
@@ -54193,8 +54143,8 @@ preAlarmtimer:
 	.string	"INT_LEAST32_MAX __INT_LEAST32_MAX__"
 .LASF4596:
 	.string	"GPIO_SIG0_IN_SEL_M (BIT(7))"
-.LASF5943:
-	.string	"GPIO_FUNC103_IN_SEL_M ((GPIO_FUNC103_IN_SEL_V)<<(GPIO_FUNC103_IN_SEL_S))"
+.LASF7672:
+	.string	"GPIO_FUNC236_IN_SEL_M ((GPIO_FUNC236_IN_SEL_V)<<(GPIO_FUNC236_IN_SEL_S))"
 .LASF8947:
 	.string	"RTC_IO_SENSE1_MUX_SEL (BIT(27))"
 .LASF10308:
@@ -54223,8 +54173,6 @@ preAlarmtimer:
 	.string	"RTC_GPIO_PIN0_INT_TYPE 0x00000007"
 .LASF6520:
 	.string	"GPIO_SIG148_IN_SEL_M (BIT(7))"
-.LASF9369:
-	.string	"RTC_IO_TOUCH_PAD1_DRV_S 29"
 .LASF1333:
 	.string	"SCNuFAST16 __SCN16(u)"
 .LASF9464:
@@ -54620,7 +54568,7 @@ preAlarmtimer:
 	.string	"XTENSA_SWVERSION_T1050_5 105005"
 .LASF9901:
 	.string	"MCU_SEL_M (MCU_SEL_V << MCU_SEL_S)"
-.LASF11852:
+.LASF11847:
 	.string	"RST_LoRa"
 .LASF7519:
 	.string	"GPIO_FUNC225_IN_SEL_CFG_REG (DR_REG_GPIO_BASE + 0x04b4)"
@@ -54650,8 +54598,8 @@ preAlarmtimer:
 	.string	"GPIO_CALI_RDY_SYNC2_V 0x1"
 .LASF10078:
 	.string	"FUNC_GPIO22_GPIO22_0 0"
-.LASF11680:
-	.string	"B11011010 218"
+.LASF7696:
+	.string	"GPIO_FUNC238_IN_INV_SEL_S 6"
 .LASF8559:
 	.string	"GPIO_FUNC37_OEN_SEL_S 10"
 .LASF3277:
@@ -55072,8 +55020,8 @@ preAlarmtimer:
 	.string	"XCHAL_ITLB_SET0_E2_VPN_CONST 0x40000000"
 .LASF1028:
 	.string	"UINT32_C(x) __UINT32_C(x)"
-.LASF6041:
-	.string	"GPIO_SIG111_IN_SEL_S 7"
+.LASF11668:
+	.string	"B11001110 206"
 .LASF3187:
 	.string	"ETS_I2S1_INTR_SOURCE 33"
 .LASF5741:
@@ -55084,11 +55032,11 @@ preAlarmtimer:
 	.string	"_SYS_FEATURES_H "
 .LASF6817:
 	.string	"GPIO_FUNC171_IN_SEL_CFG_REG (DR_REG_GPIO_BASE + 0x03dc)"
-.LASF11853:
+.LASF11848:
 	.string	"DIO0"
-.LASF11854:
+.LASF11849:
 	.string	"DIO1"
-.LASF11855:
+.LASF11850:
 	.string	"DIO2"
 .LASF4307:
 	.string	"GPIO_PIN27_CONFIG_S 11"
@@ -55304,8 +55252,8 @@ preAlarmtimer:
 	.string	"GPIO_FUNC11_OEN_INV_SEL (BIT(11))"
 .LASF9285:
 	.string	"RTC_IO_TOUCH_DREFH_M ((RTC_IO_TOUCH_DREFH_V)<<(RTC_IO_TOUCH_DREFH_S))"
-.LASF968:
-	.string	"__int_fast8_t_defined 1"
+.LASF11623:
+	.string	"B10100001 161"
 .LASF2880:
 	.string	"PS_PROG_SHIFT PS_UM_SHIFT"
 .LASF6170:
@@ -55724,15 +55672,15 @@ preAlarmtimer:
 	.string	"GPIO_FUNC196_IN_SEL_CFG_REG (DR_REG_GPIO_BASE + 0x0440)"
 .LASF6633:
 	.string	"GPIO_FUNC156_IN_SEL_V 0x3F"
-.LASF11866:
-	.string	"TimerEvent_s"
+.LASF9369:
+	.string	"RTC_IO_TOUCH_PAD1_DRV_S 29"
 .LASF4373:
 	.string	"GPIO_PIN30_WAKEUP_ENABLE_V 0x1"
 .LASF10740:
 	.string	"traceINCREASE_TICK_COUNT(x) "
 .LASF994:
 	.string	"INT64_MAX __INT64_MAX__"
-.LASF11839:
+.LASF11834:
 	.string	"TimerSetTime"
 .LASF678:
 	.string	"XCHAL_NMI_VECOFS 0x000002C0"
@@ -56054,8 +56002,6 @@ preAlarmtimer:
 	.string	"RTC_IO_TOUCH_PAD6_XPD (BIT(20))"
 .LASF2891:
 	.string	"DEBUGCAUSE_BREAKN_SHIFT 4"
-.LASF11668:
-	.string	"B11001110 206"
 .LASF100:
 	.string	"__INT16_C(c) c"
 .LASF7159:
@@ -56578,8 +56524,8 @@ preAlarmtimer:
 	.string	"CONFIG_WARN_WRITE_STRINGS 1"
 .LASF5179:
 	.string	"GPIO_FUNC45_IN_SEL_CFG_REG (DR_REG_GPIO_BASE + 0x01e4)"
-.LASF6014:
-	.string	"GPIO_SIG109_IN_SEL_V 0x1"
+.LASF11300:
+	.string	"B0001111 15"
 .LASF3733:
 	.string	"GPIO_PIN0_INT_ENA 0x0000001F"
 .LASF10495:
@@ -57226,8 +57172,6 @@ preAlarmtimer:
 	.string	"CONFIG_BLUEDROID_PINNED_TO_CORE_0 1"
 .LASF8548:
 	.string	"GPIO_FUNC36_OUT_SEL_M ((GPIO_FUNC36_OUT_SEL_V)<<(GPIO_FUNC36_OUT_SEL_S))"
-.LASF10858:
-	.string	"_GCC_LIMITS_H_ "
 .LASF9726:
 	.string	"RTC_IO_TOUCH_PAD6_TO_GPIO_S 12"
 .LASF3234:
@@ -57704,8 +57648,6 @@ preAlarmtimer:
 	.string	"GPIO_FUNC131_IN_SEL_S 0"
 .LASF9814:
 	.string	"RTC_IO_TOUCH_PAD9_START (BIT(22))"
-.LASF11821:
-	.string	"Timestamp"
 .LASF9576:
 	.string	"RTC_IO_TOUCH_PAD4_XPD_S 20"
 .LASF2507:
@@ -58018,6 +57960,8 @@ preAlarmtimer:
 	.string	"CONFIG_ARDUHAL_PARTITION_SCHEME_DEFAULT 1"
 .LASF9115:
 	.string	"RTC_IO_PDAC1_SLP_IE_V 0x1"
+.LASF6040:
+	.string	"GPIO_SIG111_IN_SEL_V 0x1"
 .LASF7475:
 	.string	"GPIO_FUNC221_IN_INV_SEL_S 6"
 .LASF1769:
@@ -58413,7 +58357,7 @@ preAlarmtimer:
 	.string	"GPIO_FUNC76_IN_INV_SEL_V 0x1"
 .LASF10608:
 	.string	"GPIO_SEL_34 ((uint64_t)(((uint64_t)1)<<34))"
-.LASF11845:
+.LASF11840:
 	.string	"MISO"
 .LASF8449:
 	.string	"GPIO_FUNC31_OUT_SEL_CFG_REG (DR_REG_GPIO_BASE + 0x05ac)"
@@ -58515,8 +58459,6 @@ preAlarmtimer:
 	.string	"GPIO_FUNC40_IN_SEL_S 0"
 .LASF2846:
 	.string	"EXCCAUSE_LOAD_PROHIBITED 28"
-.LASF11623:
-	.string	"B10100001 161"
 .LASF6807:
 	.string	"GPIO_SIG170_IN_SEL_V 0x1"
 .LASF7398:
@@ -58737,8 +58679,8 @@ preAlarmtimer:
 	.string	"SCNxLEAST16 __SCN16(x)"
 .LASF8179:
 	.string	"GPIO_FUNC15_OEN_INV_SEL_M (BIT(11))"
-.LASF11334:
-	.string	"B11000 24"
+.LASF2416:
+	.string	"XCHAL_INTLEVEL14_ANDBELOW_MASK XCHAL_INTLEVEL7_ANDBELOW_MASK"
 .LASF3061:
 	.string	"DR_REG_UHCI1_BASE 0x3ff4C000"
 .LASF2330:
@@ -60005,8 +59947,8 @@ preAlarmtimer:
 	.string	"RTC_IO_SENSE1_SLP_IE_M (BIT(20))"
 .LASF2928:
 	.string	"MEMCTL_DCWU_SHIFT 8"
-.LASF9457:
-	.string	"RTC_IO_TOUCH_PAD2_MUX_SEL_V 0x1"
+.LASF8600:
+	.string	"GPIO_FUNC39_OUT_SEL_V 0x1FF"
 .LASF11112:
 	.string	"INPUT_PULLDOWN 0x09"
 .LASF5751:
@@ -60027,6 +59969,8 @@ preAlarmtimer:
 	.string	"B11111001 249"
 .LASF3252:
 	.string	"configAPPLICATION_ALLOCATED_HEAP 1"
+.LASF11334:
+	.string	"B11000 24"
 .LASF11008:
 	.string	"ARDUHAL_LOG_COLOR_E "
 .LASF5515:
@@ -60271,7 +60215,7 @@ preAlarmtimer:
 	.string	"GPIO_FUNC11_IN_SEL 0x0000003F"
 .LASF2807:
 	.string	"XSHAL_INTLEVEL4_VECTOR_SIZE 0x00000038"
-.LASF11835:
+.LASF11830:
 	.string	"futureEventInTime"
 .LASF1683:
 	.string	"CONFIG_BTDM_CONTROLLER_PINNED_TO_CORE_0 1"
@@ -60555,8 +60499,6 @@ preAlarmtimer:
 	.string	"RTC_GPIO_PIN8_INT_TYPE_S 7"
 .LASF3744:
 	.string	"GPIO_PIN0_WAKEUP_ENABLE_S 10"
-.LASF1031:
-	.string	"INTMAX_C(x) __INTMAX_C(x)"
 .LASF4489:
 	.string	"GPIO_PIN36_INT_ENA 0x0000001F"
 .LASF9898:
@@ -60946,7 +60888,7 @@ preAlarmtimer:
 	.string	"XCHAL_HAVE_BSP3 0"
 .LASF4048:
 	.string	"GPIO_PIN15_INT_ENA 0x0000001F"
-.LASF11836:
+.LASF11831:
 	.string	"TimerComputeElapsedTime"
 .LASF864:
 	.string	"_REENT_MP_P5S(ptr) ((ptr)->_mp->_p5s)"
@@ -62076,8 +62018,8 @@ preAlarmtimer:
 	.string	"GPIO_SIG112_IN_SEL_M (BIT(7))"
 .LASF814:
 	.string	"__lock_close(lock) _lock_close(&(lock))"
-.LASF2416:
-	.string	"XCHAL_INTLEVEL14_ANDBELOW_MASK XCHAL_INTLEVEL7_ANDBELOW_MASK"
+.LASF5943:
+	.string	"GPIO_FUNC103_IN_SEL_M ((GPIO_FUNC103_IN_SEL_V)<<(GPIO_FUNC103_IN_SEL_S))"
 .LASF9107:
 	.string	"RTC_IO_PDAC1_FUN_SEL_V 0x3"
 .LASF1807:
@@ -62096,8 +62038,8 @@ preAlarmtimer:
 	.string	"FUNC_GPIO17_GPIO17_0 0"
 .LASF144:
 	.string	"__DBL_DIG__ 15"
-.LASF6167:
-	.string	"GPIO_FUNC121_IN_SEL_CFG_REG (DR_REG_GPIO_BASE + 0x0314)"
+.LASF10858:
+	.string	"_GCC_LIMITS_H_ "
 .LASF4295:
 	.string	"GPIO_PIN26_PAD_DRIVER (BIT(2))"
 .LASF3513:
@@ -62128,6 +62070,8 @@ preAlarmtimer:
 	.string	"PORTBENCHMARK_H "
 .LASF10567:
 	.string	"ESP_INTR_FLAG_IRAM (1<<10)"
+.LASF7944:
+	.string	"GPIO_FUNC1_OEN_SEL (BIT(10))"
 .LASF8326:
 	.string	"GPIO_FUNC23_OUT_SEL 0x000001FF"
 .LASF2819:
@@ -62226,8 +62170,6 @@ preAlarmtimer:
 	.string	"GPIO_FUNC19_IN_SEL_M ((GPIO_FUNC19_IN_SEL_V)<<(GPIO_FUNC19_IN_SEL_S))"
 .LASF8251:
 	.string	"GPIO_FUNC19_OEN_SEL_M (BIT(10))"
-.LASF8196:
-	.string	"GPIO_FUNC16_OEN_INV_SEL_M (BIT(11))"
 .LASF483:
 	.string	"XCHAL_INTLEVEL1_ANDBELOW_MASK 0x000637FF"
 .LASF1669:
@@ -62292,8 +62234,8 @@ preAlarmtimer:
 	.string	"GPIO_FUNC237_IN_INV_SEL_S 6"
 .LASF560:
 	.string	"XCHAL_INTTYPE_MASK_EXTERN_LEVEL 0x8FBE333F"
-.LASF7672:
-	.string	"GPIO_FUNC236_IN_SEL_M ((GPIO_FUNC236_IN_SEL_V)<<(GPIO_FUNC236_IN_SEL_S))"
+.LASF10994:
+	.string	"uxSemaphoreGetCount(xSemaphore) uxQueueMessagesWaiting( ( QueueHandle_t ) ( xSemaphore ) )"
 .LASF3480:
 	.string	"SOC_MEM_BT_MISC_END 0x3ffbdb5c"
 .LASF2101:
