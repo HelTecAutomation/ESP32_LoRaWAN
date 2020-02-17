@@ -17,8 +17,8 @@
  * You can change some definition in "Commissioning.h" and "LoRaMac-definitions.h"
  *
  * HelTec AutoMation, Chengdu, China.
- * �ɶ��������Զ����Ƽ����޹�˾
- * www.heltec.cn
+ * 成都惠利特自动化科技有限公司
+ * https://heltec.org
  * support@heltec.cn
  *
  *this project also release in GitHub:
