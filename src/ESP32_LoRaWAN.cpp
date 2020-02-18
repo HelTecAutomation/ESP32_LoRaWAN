@@ -333,7 +333,7 @@ static void lwan_dev_params_update( void )
 
 	MibRequestConfirm_t mibReq;
 	uint16_t channelsMaskTemp[6];
-	channelsMaskTemp[0] = 0x0001;
+	channelsMaskTemp[0] = 0x00FF;
 	channelsMaskTemp[1] = 0x0000;
 	channelsMaskTemp[2] = 0x0000;
 	channelsMaskTemp[3] = 0x0000;
@@ -488,7 +488,7 @@ void LoRaWanClass::join()
 void LoRaWanClass::send(DeviceClass_t classMode)
 {
 	if( NextTx == true )
-	{
+	{ 	//lwan_dev_params_update();
 		NextTx = SendFrame( );
 	}
 }
@@ -508,7 +508,12 @@ void LoRaWanClass::displayJoining()
 {
 	digitalWrite(Vext,LOW);
 	delay(10);
+	Display.init();
+	delay(100);
 	Display.wakeup();
+	Display.flipScreenVertically();
+	Display.setFont(ArialMT_Plain_16);
+	Display.setTextAlignment(TEXT_ALIGN_CENTER);
 	Display.clear();
 	Display.drawString(58, 22, "JOINING...");
 	Display.display();
@@ -534,9 +539,8 @@ void LoRaWanClass::displaySending()
     }
 	digitalWrite(Vext,LOW);
 	delay(10);
-	Display.wakeup();
 	Display.init();
-	delay(50);
+	Display.wakeup();
 	Display.flipScreenVertically();
 	Display.setFont(ArialMT_Plain_16);
 	Display.setTextAlignment(TEXT_ALIGN_CENTER);

@@ -1225,6 +1225,7 @@ static void OnRadioRxTimeout( void )
 
 static void OnMacStateCheckTimerEvent( void )
 {
+//	lora_printf("OnMacStateCheckTimerEvent\r\n");
     GetPhyParams_t getPhy;
     PhyParam_t phyParam;
     bool noTx = false;
@@ -2400,7 +2401,6 @@ LoRaMacStatus_t SendFrameOnChannel( uint8_t channel )
         JoinRequestTrials++;
     }
     // Send now
-
     Radio.Send( LoRaMacBuffer, LoRaMacBufferPktLen );
 
     LoRaMacState |= LORAMAC_TX_RUNNING;

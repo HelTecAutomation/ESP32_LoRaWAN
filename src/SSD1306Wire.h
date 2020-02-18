@@ -179,6 +179,4 @@ class SSD1306Wire : public OLEDDisplay {
 
 };
 
-//SSD1306Wire display;
-
 #endif

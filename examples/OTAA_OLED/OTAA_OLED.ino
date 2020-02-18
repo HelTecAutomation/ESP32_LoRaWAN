@@ -12,7 +12,7 @@
  * - Informations output via serial(115200);
  *
  * - Only ESP32 + LoRa series boards can use this library, need a license
- *   to make the code run(check you license here: http://www.heltec.cn/search);
+ *   to make the code run(check you license here: http://www.heltec.cn/search );
  *
  * You can change some definition in "Commissioning.h" and "LoRaMac-definitions.h"
  *

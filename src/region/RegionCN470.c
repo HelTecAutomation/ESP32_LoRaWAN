@@ -274,6 +274,7 @@ PhyParam_t RegionCN470GetPhyParam( GetPhyParams_t* getPhy )
         case PHY_DEF_NB_JOIN_TRIALS:
         {
             phyParam.Value = 48;
+//        	phyParam.Value = 2;
             break;
         }
         case PHY_BEACON_FORMAT:
@@ -529,7 +530,6 @@ bool RegionCN470RxConfig( RxConfigParams_t* rxConfig, int8_t* datarate )
     }
     Radio.SetMaxPayloadLength( MODEM_LORA, maxPayload + LORA_MAC_FRMPAYLOAD_OVERHEAD );
     DBG_PRINTF("RX on freq %u Hz at DR %d\r\n", (unsigned int)frequency, dr);
-
     *datarate = (uint8_t) dr;
     return true;
 }
@@ -546,12 +546,14 @@ bool RegionCN470TxConfig( TxConfigParams_t* txConfig, int8_t* txPower, TimerTime
     // Setup the radio frequency
     Radio.SetChannel( Channels[txConfig->Channel].Frequency );
 
-    DBG_PRINTF("TX on freq %u Hz at DR %d\r\n", (unsigned int)Channels[txConfig->Channel].Frequency, txConfig->Datarate);
+    
     Radio.SetTxConfig( MODEM_LORA, phyTxPower, 0, 0, phyDr, 1, 8, false, true, 0, 0, false, 3000 );
     // Setup maximum payload lenght of the radio driver
+
     Radio.SetMaxPayloadLength( MODEM_LORA, txConfig->PktLen );
     // Get the time-on-air of the next tx frame
     *txTimeOnAir = Radio.TimeOnAir( MODEM_LORA,  txConfig->PktLen );
+	DBG_PRINTF("TX on freq %u Hz at DR %d\r\n", (unsigned int)Channels[txConfig->Channel].Frequency, txConfig->Datarate);
     *txPower = txPowerLimited;
 
     return true;
