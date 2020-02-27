@@ -488,7 +488,8 @@ void LoRaWanClass::join()
 void LoRaWanClass::send(DeviceClass_t classMode)
 {
 	if( NextTx == true )
-	{ 	//lwan_dev_params_update();
+	{ 	
+		// lwan_dev_params_update();
 		NextTx = SendFrame( );
 	}
 }
@@ -507,9 +508,9 @@ void LoRaWanClass::sleep(DeviceClass_t classMode,uint8_t debugLevel)
 void LoRaWanClass::displayJoining()
 {
 	digitalWrite(Vext,LOW);
-	delay(10);
+	delay(20);
 	Display.init();
-	delay(100);
+	delay(20);
 	Display.wakeup();
 	Display.flipScreenVertically();
 	Display.setFont(ArialMT_Plain_16);
@@ -538,7 +539,7 @@ void LoRaWanClass::displaySending()
       displayJoined();
     }
 	digitalWrite(Vext,LOW);
-	delay(10);
+	delay(20);
 	Display.init();
 	Display.wakeup();
 	Display.flipScreenVertically();
