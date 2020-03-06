@@ -98,6 +98,7 @@ uint8_t debugLevel = LoRaWAN_DEBUG_LEVEL;
 /*LoraWan region, select in arduino IDE tools*/
 LoRaMacRegion_t loraWanRegion = ACTIVE_REGION;
 
+
 static void prepareTxFrame( uint8_t port )
 {
     appDataSize = 4;//AppDataSize max value is 64
