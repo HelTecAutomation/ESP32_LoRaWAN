@@ -1,7 +1,10 @@
 #include <ESP32_LoRaWAN.h>
 
+#define LEDPin 25  //LED light
 
+#if defined( WIFI_LoRa_32 ) || defined( WIFI_LoRa_32_V2 ) || defined( Wireless_Stick )
 SSD1306  Display(0x3c, SDA_OLED, SCL_OLED, RST_OLED);
+#endif
 
 #ifdef REGION_EU868
 #include "region/RegionEU868.h"
@@ -179,11 +182,41 @@ uint16_t GetBatteryVoltage(void)
 	return 0;
 }
 
+void app(uint8_t data)
+ {
+	 // lora_printf("data:%d\r\n",data);
+	 switch(data)
+     {
+ 		case 49:
+ 		{
+ 			pinMode(LEDPin,OUTPUT);
+ 			digitalWrite(LEDPin, HIGH);
+ 			break;
+ 		}
+ 		case 50:
+ 		{
+ 			pinMode(LEDPin,OUTPUT);
+ 			digitalWrite(LEDPin, LOW);
+ 			break;
+ 		}
+ 		case 51:
+ 		{
+ 			break;
+ 		}
+ 		default:
+ 		{
+ 			break;
+ 		}
+     }
+ }
 
 void __attribute__((weak)) downLinkDataHandle(McpsIndication_t *mcpsIndication)
 {
 	lora_printf("+REV DATA:%s,RXSIZE %d,PORT %d\r\n",mcpsIndication->RxSlot?"RXWIN2":"RXWIN1",mcpsIndication->BufferSize,mcpsIndication->Port);
 	lora_printf("+REV DATA:");
+	if(mcpsIndication->Port){
+		app(mcpsIndication->Buffer[0]);
+	}
 	for(uint8_t i=0;i<mcpsIndication->BufferSize;i++)
 	{
 		lora_printf("%02X",mcpsIndication->Buffer[i]);

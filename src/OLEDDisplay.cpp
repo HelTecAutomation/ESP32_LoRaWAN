@@ -60,8 +60,10 @@ bool OLEDDisplay::init() {
   }
   }
   #endif
-
+#if defined( WIFI_LoRa_32 ) || defined( WIFI_LoRa_32_V2 ) || defined( Wireless_Stick )
   resetDisplay(RST_OLED);
+#endif
+
   sendInitCommands();
 
   clear();
