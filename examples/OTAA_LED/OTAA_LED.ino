@@ -48,7 +48,7 @@ uint8_t AppSKey[] = { 0xd7, 0x2c, 0x78, 0x75, 0x8c, 0xdc, 0xca, 0xbf, 0x55, 0xee
 uint32_t DevAddr =  ( uint32_t )0x007e6ae1;
 
 /*LoraWan Class, Class A and Class C are supported*/
-DeviceClass_t  loraWanClass = CLASS_A;
+DeviceClass_t  loraWanClass = CLASS_C;
 
 /*the application data transmission duty cycle.  value in [ms].*/
 uint32_t appTxDutyCycle = 15000;
@@ -97,6 +97,51 @@ uint8_t debugLevel = LoRaWAN_DEBUG_LEVEL;
 
 /*LoraWan region, select in arduino IDE tools*/
 LoRaMacRegion_t loraWanRegion = ACTIVE_REGION;
+
+
+#define LEDPin 25  //LED light
+void app(uint8_t data)
+ {
+    // lora_printf("data:%d\r\n",data);
+   switch(data)
+     {
+    case 49:
+    {
+      pinMode(LEDPin,OUTPUT);
+      digitalWrite(LEDPin, HIGH);
+      break;
+    }
+    case 50:
+    {
+      pinMode(LEDPin,OUTPUT);
+      digitalWrite(LEDPin, LOW);
+      break;
+    }
+    case 51:
+    {
+      break;
+    }
+    default:
+    {
+      break;
+    }
+     }
+ }
+
+
+void  downLinkDataHandle(McpsIndication_t *mcpsIndication)
+{
+	lora_printf("+REV DATA:%s,RXSIZE %d,PORT %d\r\n",mcpsIndication->RxSlot?"RXWIN2":"RXWIN1",mcpsIndication->BufferSize,mcpsIndication->Port);
+	lora_printf("+REV DATA:");
+    app(mcpsIndication->Buffer[0]);
+
+  for(uint8_t i=0;i<mcpsIndication->BufferSize;i++)
+  {
+    lora_printf("%02X",mcpsIndication->Buffer[i]);
+  }
+  lora_printf("\r\n");
+}
+
 
 
 static void prepareTxFrame( uint8_t port )
