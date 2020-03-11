@@ -78,7 +78,7 @@ typedef struct
 
 #if defined( AES_ENC_PREKEYED ) || defined( AES_DEC_PREKEYED )
 
-return_type aes_set_key( const uint8_t key[],
+return_type lorawan_aes_set_key( const uint8_t key[],
                          length_type keylen,
                          aes_context ctx[1] );
 #endif
@@ -89,7 +89,7 @@ return_type aes_encrypt( const uint8_t in[N_BLOCK],
                          uint8_t out[N_BLOCK],
                          const aes_context ctx[1] );
 
-return_type aes_cbc_encrypt( const uint8_t *in,
+return_type lorawan_aes_cbc_encrypt( const uint8_t *in,
                          uint8_t *out,
                          int32_t n_block,
                          uint8_t iv[N_BLOCK],

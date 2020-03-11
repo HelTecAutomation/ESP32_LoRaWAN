@@ -65,7 +65,7 @@ void AES_CMAC_Init(AES_CMAC_CTX *ctx)
 void AES_CMAC_SetKey(AES_CMAC_CTX *ctx, const uint8_t key[AES_CMAC_KEY_LENGTH])
 {
            //rijndael_set_key_enc_only(&ctx->rijndael, key, 128);
-       aes_set_key( key, AES_CMAC_KEY_LENGTH, &ctx->rijndael);
+       lorawan_aes_set_key( key, AES_CMAC_KEY_LENGTH, &ctx->rijndael);
 }
     
 void AES_CMAC_Update(AES_CMAC_CTX *ctx, const uint8_t *data, uint32_t len)
