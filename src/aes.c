@@ -510,7 +510,7 @@ static void inv_shift_sub_rows( uint8_t st[N_BLOCK] )
 
 /*  Set the cipher key for the pre-keyed version */
 
-return_type aes_set_key( const uint8_t key[], length_type keylen, aes_context ctx[1] )
+return_type lorawan_aes_set_key( const uint8_t key[], length_type keylen, aes_context ctx[1] )
 {
     uint8_t cc, rc, hi;
 
@@ -594,7 +594,7 @@ return_type aes_encrypt( const uint8_t in[N_BLOCK], uint8_t  out[N_BLOCK], const
 
 /* CBC encrypt a number of blocks (input and return an IV) */
 
-return_type aes_cbc_encrypt( const uint8_t *in, uint8_t *out,
+return_type lorawan_aes_cbc_encrypt( const uint8_t *in, uint8_t *out,
                          int32_t n_block, uint8_t iv[N_BLOCK], const aes_context ctx[1] )
 {
 

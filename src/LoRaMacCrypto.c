@@ -116,7 +116,7 @@ void LoRaMacPayloadEncrypt( const uint8_t *buffer, uint16_t size, const uint8_t 
     uint16_t ctr = 1;
 
     memset1( AesContext.ksch, '\0', 240 );
-    aes_set_key( key, 16, &AesContext );
+    lorawan_aes_set_key( key, 16, &AesContext );
 
     aBlock[5] = dir;
 
@@ -175,7 +175,7 @@ void LoRaMacJoinComputeMic( const uint8_t *buffer, uint16_t size, const uint8_t 
 void LoRaMacJoinDecrypt( const uint8_t *buffer, uint16_t size, const uint8_t *key, uint8_t *decBuffer )
 {
     memset1( AesContext.ksch, '\0', 240 );
-    aes_set_key( key, 16, &AesContext );
+    lorawan_aes_set_key( key, 16, &AesContext );
     aes_encrypt( buffer, decBuffer, &AesContext );
     // Check if optional CFList is included
     if( size >= 16 )
@@ -190,7 +190,7 @@ void LoRaMacJoinComputeSKeys( const uint8_t *key, const uint8_t *appNonce, uint1
     uint8_t *pDevNonce = ( uint8_t * )&devNonce;
     
     memset1( AesContext.ksch, '\0', 240 );
-    aes_set_key( key, 16, &AesContext );
+    lorawan_aes_set_key( key, 16, &AesContext );
 
     memset1( nonce, 0, sizeof( nonce ) );
     nonce[0] = 0x01;
@@ -231,7 +231,7 @@ void LoRaMacBeaconComputePingOffset( uint64_t beaconTime, uint32_t address, uint
     buffer[6] = ( address >> 16 ) & 0xFF;
     buffer[7] = ( address >> 24 ) & 0xFF;
 
-    aes_set_key( zeroKey, 16, &AesContext );
+    lorawan_aes_set_key( zeroKey, 16, &AesContext );
     aes_encrypt( buffer, cipher, &AesContext );
 
     result = ( ( ( uint32_t ) cipher[0] ) + ( ( ( uint32_t ) cipher[1] ) * 256 ) );
