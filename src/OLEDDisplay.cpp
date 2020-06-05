@@ -3,6 +3,7 @@
  *
  * Copyright (c) 2018 by ThingPulse, Daniel Eichhorn
  * Copyright (c) 2018 by Fabrice Weinberg
+ * Copyright (c) 2019 by Helmut Tschemernjak - www.radioshuttle.de
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,58 +29,111 @@
  *
  */
 
+ /*
+  * TODO Helmut
+  * - test/finish dislplay.printf() on mbed-os
+  * - Finish _putc with drawLogBuffer when running display
+  */
 
 #include "OLEDDisplay.h"
+
+OLEDDisplay::OLEDDisplay() {
+
+#ifdef Wireless_Stick 
+  displayWidth = 64;
+	displayHeight = 32;
+	displayBufferSize = displayWidth * displayHeight / 8;
+	color = WHITE;
+	geometry = GEOMETRY_64_32;
+	textAlignment = TEXT_ALIGN_LEFT;
+	fontData = ArialMT_Plain_10;
+	fontTableLookupFunction = DefaultFontTableLookup;
+	buffer = NULL;
+#else
+  displayWidth = 128;
+	displayHeight = 64;
+	displayBufferSize = displayWidth * displayHeight / 8;
+	color = WHITE;
+	geometry = GEOMETRY_128_64;
+	textAlignment = TEXT_ALIGN_LEFT;
+	fontData = ArialMT_Plain_10;
+	fontTableLookupFunction = DefaultFontTableLookup;
+	buffer = NULL;
+#endif
+
+#ifdef OLEDDISPLAY_DOUBLE_BUFFER
+	buffer_back = NULL;
+#endif
+}
 
 OLEDDisplay::~OLEDDisplay() {
   end();
 }
 
-bool OLEDDisplay::init() {
+bool OLEDDisplay::allocateBuffer() {
+
+  logBufferSize = 0;
+  logBufferFilled = 0;
+  logBufferLine = 0;
+  logBufferMaxLines = 0;
+  logBuffer = NULL;
+	
   if (!this->connect()) {
     DEBUG_OLEDDISPLAY("[OLEDDISPLAY][init] Can't establish connection to display\n");
     return false;
   }
 
   if(this->buffer==NULL) {
-  this->buffer = (uint8_t*) malloc(sizeof(uint8_t) * displayBufferSize);
+    this->buffer = (uint8_t*) malloc((sizeof(uint8_t) * displayBufferSize) + getBufferOffset());
+    this->buffer += getBufferOffset();
 
-  if(!this->buffer) {
-    DEBUG_OLEDDISPLAY("[OLEDDISPLAY][init] Not enough memory to create display\n");
-    return false;
-  }
+    if(!this->buffer) {
+      DEBUG_OLEDDISPLAY("[OLEDDISPLAY][init] Not enough memory to create display\n");
+      return false;
+    }
   }
 
   #ifdef OLEDDISPLAY_DOUBLE_BUFFER
   if(this->buffer_back==NULL) {
-  this->buffer_back = (uint8_t*) malloc(sizeof(uint8_t) * displayBufferSize);
-
-  if(!this->buffer_back) {
-    DEBUG_OLEDDISPLAY("[OLEDDISPLAY][init] Not enough memory to create back buffer\n");
-    free(this->buffer);
-    return false;
-  }
+    this->buffer_back = (uint8_t*) malloc((sizeof(uint8_t) * displayBufferSize) + getBufferOffset());
+    this->buffer_back += getBufferOffset();
+  
+    if(!this->buffer_back) {
+      DEBUG_OLEDDISPLAY("[OLEDDISPLAY][init] Not enough memory to create back buffer\n");
+      free(this->buffer - getBufferOffset());
+      return false;
+    }
   }
   #endif
+  
+  return true;
+}
+
+bool OLEDDisplay::init() {
+
+  if(!allocateBuffer()) {
+    return false;
+  }
+  
 #if defined( WIFI_LoRa_32 ) || defined( WIFI_LoRa_32_V2 ) || defined( Wireless_Stick )
   resetDisplay(RST_OLED);
 #endif
 
+  //resetDisplay();
   sendInitCommands();
-
   clear();
-	#ifdef OLEDDISPLAY_DOUBLE_BUFFER
-	memset(buffer_back, 1, displayBufferSize);
-	#endif
-	display();
+  #ifdef OLEDDISPLAY_DOUBLE_BUFFER
+  memset(buffer_back, 1, displayBufferSize);
+  #endif
+  display();
 
   return true;
 }
 
 void OLEDDisplay::end() {
-  if (this->buffer) { free(this->buffer); this->buffer = NULL; }
+  if (this->buffer) { free(this->buffer - getBufferOffset()); this->buffer = NULL; }
   #ifdef OLEDDISPLAY_DOUBLE_BUFFER
-  if (this->buffer_back) { free(this->buffer_back); this->buffer_back = NULL; }
+  if (this->buffer_back) { free(this->buffer_back - getBufferOffset()); this->buffer_back = NULL; }
   #endif
   if (this->logBuffer != NULL) { free(this->logBuffer); this->logBuffer = NULL; }
 }
@@ -100,9 +154,9 @@ void OLEDDisplay::resetDisplay(uint8_t rstPin) {
 	pinMode(rstPin, OUTPUT);
   digitalWrite(rstPin,HIGH);
   delay(50);
-	digitalWrite(rstPin,LOW);
-	delay(200);
-	digitalWrite(rstPin,HIGH);
+  digitalWrite(rstPin,LOW);
+  delay(200);
+  digitalWrite(rstPin,HIGH);
   delay(50);
 }
 
@@ -123,6 +177,27 @@ void OLEDDisplay::setPixel(int16_t x, int16_t y) {
     }
   }
 }
+
+void OLEDDisplay::setPixelColor(int16_t x, int16_t y, OLEDDISPLAY_COLOR color) {
+  if (x >= 0 && x < this->width() && y >= 0 && y < this->height()) {
+    switch (color) {
+      case WHITE:   buffer[x + (y / 8) * this->width()] |=  (1 << (y & 7)); break;
+      case BLACK:   buffer[x + (y / 8) * this->width()] &= ~(1 << (y & 7)); break;
+      case INVERSE: buffer[x + (y / 8) * this->width()] ^=  (1 << (y & 7)); break;
+    }
+  }
+}
+
+void OLEDDisplay::clearPixel(int16_t x, int16_t y) {
+  if (x >= 0 && x < this->width() && y >= 0 && y < this->height()) {
+    switch (color) {
+      case BLACK:   buffer[x + (y >> 3) * this->width()] |=  (1 << (y & 7)); break;
+      case WHITE:   buffer[x + (y >> 3) * this->width()] &= ~(1 << (y & 7)); break;
+      case INVERSE: buffer[x + (y >> 3) * this->width()] ^=  (1 << (y & 7)); break;
+    }
+  }
+}
+
 
 // Bresenham's algorithm - thx wikipedia and Adafruit_GFX
 void OLEDDisplay::drawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1) {
@@ -182,9 +257,9 @@ void OLEDDisplay::drawCircle(int16_t x0, int16_t y0, int16_t radius) {
 	int16_t dp = 1 - radius;
 	do {
 		if (dp < 0)
-			dp = dp + 2 * (++x) + 3;
+			dp = dp + (x++) * 2 + 3;
 		else
-			dp = dp + 2 * (++x) - 2 * (--y) + 5;
+			dp = dp + (x++) * 2 - (y--) * 2 + 5;
 
 		setPixel(x0 + x, y0 + y);     //For the 8 octants
 		setPixel(x0 - x, y0 + y);
@@ -208,9 +283,9 @@ void OLEDDisplay::drawCircleQuads(int16_t x0, int16_t y0, int16_t radius, uint8_
   int16_t dp = 1 - radius;
   while (x < y) {
     if (dp < 0)
-      dp = dp + 2 * (++x) + 3;
+      dp = dp + (x++) * 2 + 3;
     else
-      dp = dp + 2 * (++x) - 2 * (--y) + 5;
+      dp = dp + (x++) * 2 - (y--) * 2 + 5;
     if (quads & 0x1) {
       setPixel(x0 + x, y0 - y);
       setPixel(x0 + y, y0 - x);
@@ -248,9 +323,9 @@ void OLEDDisplay::fillCircle(int16_t x0, int16_t y0, int16_t radius) {
 	int16_t dp = 1 - radius;
 	do {
 		if (dp < 0)
-			dp = dp + 2 * (++x) + 3;
-		else
-			dp = dp + 2 * (++x) - 2 * (--y) + 5;
+      dp = dp + (x++) * 2 + 3;
+    else
+      dp = dp + (x++) * 2 - (y--) * 2 + 5;
 
     drawHorizontalLine(x0 - x, y0 - y, 2*x);
     drawHorizontalLine(x0 - x, y0 + y, 2*x);
@@ -412,13 +487,29 @@ void OLEDDisplay::drawXbm(int16_t xMove, int16_t yMove, int16_t width, int16_t h
   }
 }
 
+void OLEDDisplay::drawIco16x16(int16_t xMove, int16_t yMove, const char *ico, bool inverse) {
+  uint16_t data;
+
+  for(int16_t y = 0; y < 16; y++) {
+    data = pgm_read_byte(ico + (y << 1)) + (pgm_read_byte(ico + (y << 1) + 1) << 8);
+    for(int16_t x = 0; x < 16; x++ ) {
+      if ((data & 0x01) ^ inverse) {
+        setPixelColor(xMove + x, yMove + y, WHITE);
+      } else {
+        setPixelColor(xMove + x, yMove + y, BLACK);
+      }
+      data >>= 1; // Move a bit
+    }
+  }
+}
+
 void OLEDDisplay::drawStringInternal(int16_t xMove, int16_t yMove, char* text, uint16_t textLength, uint16_t textWidth) {
   uint8_t textHeight       = pgm_read_byte(fontData + HEIGHT_POS);
   uint8_t firstChar        = pgm_read_byte(fontData + FIRST_CHAR_POS);
   uint16_t sizeOfJumpTable = pgm_read_byte(fontData + CHAR_NUM_POS)  * JUMPTABLE_BYTES;
 
-  uint8_t cursorX         = 0;
-  uint8_t cursorY         = 0;
+  uint16_t cursorX         = 0;
+  uint16_t cursorY         = 0;
 
   switch (textAlignment) {
     case TEXT_ALIGN_CENTER_BOTH:
@@ -442,15 +533,15 @@ void OLEDDisplay::drawStringInternal(int16_t xMove, int16_t yMove, char* text, u
     int16_t xPos = xMove + cursorX;
     int16_t yPos = yMove + cursorY;
 
-    byte code = text[j];
+    uint8_t code = text[j];
     if (code >= firstChar) {
-      byte charCode = code - firstChar;
+      uint8_t charCode = code - firstChar;
 
       // 4 Bytes per char code
-      byte msbJumpToChar    = pgm_read_byte( fontData + JUMPTABLE_START + charCode * JUMPTABLE_BYTES );                  // MSB  \ JumpAddress
-      byte lsbJumpToChar    = pgm_read_byte( fontData + JUMPTABLE_START + charCode * JUMPTABLE_BYTES + JUMPTABLE_LSB);   // LSB /
-      byte charByteSize     = pgm_read_byte( fontData + JUMPTABLE_START + charCode * JUMPTABLE_BYTES + JUMPTABLE_SIZE);  // Size
-      byte currentCharWidth = pgm_read_byte( fontData + JUMPTABLE_START + charCode * JUMPTABLE_BYTES + JUMPTABLE_WIDTH); // Width
+      uint8_t msbJumpToChar    = pgm_read_byte( fontData + JUMPTABLE_START + charCode * JUMPTABLE_BYTES );                  // MSB  \ JumpAddress
+      uint8_t lsbJumpToChar    = pgm_read_byte( fontData + JUMPTABLE_START + charCode * JUMPTABLE_BYTES + JUMPTABLE_LSB);   // LSB /
+      uint8_t charByteSize     = pgm_read_byte( fontData + JUMPTABLE_START + charCode * JUMPTABLE_BYTES + JUMPTABLE_SIZE);  // Size
+      uint8_t currentCharWidth = pgm_read_byte( fontData + JUMPTABLE_START + charCode * JUMPTABLE_BYTES + JUMPTABLE_WIDTH); // Width
 
       // Test if the char is drawable
       if (!(msbJumpToChar == 255 && lsbJumpToChar == 255)) {
@@ -463,7 +554,6 @@ void OLEDDisplay::drawStringInternal(int16_t xMove, int16_t yMove, char* text, u
     }
   }
 }
-
 
 void OLEDDisplay::drawString(int16_t xMove, int16_t yMove, String strUser) {
   uint16_t lineHeight = pgm_read_byte(fontData + HEIGHT_POS);
@@ -493,56 +583,6 @@ void OLEDDisplay::drawString(int16_t xMove, int16_t yMove, String strUser) {
   }
   free(text);
 }
-//void OLEDDisplay::drawdata(int16_t xMove, int16_t yMove, int16_t Num) {
-//  uint16_t lineHeight = pgm_read_byte(fontData + HEIGHT_POS);
-//  unsigned char c = 0,i = 0,j = 0,ch[3];
-//  String strUser;
-//
-//  ch[0] = Num/100 + 48;//����ʮ���Ƶ�48��Ϊ�˸�Num����ASCLL��ĸ�4λ0011 0000��
-//  ch[1] = Num%100/10 + 48;
-//  ch[2] = Num%10 + 48;
-//
-//  if(ch[0] == 48)     //���ڰ�����ÿλΪ"0"ʱ����ɿո񣨼�����ʾ��
-//  {
-//      ch[0] = 32;
-//				if(ch[1] == 48)
-//				{
-//						ch[1] = 32;
-//						if(ch[2] == 48)
-//							{
-//									ch[2] = 32;
-//							}
-//							else{ch[2] = Num%10 + 48;}
-//				}
-//				else{ch[1] = Num%100/10 + 48;}
-//  }
-//  else {ch[0] = Num/100 + 48;}
-//
-//  // char* text must be freed!
-//  char* text = utf8ascii(strUser);
-//
-//  uint16_t yOffset = 0;
-//  // If the string should be centered vertically too
-//  // we need to now how heigh the string is.
-//  if (textAlignment == TEXT_ALIGN_CENTER_BOTH) {
-//    uint16_t lb = 0;
-//    // Find number of linebreaks in text
-//    for (uint16_t i=0;text[i] != 0; i++) {
-//      lb += (text[i] == 10);
-//    }
-//    // Calculate center
-//    yOffset = (lb * lineHeight) / 2;
-//  }
-//
-//  uint16_t line = 0;
-//  char* textPart = strtok(text,"\n");
-//  while (textPart != NULL) {
-//    uint16_t length = strlen(textPart);
-//    drawStringInternal(xMove, yMove - yOffset + (line++) * lineHeight, textPart, length, getStringWidth(textPart, length));
-//    textPart = strtok(NULL, "\n");
-//  }
-//  free(text);
-//}
 
 void OLEDDisplay::drawStringMaxWidth(int16_t xMove, int16_t yMove, uint16_t maxLineWidth, String strUser) {
   uint16_t firstChar  = pgm_read_byte(fontData + FIRST_CHAR_POS);
@@ -816,20 +856,54 @@ size_t OLEDDisplay::write(const char* str) {
   return length;
 }
 
+#ifdef __MBED__
+int OLEDDisplay::_putc(int c) {
+
+	if (!fontData)
+		return 1;
+	if (!logBufferSize) {
+		uint8_t textHeight = pgm_read_byte(fontData + HEIGHT_POS);
+		uint16_t lines =  this->displayHeight / textHeight;
+		uint16_t chars =   2 * (this->displayWidth / textHeight);
+		
+		if (this->displayHeight % textHeight)
+			lines++;
+		if (this->displayWidth % textHeight)
+			chars++;
+		setLogBuffer(lines, chars);
+	}
+
+	return this->write((uint8_t)c);
+}
+#endif
+
 // Private functions
-void OLEDDisplay::setGeometry(OLEDDISPLAY_GEOMETRY g) {
+void OLEDDisplay::setGeometry(OLEDDISPLAY_GEOMETRY g, uint16_t width, uint16_t height) {
   this->geometry = g;
-  if (g == GEOMETRY_128_64) {
-    this->displayWidth                     = 128;
-    this->displayHeight                    = 64;
-  } else if (g == GEOMETRY_128_32) {
-    this->displayWidth                     = 128;
-    this->displayHeight                    = 32;
+  switch (g) {
+  	case GEOMETRY_128_64:
+    	this->displayWidth = 128;
+    	this->displayHeight = 64;
+		break;
+	case GEOMETRY_128_32:
+    	this->displayWidth = 128;
+    	this->displayHeight = 32;
+		break;
+	case GEOMETRY_64_32:
+    	this->displayWidth = 64;
+    	this->displayHeight = 32;
+		break;
+	case GEOMETRY_RAWMODE:
+		this->displayWidth = width > 0 ? width : 128;
+		this->displayHeight = height > 0 ? height : 64;
+		break;
   }
   this->displayBufferSize                = displayWidth*displayHeight/8;
 }
 
 void OLEDDisplay::sendInitCommands(void) {
+  if (geometry == GEOMETRY_RAWMODE)
+  	return;
   sendCommand(DISPLAYOFF);
   sendCommand(SETDISPLAYCLOCKDIV);
   sendCommand(0xF0); // Increase speed of the display max ~96Hz
@@ -846,7 +920,7 @@ void OLEDDisplay::sendInitCommands(void) {
   sendCommand(COMSCANINC);
   sendCommand(SETCOMPINS);
 
-  if (geometry == GEOMETRY_128_64) {
+  if ((geometry == GEOMETRY_128_64) || (geometry == GEOMETRY_64_32)) {
     sendCommand(0x12);
   } else if (geometry == GEOMETRY_128_32) {
     sendCommand(0x02);
@@ -892,7 +966,7 @@ void inline OLEDDisplay::drawInternal(int16_t xMove, int16_t yMove, int16_t widt
       yOffset = initYOffset;
     }
 
-    byte currentByte = pgm_read_byte(data + offset + i);
+    uint8_t currentByte = pgm_read_byte(data + offset + i);
 
     int16_t xPos = xMove + (i / rasterHeight);
     int16_t yPos = ((yMove >> 3) + (i % rasterHeight)) * this->width();
@@ -933,8 +1007,9 @@ void inline OLEDDisplay::drawInternal(int16_t xMove, int16_t yMove, int16_t widt
         // and setting the new yOffset
         yOffset = 8 - yOffset;
       }
-
+#ifndef __MBED__
       yield();
+#endif
     }
   }
 }
@@ -969,4 +1044,27 @@ char* OLEDDisplay::utf8ascii(String str) {
 
 void OLEDDisplay::setFontTableLookupFunction(FontTableLookupFunction function) {
   this->fontTableLookupFunction = function;
+}
+
+
+char DefaultFontTableLookup(const uint8_t ch) {
+    // UTF-8 to font table index converter
+    // Code form http://playground.arduino.cc/Main/Utf8ascii
+	static uint8_t LASTCHAR;
+
+	if (ch < 128) { // Standard ASCII-set 0..0x7F handling
+		LASTCHAR = 0;
+		return ch;
+	}
+
+	uint8_t last = LASTCHAR;   // get last char
+	LASTCHAR = ch;
+
+	switch (last) {    // conversion depnding on first UTF8-character
+		case 0xC2: return (uint8_t) ch;
+		case 0xC3: return (uint8_t) (ch | 0xC0);
+		case 0x82: if (ch == 0xAC) return (uint8_t) 0x80;    // special case Euro-symbol
+	}
+
+	return (uint8_t) 0; // otherwise: return zero, if character has to be ignored
 }

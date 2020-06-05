@@ -3,6 +3,7 @@
  *
  * Copyright (c) 2018 by ThingPulse, Daniel Eichhorn
  * Copyright (c) 2018 by Fabrice Weinberg
+ * Copyright (c) 2019 by Helmut Tschemernjak - www.radioshuttle.de
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -30,8 +31,41 @@
 
 #include "OLEDDisplayUi.h"
 
+void LoadingDrawDefault(OLEDDisplay *display, LoadingStage* stage, uint8_t progress) {
+      display->setTextAlignment(TEXT_ALIGN_CENTER);
+      display->setFont(ArialMT_Plain_10);
+      display->drawString(64, 18, stage->process);
+      display->drawProgressBar(4, 32, 120, 8, progress);
+};
+
+
 OLEDDisplayUi::OLEDDisplayUi(OLEDDisplay *display) {
   this->display = display;
+	
+  indicatorPosition = BOTTOM;
+  indicatorDirection = LEFT_RIGHT;
+  activeSymbol = ANIMATION_activeSymbol;
+  inactiveSymbol = ANIMATION_inactiveSymbol;
+  frameAnimationDirection   = SLIDE_RIGHT;
+  lastTransitionDirection = 1;
+  frameCount = 0;
+  nextFrameNumber = -1;
+  overlayCount = 0;
+  indicatorDrawState = 1;
+  loadingDrawFunction = LoadingDrawDefault;
+  updateInterval = 33;
+  state.lastUpdate = 0;
+  state.ticksSinceLastStateSwitch = 0;
+  state.frameState = FIXED;
+  state.currentFrame = 0;
+  state.frameTransitionDirection = 1;
+  state.isIndicatorDrawen = true;
+  state.manuelControll = false;
+  state.userData = NULL;
+  shouldDrawIndicators = true;
+  autoTransition = true;
+  setTimePerFrame(5000);
+  setTimePerTransition(500);
 }
 
 void OLEDDisplayUi::init() {
@@ -39,13 +73,10 @@ void OLEDDisplayUi::init() {
 }
 
 void OLEDDisplayUi::setTargetFPS(uint8_t fps){
-  float oldInterval = this->updateInterval;
   this->updateInterval = ((float) 1.0 / (float) fps) * 1000;
 
-  // Calculate new ticksPerFrame
-  float changeRatio = oldInterval / (float) this->updateInterval;
-  this->ticksPerFrame *= changeRatio;
-  this->ticksPerTransition *= changeRatio;
+  this->ticksPerFrame = timePerFrame / updateInterval;
+  this->ticksPerTransition = timePerTransition / updateInterval;
 }
 
 // -/------ Automatic controll ------\-
@@ -65,10 +96,12 @@ void OLEDDisplayUi::setAutoTransitionBackwards(){
   this->lastTransitionDirection = -1;
 }
 void OLEDDisplayUi::setTimePerFrame(uint16_t time){
-  this->ticksPerFrame = (uint16_t) ( (float) time / (float) updateInterval);
+  this->timePerFrame = time;
+  this->ticksPerFrame = timePerFrame / updateInterval;
 }
 void OLEDDisplayUi::setTimePerTransition(uint16_t time){
-  this->ticksPerTransition = (uint16_t) ( (float) time / (float) updateInterval);
+  this->timePerTransition = time;
+  this->ticksPerTransition = timePerTransition / updateInterval;
 }
 
 // -/------ Customize indicator position and style -------\-
@@ -192,18 +225,31 @@ OLEDDisplayUiState* OLEDDisplayUi::getUiState(){
   return &this->state;
 }
 
-
-int8_t OLEDDisplayUi::update(){
+int16_t OLEDDisplayUi::update(){
+#ifdef ARDUINO
   unsigned long frameStart = millis();
-  int8_t timeBudget = this->updateInterval - (frameStart - this->state.lastUpdate);
+#elif __MBED__
+	Timer t;
+	t.start();
+	unsigned long frameStart = t.read_ms();
+#else
+#error "Unkown operating system"
+#endif
+  int32_t timeBudget = this->updateInterval - (frameStart - this->state.lastUpdate);
   if ( timeBudget <= 0) {
     // Implement frame skipping to ensure time budget is keept
-    if (this->autoTransition && this->state.lastUpdate != 0) this->state.ticksSinceLastStateSwitch += ceil(-timeBudget / this->updateInterval);
+    if (this->autoTransition && this->state.lastUpdate != 0) this->state.ticksSinceLastStateSwitch += ceil((double)-timeBudget / (double)this->updateInterval);
 
     this->state.lastUpdate = frameStart;
     this->tick();
   }
+#ifdef ARDUINO
   return this->updateInterval - (millis() - frameStart);
+#elif __MBED__
+  return this->updateInterval - (t.read_ms() - frameStart);
+#else
+#error "Unkown operating system"
+#endif
 }
 
 
@@ -378,7 +424,7 @@ void OLEDDisplayUi::drawIndicator() {
     uint16_t x = 0,y = 0;
 
 
-    for (byte i = 0; i < this->frameCount; i++) {
+    for (uint8_t i = 0; i < this->frameCount; i++) {
 
       switch (this->indicatorPosition){
         case TOP:

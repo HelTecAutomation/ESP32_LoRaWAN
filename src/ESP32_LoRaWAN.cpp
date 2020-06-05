@@ -520,10 +520,18 @@ void LoRaWanClass::displayJoining()
 	delay(20);
 	Display.wakeup();
 	Display.flipScreenVertically();
+#ifdef Wireless_Stick
+	Display.setFont(ArialMT_Plain_10);
+#else
 	Display.setFont(ArialMT_Plain_16);
+#endif
 	Display.setTextAlignment(TEXT_ALIGN_CENTER);
 	Display.clear();
+#ifdef Wireless_Stick
+	Display.drawString(64, 40, "JOINING...");
+#else
 	Display.drawString(58, 22, "JOINING...");
+#endif
 	Display.display();
 }
 void LoRaWanClass::displayJoined()
@@ -533,7 +541,11 @@ void LoRaWanClass::displayJoined()
 	delay(50);
 	Display.wakeup();
 	Display.clear();
+#ifdef Wireless_Stick
+	Display.drawString(64, 40, "JOINED");
+#else
 	Display.drawString(64, 22, "JOINED");
+#endif
 	Display.display();
 	delay(1000);
 	Display.sleep();
@@ -550,10 +562,18 @@ void LoRaWanClass::displaySending()
 	Display.init();
 	Display.wakeup();
 	Display.flipScreenVertically();
+#ifdef Wireless_Stick
+Display.setFont(ArialMT_Plain_10);
+#else
 	Display.setFont(ArialMT_Plain_16);
+#endif
 	Display.setTextAlignment(TEXT_ALIGN_CENTER);
 	Display.clear();
+#ifdef Wireless_Stick
+	Display.drawString(58, 40, "SENDING...");
+#else
 	Display.drawString(58, 22, "SENDING...");
+#endif
 	Display.display();
 }
 void LoRaWanClass::displayAck()
@@ -564,12 +584,20 @@ void LoRaWanClass::displayAck()
     }
     ifDisplayAck--;
 	Display.clear();
+#ifdef Wireless_Stick
+	Display.drawString(64, 30, "Got ACK");
+#else
 	Display.drawString(64, 22, "ACK RECEIVED");
+#endif
 	if(loraWanClass==CLASS_A)
 	{
 		Display.setFont(ArialMT_Plain_10);
 		Display.setTextAlignment(TEXT_ALIGN_LEFT);
-		Display.drawString(28, 50, "Into deep sleep in 2S");
+#ifdef Wireless_Stick
+		Display.drawString(32, 50, "Sleep in 2S");
+#else
+		Display.drawString(32, 50, "Deep sleep in 2S");
+#endif
 	}
 	Display.display();
 	if(loraWanClass==CLASS_A)
@@ -584,11 +612,19 @@ void LoRaWanClass::displayMcuInit()
 	Display.init();
 	delay(100);
 	Display.flipScreenVertically();
+#ifdef Wireless_Stick
+	Display.setFont(ArialMT_Plain_10);
+	Display.setTextAlignment(TEXT_ALIGN_CENTER);
+	Display.clear();
+	Display.drawString(64, 30, "LORAWAN");
+	Display.drawString(64, 50, "STARTING");
+#else
 	Display.setFont(ArialMT_Plain_16);
 	Display.setTextAlignment(TEXT_ALIGN_CENTER);
 	Display.clear();
 	Display.drawString(64, 11, "LORAWAN");
-	Display.drawString(64, 33, "STARTING");
+	Display.drawString(64, 21, "STARTING");
+#endif
 	Display.display();
 }
 

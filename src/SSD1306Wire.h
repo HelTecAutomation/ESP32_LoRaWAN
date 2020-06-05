@@ -34,6 +34,10 @@
 #include "OLEDDisplay.h"
 #include <Wire.h>
 
+#if defined(ARDUINO_ARCH_AVR) || defined(ARDUINO_ARCH_STM32)
+#define _min	min
+#define _max	max
+#endif
 
 class SSD1306Wire : public OLEDDisplay {
   private:
@@ -137,7 +141,6 @@ class SSD1306Wire : public OLEDDisplay {
 
         sendCommand(PAGEADDR);
         sendCommand(0x0);
-        sendCommand((this->height() / 8) - 1);
 
         if (geometry == GEOMETRY_128_64) {
           sendCommand(0x7);
@@ -163,6 +166,9 @@ class SSD1306Wire : public OLEDDisplay {
     }
 
   private:
+	int getBufferOffset(void) {
+		return 0;
+	}
     inline void sendCommand(uint8_t command) __attribute__((always_inline)){
       initI2cIfNeccesary();
       Wire.beginTransmission(_address);
@@ -173,7 +179,11 @@ class SSD1306Wire : public OLEDDisplay {
 
     void initI2cIfNeccesary() {
       if (_doI2cAutoInit) {
-        Wire.begin(this->_sda, this->_scl);
+#ifdef ARDUINO_ARCH_AVR 
+      	Wire.begin();
+#else
+      	Wire.begin(this->_sda, this->_scl);
+#endif
       }
     }
 
