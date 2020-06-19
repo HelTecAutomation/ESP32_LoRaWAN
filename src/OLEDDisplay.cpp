@@ -3,7 +3,6 @@
  *
  * Copyright (c) 2018 by ThingPulse, Daniel Eichhorn
  * Copyright (c) 2018 by Fabrice Weinberg
- * Copyright (c) 2019 by Helmut Tschemernjak - www.radioshuttle.de
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,32 +28,12 @@
  *
  */
 
- /*
-  * TODO Helmut
-  * - test/finish dislplay.printf() on mbed-os
-  * - Finish _putc with drawLogBuffer when running display
-  */
 
 #include "OLEDDisplay.h"
 
 OLEDDisplay::OLEDDisplay() {
 
-<<<<<<< HEAD
 	displayWidth = 128;
-=======
-#ifdef Wireless_Stick 
-  displayWidth = 64;
-	displayHeight = 32;
-	displayBufferSize = displayWidth * displayHeight / 8;
-	color = WHITE;
-	geometry = GEOMETRY_64_32;
-	textAlignment = TEXT_ALIGN_LEFT;
-	fontData = ArialMT_Plain_10;
-	fontTableLookupFunction = DefaultFontTableLookup;
-	buffer = NULL;
-#else
-  displayWidth = 128;
->>>>>>> 3c22ed273f6cff7d63eee595fef96e485e38bd99
 	displayHeight = 64;
 	displayBufferSize = displayWidth * displayHeight / 8;
 	color = WHITE;
@@ -63,11 +42,6 @@ OLEDDisplay::OLEDDisplay() {
 	fontData = ArialMT_Plain_10;
 	fontTableLookupFunction = DefaultFontTableLookup;
 	buffer = NULL;
-<<<<<<< HEAD
-=======
-#endif
-
->>>>>>> 3c22ed273f6cff7d63eee595fef96e485e38bd99
 #ifdef OLEDDISPLAY_DOUBLE_BUFFER
 	buffer_back = NULL;
 #endif
@@ -77,76 +51,45 @@ OLEDDisplay::~OLEDDisplay() {
   end();
 }
 
-bool OLEDDisplay::allocateBuffer() {
-
-  logBufferSize = 0;
-  logBufferFilled = 0;
-  logBufferLine = 0;
-  logBufferMaxLines = 0;
-  logBuffer = NULL;
-	
+bool OLEDDisplay::init() {
   if (!this->connect()) {
     DEBUG_OLEDDISPLAY("[OLEDDISPLAY][init] Can't establish connection to display\n");
     return false;
   }
 
   if(this->buffer==NULL) {
-<<<<<<< HEAD
   	this->buffer = (uint8_t*) malloc((sizeof(uint8_t) * displayBufferSize) + getBufferOffset());
 	this->buffer += getBufferOffset();
-=======
-    this->buffer = (uint8_t*) malloc((sizeof(uint8_t) * displayBufferSize) + getBufferOffset());
-    this->buffer += getBufferOffset();
->>>>>>> 3c22ed273f6cff7d63eee595fef96e485e38bd99
 
-    if(!this->buffer) {
-      DEBUG_OLEDDISPLAY("[OLEDDISPLAY][init] Not enough memory to create display\n");
-      return false;
-    }
+  if(!this->buffer) {
+    DEBUG_OLEDDISPLAY("[OLEDDISPLAY][init] Not enough memory to create display\n");
+    return false;
+  }
   }
 
   #ifdef OLEDDISPLAY_DOUBLE_BUFFER
   if(this->buffer_back==NULL) {
-<<<<<<< HEAD
   this->buffer_back = (uint8_t*) malloc((sizeof(uint8_t) * displayBufferSize) + getBufferOffset());
   this->buffer_back += getBufferOffset();
 
   if(!this->buffer_back) {
     DEBUG_OLEDDISPLAY("[OLEDDISPLAY][init] Not enough memory to create back buffer\n");
     free(this->buffer - getBufferOffset());
-=======
-    this->buffer_back = (uint8_t*) malloc((sizeof(uint8_t) * displayBufferSize) + getBufferOffset());
-    this->buffer_back += getBufferOffset();
-  
-    if(!this->buffer_back) {
-      DEBUG_OLEDDISPLAY("[OLEDDISPLAY][init] Not enough memory to create back buffer\n");
-      free(this->buffer - getBufferOffset());
-      return false;
-    }
-  }
-  #endif
-  
-  return true;
-}
-
-bool OLEDDisplay::init() {
-
-  if(!allocateBuffer()) {
->>>>>>> 3c22ed273f6cff7d63eee595fef96e485e38bd99
     return false;
   }
-  
+  }
+  #endif
 #if defined( WIFI_LoRa_32 ) || defined( WIFI_LoRa_32_V2 ) || defined( Wireless_Stick )
   resetDisplay(RST_OLED);
 #endif
 
-  //resetDisplay();
   sendInitCommands();
+
   clear();
-  #ifdef OLEDDISPLAY_DOUBLE_BUFFER
-  memset(buffer_back, 1, displayBufferSize);
-  #endif
-  display();
+	#ifdef OLEDDISPLAY_DOUBLE_BUFFER
+	memset(buffer_back, 1, displayBufferSize);
+	#endif
+	display();
 
   return true;
 }
@@ -175,9 +118,9 @@ void OLEDDisplay::resetDisplay(uint8_t rstPin) {
 	pinMode(rstPin, OUTPUT);
   digitalWrite(rstPin,HIGH);
   delay(50);
-  digitalWrite(rstPin,LOW);
-  delay(200);
-  digitalWrite(rstPin,HIGH);
+	digitalWrite(rstPin,LOW);
+	delay(200);
+	digitalWrite(rstPin,HIGH);
   delay(50);
 }
 
@@ -219,29 +162,6 @@ void OLEDDisplay::clearPixel(int16_t x, int16_t y) {
   }
 }
 
-<<<<<<< HEAD
-=======
-void OLEDDisplay::setPixelColor(int16_t x, int16_t y, OLEDDISPLAY_COLOR color) {
-  if (x >= 0 && x < this->width() && y >= 0 && y < this->height()) {
-    switch (color) {
-      case WHITE:   buffer[x + (y / 8) * this->width()] |=  (1 << (y & 7)); break;
-      case BLACK:   buffer[x + (y / 8) * this->width()] &= ~(1 << (y & 7)); break;
-      case INVERSE: buffer[x + (y / 8) * this->width()] ^=  (1 << (y & 7)); break;
-    }
-  }
-}
-
-void OLEDDisplay::clearPixel(int16_t x, int16_t y) {
-  if (x >= 0 && x < this->width() && y >= 0 && y < this->height()) {
-    switch (color) {
-      case BLACK:   buffer[x + (y >> 3) * this->width()] |=  (1 << (y & 7)); break;
-      case WHITE:   buffer[x + (y >> 3) * this->width()] &= ~(1 << (y & 7)); break;
-      case INVERSE: buffer[x + (y >> 3) * this->width()] ^=  (1 << (y & 7)); break;
-    }
-  }
-}
-
->>>>>>> 3c22ed273f6cff7d63eee595fef96e485e38bd99
 
 // Bresenham's algorithm - thx wikipedia and Adafruit_GFX
 void OLEDDisplay::drawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1) {
@@ -301,15 +221,9 @@ void OLEDDisplay::drawCircle(int16_t x0, int16_t y0, int16_t radius) {
 	int16_t dp = 1 - radius;
 	do {
 		if (dp < 0)
-<<<<<<< HEAD
 			dp = dp + ((++x) << 1) + 3;
 		else
 			dp = dp + ((++x) << 1) - ((--y) << 1) + 5;
-=======
-			dp = dp + (x++) * 2 + 3;
-		else
-			dp = dp + (x++) * 2 - (y--) * 2 + 5;
->>>>>>> 3c22ed273f6cff7d63eee595fef96e485e38bd99
 
 		setPixel(x0 + x, y0 + y);     //For the 8 octants
 		setPixel(x0 - x, y0 + y);
@@ -333,15 +247,9 @@ void OLEDDisplay::drawCircleQuads(int16_t x0, int16_t y0, int16_t radius, uint8_
   int16_t dp = 1 - radius;
   while (x < y) {
     if (dp < 0)
-<<<<<<< HEAD
       dp = dp + ((++x) << 1) + 3;
     else
       dp = dp + ((++x) << 1) - ((--y) << 1) + 5;
-=======
-      dp = dp + (x++) * 2 + 3;
-    else
-      dp = dp + (x++) * 2 - (y--) * 2 + 5;
->>>>>>> 3c22ed273f6cff7d63eee595fef96e485e38bd99
     if (quads & 0x1) {
       setPixel(x0 + x, y0 - y);
       setPixel(x0 + y, y0 - x);
@@ -379,15 +287,9 @@ void OLEDDisplay::fillCircle(int16_t x0, int16_t y0, int16_t radius) {
 	int16_t dp = 1 - radius;
 	do {
 		if (dp < 0)
-<<<<<<< HEAD
       dp = dp + ((++x) << 1) + 3;
     else
       dp = dp + ((++x) << 1) - ((--y) << 1) + 5;
-=======
-      dp = dp + (x++) * 2 + 3;
-    else
-      dp = dp + (x++) * 2 - (y--) * 2 + 5;
->>>>>>> 3c22ed273f6cff7d63eee595fef96e485e38bd99
 
     drawHorizontalLine(x0 - x, y0 - y, 2*x);
     drawHorizontalLine(x0 - x, y0 + y, 2*x);
@@ -619,6 +521,7 @@ void OLEDDisplay::drawStringInternal(int16_t xMove, int16_t yMove, char* text, u
   }
 }
 
+
 void OLEDDisplay::drawString(int16_t xMove, int16_t yMove, String strUser) {
   uint16_t lineHeight = pgm_read_byte(fontData + HEIGHT_POS);
 
@@ -647,6 +550,56 @@ void OLEDDisplay::drawString(int16_t xMove, int16_t yMove, String strUser) {
   }
   free(text);
 }
+//void OLEDDisplay::drawdata(int16_t xMove, int16_t yMove, int16_t Num) {
+//  uint16_t lineHeight = pgm_read_byte(fontData + HEIGHT_POS);
+//  unsigned char c = 0,i = 0,j = 0,ch[3];
+//  String strUser;
+//
+//  ch[0] = Num/100 + 48;//??????????48??????Num????ASCLL????4¦Ë0011 0000??
+//  ch[1] = Num%100/10 + 48;
+//  ch[2] = Num%10 + 48;
+//
+//  if(ch[0] == 48)     //??????????¦Ë?"0"?????????????????
+//  {
+//      ch[0] = 32;
+//				if(ch[1] == 48)
+//				{
+//						ch[1] = 32;
+//						if(ch[2] == 48)
+//							{
+//									ch[2] = 32;
+//							}
+//							else{ch[2] = Num%10 + 48;}
+//				}
+//				else{ch[1] = Num%100/10 + 48;}
+//  }
+//  else {ch[0] = Num/100 + 48;}
+//
+//  // char* text must be freed!
+//  char* text = utf8ascii(strUser);
+//
+//  uint16_t yOffset = 0;
+//  // If the string should be centered vertically too
+//  // we need to now how heigh the string is.
+//  if (textAlignment == TEXT_ALIGN_CENTER_BOTH) {
+//    uint16_t lb = 0;
+//    // Find number of linebreaks in text
+//    for (uint16_t i=0;text[i] != 0; i++) {
+//      lb += (text[i] == 10);
+//    }
+//    // Calculate center
+//    yOffset = (lb * lineHeight) / 2;
+//  }
+//
+//  uint16_t line = 0;
+//  char* textPart = strtok(text,"\n");
+//  while (textPart != NULL) {
+//    uint16_t length = strlen(textPart);
+//    drawStringInternal(xMove, yMove - yOffset + (line++) * lineHeight, textPart, length, getStringWidth(textPart, length));
+//    textPart = strtok(NULL, "\n");
+//  }
+//  free(text);
+//}
 
 void OLEDDisplay::drawStringMaxWidth(int16_t xMove, int16_t yMove, uint16_t maxLineWidth, String strUser) {
   uint16_t firstChar  = pgm_read_byte(fontData + FIRST_CHAR_POS);
@@ -992,31 +945,9 @@ size_t OLEDDisplay::write(const char* str) {
   return length;
 }
 
-#ifdef __MBED__
-int OLEDDisplay::_putc(int c) {
-
-	if (!fontData)
-		return 1;
-	if (!logBufferSize) {
-		uint8_t textHeight = pgm_read_byte(fontData + HEIGHT_POS);
-		uint16_t lines =  this->displayHeight / textHeight;
-		uint16_t chars =   2 * (this->displayWidth / textHeight);
-		
-		if (this->displayHeight % textHeight)
-			lines++;
-		if (this->displayWidth % textHeight)
-			chars++;
-		setLogBuffer(lines, chars);
-	}
-
-	return this->write((uint8_t)c);
-}
-#endif
-
 // Private functions
-void OLEDDisplay::setGeometry(OLEDDISPLAY_GEOMETRY g, uint16_t width, uint16_t height) {
+void OLEDDisplay::setGeometry(OLEDDISPLAY_GEOMETRY g) {
   this->geometry = g;
-<<<<<<< HEAD
   if (g == GEOMETRY_128_64) {
     this->displayWidth                     = 128;
     this->displayHeight                    = 64;
@@ -1030,32 +961,10 @@ void OLEDDisplay::setGeometry(OLEDDISPLAY_GEOMETRY g, uint16_t width, uint16_t h
     this->displayWidth                     =128;
     this->displayHeight                    =64;
   }  
-=======
-  switch (g) {
-  	case GEOMETRY_128_64:
-    	this->displayWidth = 128;
-    	this->displayHeight = 64;
-		break;
-	case GEOMETRY_128_32:
-    	this->displayWidth = 128;
-    	this->displayHeight = 32;
-		break;
-	case GEOMETRY_64_32:
-    	this->displayWidth = 64;
-    	this->displayHeight = 32;
-		break;
-	case GEOMETRY_RAWMODE:
-		this->displayWidth = width > 0 ? width : 128;
-		this->displayHeight = height > 0 ? height : 64;
-		break;
-  }
->>>>>>> 3c22ed273f6cff7d63eee595fef96e485e38bd99
   this->displayBufferSize                = displayWidth*displayHeight/8;
 }
 
 void OLEDDisplay::sendInitCommands(void) {
-  if (geometry == GEOMETRY_RAWMODE)
-  	return;
   sendCommand(DISPLAYOFF);
   sendCommand(SETDISPLAYCLOCKDIV);
   sendCommand(0xF0); // Increase speed of the display max ~96Hz
@@ -1072,7 +981,7 @@ void OLEDDisplay::sendInitCommands(void) {
   sendCommand(COMSCANDEC);
   sendCommand(SETCOMPINS);
 
-  if ((geometry == GEOMETRY_128_64) || (geometry == GEOMETRY_64_32)) {
+  if (geometry == GEOMETRY_128_64) {
     sendCommand(0x12);
   } else if (geometry == GEOMETRY_128_32) {
     sendCommand(0x02);
@@ -1159,9 +1068,8 @@ void inline OLEDDisplay::drawInternal(int16_t xMove, int16_t yMove, int16_t widt
         // and setting the new yOffset
         yOffset = 8 - yOffset;
       }
-#ifndef __MBED__
+
       yield();
-#endif
     }
   }
 }
