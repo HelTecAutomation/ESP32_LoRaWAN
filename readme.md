@@ -1,4 +1,5 @@
 ## Contents
+
 - [The Overview](#the-overview)
 - [Installing](#installing)
 - [Features](#features)
@@ -7,18 +8,18 @@
 - [Contact us](#contact-us)
 
 # The Overview
-----------
+
 - **This library must work with newest [Heltec_ESP32 development framework](https://github.com/Heltec-Aaron-Lee/WiFi_Kit_series)**
   - *For now, new features still not included in the release version, must install this framework via Git.*
 - This library is make LoRaWAN 1.0.2 protocol running with ESP32. Only support the ESP32 + LoRa series products made by [HelTec Automation(TM)](heltec.org), and a [LoRa gateway](https://heltec.org/proudct_center/lora/lora-gateway/) is must needed;
 - LoRaWAN relevant parameters are defined in the .ino file;
-- This library is transplanted form https://github.com/Lora-net/LoRaMac-node;
-- Use RTC and deep sleep mode supported, only few millisecond wake up in a cycle;
+- This library is transplanted from https://github.com/Lora-net/LoRaMac-node;
+- Use RTC and deep sleep mode supported, only a few milliseconds wake up in a cycle;
 - **[Heltec LoRa Node Family](https://docs.heltec.cn/#/en/products/lora/lora_node/heltec_lora_node_list_eu).**
 
 
 # Installing
-----------
+
 To install this library:
 
 - install it using the Arduino Library manager ("Sketch" -> "Include Library" -> "Manage Libraries..."), or
@@ -28,20 +29,20 @@ To install this library:
 For more info, see https://www.arduino.cc/en/Guide/Libraries
 
 # Features
-----------
-The ESP32_LoRaWAN library provides a fairly complete LoRaWAN Class A and Class C implementation, the newest updated February 10th, 2020 already have full region support (KR920, AS923, US915 etc.).
 
-The following functions included:
+The `ESP32_LoRaWAN` library provides a fairly complete LoRaWAN Class A and Class C implementation. The latest update (February 10th, 2020) has full region support (KR920, AS923, US915, etc.).
+
+The following functions are included:
  - LoRaWAN protocol V1.0.2 Class A and Class C;
- - Use ESP32's internal RTC(15KHz);
+ - Use ESP32's internal RTC (15KHz);
  - All [ESP32 + LoRa](https://heltec.org/proudct_center/lora/lora-node/) boards made by [Heltec Automation(TM)](heltec.org) can use this library;
  - Support deep sleep and stop mode;
  - Receive and print downlink payload;
  - Print and OLED show downlink data length and RSSI;
- - An unique license relate to Chip ID is needed, you can check your license here: http://www.heltec.cn/search/
+ - An unique license related to Chip ID is needed, you can check your license here: http://www.heltec.cn/search/
 
 # Test information
-----------
+
 ![](img/02.png)
  - Gateway: [HT-M01 Mini LoRa Gateway](http://www.heltec.cn/project/ht-m01-lora-gateway/?lang=en) + Raspberry Pi Zero W
  - Node: [WIFI LoRa 32 V2](https://heltec.org/project/wifi-lora-32/), [Wireless Stick](https://heltec.org/project/wireless-stick/), [Wireless Stick Lite](https://heltec.org/project/wireless-stick-lite/)
@@ -76,8 +77,6 @@ The following functions included:
 **What has not been tested:**
 
  - Receiving downlink packets in the RX2 window.
-
-&nbsp;
 
 # How to use this library
 The only different with a common Arduino library is need a unique license. It's relate to ESP32 Chip ID.
