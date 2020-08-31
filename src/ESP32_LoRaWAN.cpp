@@ -339,20 +339,13 @@ static void lwan_dev_params_update( void )
 #endif
 
 	MibRequestConfirm_t mibReq;
-	uint16_t channelsMaskTemp[6];
-	channelsMaskTemp[0] = 0x00FF;
-	channelsMaskTemp[1] = 0x0000;
-	channelsMaskTemp[2] = 0x0000;
-	channelsMaskTemp[3] = 0x0000;
-	channelsMaskTemp[4] = 0x0000;
-	channelsMaskTemp[5] = 0x0000;
 
 	mibReq.Type = MIB_CHANNELS_DEFAULT_MASK;
-	mibReq.Param.ChannelsMask = channelsMaskTemp;
+	mibReq.Param.ChannelsMask = userChannelsMask;
 	LoRaMacMibSetRequestConfirm(&mibReq);
 
 	mibReq.Type = MIB_CHANNELS_MASK;
-	mibReq.Param.ChannelsMask = channelsMaskTemp;
+	mibReq.Param.ChannelsMask = userChannelsMask;
 	LoRaMacMibSetRequestConfirm(&mibReq);
 }
 
