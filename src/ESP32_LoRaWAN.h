@@ -62,6 +62,7 @@ extern uint8_t AppSKey[];
 extern uint32_t DevAddr;
 extern uint8_t idDisplayJoined;
 extern uint8_t ifDisplayAck;
+extern uint16_t userChannelsMask[6];
 
 extern LoRaWanClass LoRaWAN;
 extern SSD1306 Display;

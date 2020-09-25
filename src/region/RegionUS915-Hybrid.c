@@ -691,7 +691,7 @@ bool RegionUS915HybridTxConfig( TxConfigParams_t* txConfig, int8_t* txPower, Tim
     Radio.SetChannel( Channels[txConfig->Channel].Frequency );
 
     Radio.SetMaxPayloadLength( MODEM_LORA, txConfig->PktLen );
-    Radio.SetTxConfig( MODEM_LORA, phyTxPower, 0, bandwidth, phyDr, 1, 8, false, true, 0, 0, false, 3e3 );
+    Radio.SetTxConfig( MODEM_LORA, phyTxPower, 0, bandwidth, phyDr, 1, 16, false, true, 0, 0, false, 3e3 );
     DBG_PRINTF("TX on freq %u Hz at DR %d\r\n", (unsigned int)Channels[txConfig->Channel].Frequency, txConfig->Datarate);
 
     *txTimeOnAir = Radio.TimeOnAir( MODEM_LORA,  txConfig->PktLen );

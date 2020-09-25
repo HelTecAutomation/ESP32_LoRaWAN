@@ -15,7 +15,7 @@
 - LoRaWAN relevant parameters are defined in the .ino file;
 - This library is transplanted from https://github.com/Lora-net/LoRaMac-node;
 - Use RTC and deep sleep mode supported, only a few milliseconds wake up in a cycle;
-- **[Heltec LoRa Node Family](https://docs.heltec.cn/#/en/products/lora/lora_node/heltec_lora_node_list_eu).**
+- **[Heltec LoRa Node Family]([Heltec Automation(TM) products index page](https://docs.heltec.cn/#/en/products/lora/lora_node/heltec_lora_node_list)).**
 
 
 # Installing
@@ -47,8 +47,8 @@ The following functions are included:
  - Gateway: [HT-M01 Mini LoRa Gateway](http://www.heltec.cn/project/ht-m01-lora-gateway/?lang=en) + Raspberry Pi Zero W
  - Node: [WIFI LoRa 32 V2](https://heltec.org/project/wifi-lora-32/), [Wireless Stick](https://heltec.org/project/wireless-stick/), [Wireless Stick Lite](https://heltec.org/project/wireless-stick-lite/)
  - LoRaServer:
-    - Aliyun ECS + Ubuntu 16.04 + [loraserver.io](https://www.loraserver.io/);
-    - [TTN](https://www.thethingsnetwork.org/)
+    - [Heltec Cloud Server](http://cloud.heltec.org/);
+    - [TTN](https://www.thethingsnetwork.org/).
  - Arudino 1.8.10
 
 | working band | status |
@@ -99,7 +99,7 @@ Choose working band you need In the Arduino tools menu:
 
 For more details about how to use this library, please refer to this document:
 
-[https://docs.heltec.cn/#/en/user_manual/connect_an_esp32_+_lora_node_to_a_lora_gateway_via_lorawan_protocol](https://docs.heltec.cn/#/en/user_manual/connect_an_esp32_+_lora_node_to_a_lora_gateway_via_lorawan_protocol)
+[ESP32 LoRaWAN library usage](https://heltec-automation-docs.readthedocs.io/en/latest/esp32/lorawan/index.html).
 
 &nbsp;
 
