@@ -50,6 +50,7 @@ uint8_t ifDisplayJoined=0;
 uint8_t ifDisplayAck=0;
 enum eDeviceState deviceState;
 
+static void lwan_dev_params_update( void );
 
 /*!
  * \brief   Prepares the payload of the frame
@@ -61,6 +62,8 @@ bool SendFrame( void )
 	McpsReq_t mcpsReq;
 	LoRaMacTxInfo_t txInfo;
 
+	lwan_dev_params_update();
+	
 	if( LoRaMacQueryTxPossible( appDataSize, &txInfo ) != LORAMAC_STATUS_OK )
 	{
 		// Send empty frame in order to flush MAC commands
@@ -496,7 +499,6 @@ void LoRaWanClass::send(DeviceClass_t classMode)
 {
 	if( NextTx == true )
 	{ 	
-		// lwan_dev_params_update();
 		NextTx = SendFrame( );
 	}
 }
@@ -623,7 +625,7 @@ void LoRaWanClass::displayMcuInit()
 	Display.setTextAlignment(TEXT_ALIGN_CENTER);
 	Display.clear();
 	Display.drawString(64, 11, "LORAWAN");
-	Display.drawString(64, 21, "STARTING");
+	Display.drawString(64, 31, "STARTING");
 #endif
 	Display.display();
 }
