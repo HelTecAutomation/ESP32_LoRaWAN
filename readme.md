@@ -46,10 +46,10 @@ The following functions are included:
 ![](img/02.png)
  - Gateway: [HT-M01 Mini LoRa Gateway](http://www.heltec.cn/project/ht-m01-lora-gateway/?lang=en) + Raspberry Pi Zero W
  - Node: [WIFI LoRa 32 V2](https://heltec.org/project/wifi-lora-32/), [Wireless Stick](https://heltec.org/project/wireless-stick/), [Wireless Stick Lite](https://heltec.org/project/wireless-stick-lite/)
- - LoRaServer:
+ - Lora Server:
     - [Heltec Cloud Server](http://cloud.heltec.org/);
     - [TTN](https://www.thethingsnetwork.org/).
- - Arudino 1.8.10
+ - Arduino 1.8.10
 
 | working band | status |
 | :----------------: | :------------:|
@@ -57,7 +57,7 @@ The following functions are included:
 | CN470 | work well |
 | EU863 | work well |
 | US915 | work well |
-| AU916 | not test |
+| AU916 | work well |
 | CN779 | not test |
 | AS923 | not test |
 | KR920 | not test |
@@ -103,6 +103,19 @@ For more details about how to use this library, please refer to this document:
 
 &nbsp;
 
+### How to Use This Library in Platform.io?
+
+The options in the Tools menu is relate to the [Heltec ESP32 development framework](https://github.com/Heltec-Aaron-Lee/WiFi_Kit_series), but in the Platform.io, it's use original [Espressif ESP32 framework](https://github.com/espressif/arduino-esp32). So we need additional definition the `build_flags` in `platformio.ini` file.
+
+```shell
+build_flags = 
+   -D REGION_CN470
+   -D ACTIVE_REGION=LORAMAC_REGION_CN470
+   -D LoRaWAN_DEBUG_LEVEL=0
+```
+
+![](img/03.png)
+
 
 # Contact us
 - **Website：[https://heltec.org](https://heltec.org/)**
@@ -112,6 +125,6 @@ For more details about how to use this library, please refer to this document:
 - **Face Book: [https://www.facebook.com/heltec.automation.5](https://www.facebook.com/heltec.automation.5)**
 
 # Issue/Bug report template
-Before reporting an issue, make sure you've searched for similar one that was already created. Also make sure to go through all the issues labelled as [for reference](https://github.com/HelTecAutomation/ESP32_LoRaWAN/issues).
+Before reporting an issue, make sure you've searched for similar one that was already created. Also make sure to go through all the issues labeled as [for reference](https://github.com/HelTecAutomation/ESP32_LoRaWAN/issues).
 
 Also you can talk in our forum: [http://community.heltec.cn/](http://community.heltec.cn/)
