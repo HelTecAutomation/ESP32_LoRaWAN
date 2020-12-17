@@ -847,7 +847,7 @@ void OnRadioRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr )
                     IsLoRaMacNetworkJoined = true;
 
                 	//Joined save its DR using LoRaMacParams.ChannelsDatarate, if set it will be default
-//                	LoRaMacParams.ChannelsDatarate = LoRaMacParamsDefaults.ChannelsDatarate;
+                	//LoRaMacParams.ChannelsDatarate = LoRaMacParamsDefaults.ChannelsDatarate;
             	} else {
                     LoRaMacConfirmQueueSetStatus( LORAMAC_EVENT_INFO_STATUS_JOIN_FAIL, MLME_JOIN );
                 }
