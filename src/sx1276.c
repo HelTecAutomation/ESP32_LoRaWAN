@@ -1813,3 +1813,22 @@ void SX1276OnDio5Irq( void )
         break;
     }
 }
+
+extern bool Irq0Fired;
+extern bool Irq1Fired;
+
+void  RadioIrqProcess(void)
+{
+	if(Irq0Fired)
+	{
+		Irq0Fired = false;
+		SX1276OnDio0Irq();
+	}
+	if(Irq1Fired)
+	{
+		Irq1Fired = false;
+		SX1276OnDio1Irq();
+	}
+
+}
+

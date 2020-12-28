@@ -504,6 +504,7 @@ void LoRaWanClass::cycle(uint32_t dutyCycle)
 
 void LoRaWanClass::sleep(DeviceClass_t classMode,uint8_t debugLevel)
 {
+	Radio.IrqProcess( );
 	Mcu.sleep(classMode,debugLevel);
 }
 
