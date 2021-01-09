@@ -424,4 +424,6 @@ void SX1276SetPublicNetwork( bool enable );
  */
 uint32_t SX1276GetWakeupTime( void );
 
+void  RadioIrqProcess(void);
+
 #endif // __SX1276_H__

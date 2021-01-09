@@ -60,7 +60,8 @@ const struct Radio_s Radio =
     SX1276ReadBuffer,
     SX1276SetMaxPayloadLength,
     SX1276SetPublicNetwork,
-    SX1276GetWakeupTime
+    SX1276GetWakeupTime,
+    RadioIrqProcess
 };
 
 /*!
@@ -195,14 +196,15 @@ void SX1276SetRfTxPower( int8_t power )
 
 uint8_t SX1276GetPaSelect( uint32_t channel )
 {
-    if( channel > RF_MID_BAND_THRESH )
+    /*if( channel > RF_MID_BAND_THRESH )
     {
         return RF_PACONFIG_PASELECT_PABOOST;
     }
     else
     {
         return RF_PACONFIG_PASELECT_RFO;
-    }
+    }*/
+    return RF_PACONFIG_PASELECT_PABOOST;
 }
 
 void SX1276SetAntSwLowPower( bool status )
