@@ -1,3 +1,20 @@
+/*
+ * HelTec Automation(TM) Wireless Bridge dedicated test code, witch includ
+ * follow functions:
+ *
+ * - Transfer WiFi message to LoRaWAN payload;
+ * 
+ * Detail description about this demo code, please refer to this document:
+ * 
+ *
+ * by Aaron.Lee from HelTec AutoMation, ChengDu, China
+ * 成都惠利特自动化科技有限公司
+ * www.heltec.cn
+ *
+ * this project also realess in GitHub:
+ * https://github.com/HelTecAutomation/ESP32_LoRaWAN
+*/
+
 #include <WiFi.h>
 #include <WiFiClient.h>
 #include <WebServer.h>
