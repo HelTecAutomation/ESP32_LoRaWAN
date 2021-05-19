@@ -90,7 +90,7 @@ bool OLEDDisplay::init() {
 	memset(buffer_back, 1, displayBufferSize);
 	#endif
 	display();
-
+  screenRotate(ANGLE_0_DEGREE);
   return true;
 }
 

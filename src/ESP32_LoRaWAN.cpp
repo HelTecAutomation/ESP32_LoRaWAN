@@ -207,6 +207,7 @@ void __attribute__((weak)) downLinkDataHandle(McpsIndication_t *mcpsIndication)
  * \param   [IN] mcpsIndication - Pointer to the indication structure,
  *               containing indication attributes.
  */
+int ackrssi;
 static void McpsIndication( McpsIndication_t *mcpsIndication )
 {
 	if( mcpsIndication->Status != LORAMAC_EVENT_INFO_STATUS_OK )
@@ -214,6 +215,7 @@ static void McpsIndication( McpsIndication_t *mcpsIndication )
 		return;
 	}
 	ifDisplayAck=1;
+	ackrssi=mcpsIndication->Rssi;
 	lora_printf( "receive data: rssi = %d, snr = %d, datarate = %d\r\n", mcpsIndication->Rssi, (int)mcpsIndication->Snr,(int)mcpsIndication->RxDatarate);
 	delay(10);
 	switch( mcpsIndication->McpsIndication )
@@ -515,7 +517,7 @@ void LoRaWanClass::displayJoining()
 	Display.init();
 	delay(20);
 	Display.wakeup();
-	Display.flipScreenVertically();
+
 #ifdef Wireless_Stick
 	Display.setFont(ArialMT_Plain_10);
 #else
@@ -557,7 +559,7 @@ void LoRaWanClass::displaySending()
 	delay(20);
 	Display.init();
 	Display.wakeup();
-	Display.flipScreenVertically();
+
 #ifdef Wireless_Stick
 Display.setFont(ArialMT_Plain_10);
 #else
@@ -583,6 +585,11 @@ void LoRaWanClass::displayAck()
 #ifdef Wireless_Stick
 	Display.drawString(64, 30, "Got ACK");
 #else
+	Display.setFont(ArialMT_Plain_10);
+	Display.setTextAlignment(TEXT_ALIGN_RIGHT);
+	Display.drawString(128,0,"rssi "+String(ackrssi));
+	Display.setFont(ArialMT_Plain_16);
+	Display.setTextAlignment(TEXT_ALIGN_CENTER);
 	Display.drawString(64, 22, "ACK RECEIVED");
 #endif
 	if(loraWanClass==CLASS_A)
@@ -597,7 +604,8 @@ void LoRaWanClass::displayAck()
 	}
 	Display.display();
 	if(loraWanClass==CLASS_A)
-	{	delay(2000);
+	{
+		delay(2000);
 		Display.sleep();
 		digitalWrite(Vext,HIGH);
 	}
@@ -607,7 +615,7 @@ void LoRaWanClass::displayMcuInit()
 	Display.wakeup();
 	Display.init();
 	delay(100);
-	Display.flipScreenVertically();
+
 #ifdef Wireless_Stick
 	Display.setFont(ArialMT_Plain_10);
 	Display.setTextAlignment(TEXT_ALIGN_CENTER);

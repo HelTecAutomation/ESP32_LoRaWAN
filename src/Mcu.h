@@ -11,6 +11,9 @@
 #include "rtc-board.h"
 #include "board-config.h"
 //#include "LoRaMac.h"
+#include "esp_spi_flash.h"
+#include "esp_partition.h"
+
 #define LORA_DEFAULT_NSS_PIN    18
 #define LORA_DEFAULT_RESET_PIN  14
 #define LORA_DEFAULT_DIO0_PIN   26
@@ -49,6 +52,7 @@ extern "C" void writefifo(uint16_t address, uint8_t *buffer, uint8_t size);
 extern "C" void readfifo(uint16_t address, uint8_t *buffer, uint8_t size);
 extern "C" uint64_t timercheck();
 extern "C" void calRTC();
+extern "C" size_t getLicenseAddress();
 #endif
 
 extern McuClass Mcu;
