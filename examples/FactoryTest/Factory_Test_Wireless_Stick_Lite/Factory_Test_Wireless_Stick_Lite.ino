@@ -140,7 +140,13 @@ void WIFIScan(unsigned int value)
 void setup()
 { 
   pinMode(LED,OUTPUT);
-  
+  for(int i = 0;i<5;i++)
+  {
+    digitalWrite(LED,1);
+    delay(100);
+    digitalWrite(LED,0);
+    delay(100);
+  }
   Serial.begin(115200);
   while (!Serial);
   
