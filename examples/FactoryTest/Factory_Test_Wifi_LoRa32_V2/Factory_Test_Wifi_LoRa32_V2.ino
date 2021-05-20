@@ -174,11 +174,10 @@ void setup()
   SPI.begin(SCK,MISO,MOSI,SS);
   Mcu.init(SS,RST_LoRa,DIO0,DIO1,license);
 
+  pinMode(Vext,OUTPUT);
   digitalWrite(Vext,LOW);
-  delay(20);
+  delay(50);
   Display.init();
-  delay(20);
-  Display.wakeup();
   
   logo();
   delay(300);
