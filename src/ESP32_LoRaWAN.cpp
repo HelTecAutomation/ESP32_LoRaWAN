@@ -2,8 +2,10 @@
 
 
 
-#if defined( WIFI_LoRa_32 ) || defined( WIFI_LoRa_32_V2 ) || defined( Wireless_Stick )
+#if defined( WIFI_LoRa_32 ) || defined( WIFI_LoRa_32_V2 ) 
 SSD1306  Display(0x3c, SDA_OLED, SCL_OLED, RST_OLED);
+#elif defined( Wireless_Stick )
+SSD1306  Display(0x3c, SDA_OLED, SCL_OLED, RST_OLED,GEOMETRY_64_32);
 #endif
 
 
@@ -510,6 +512,10 @@ void LoRaWanClass::sleep(DeviceClass_t classMode,uint8_t debugLevel)
 	Mcu.sleep(classMode,debugLevel);
 }
 
+
+
+#if defined( WIFI_LoRa_32 ) || defined( WIFI_LoRa_32_V2 ) ||defined( Wireless_Stick )
+
 void LoRaWanClass::displayJoining()
 {
 	digitalWrite(Vext,LOW);
@@ -526,7 +532,7 @@ void LoRaWanClass::displayJoining()
 	Display.setTextAlignment(TEXT_ALIGN_CENTER);
 	Display.clear();
 #ifdef Wireless_Stick
-	Display.drawString(64, 40, "JOINING...");
+	Display.drawString(32, 40, "JOINING...");
 #else
 	Display.drawString(58, 22, "JOINING...");
 #endif
@@ -540,7 +546,7 @@ void LoRaWanClass::displayJoined()
 	Display.wakeup();
 	Display.clear();
 #ifdef Wireless_Stick
-	Display.drawString(64, 40, "JOINED");
+	Display.drawString(32, 40, "JOINED");
 #else
 	Display.drawString(64, 22, "JOINED");
 #endif
@@ -620,8 +626,8 @@ void LoRaWanClass::displayMcuInit()
 	Display.setFont(ArialMT_Plain_10);
 	Display.setTextAlignment(TEXT_ALIGN_CENTER);
 	Display.clear();
-	Display.drawString(64, 30, "LORAWAN");
-	Display.drawString(64, 50, "STARTING");
+	Display.drawString(32, 30, "LORAWAN");
+	Display.drawString(32, 50, "STARTING");
 #else
 	Display.setFont(ArialMT_Plain_16);
 	Display.setTextAlignment(TEXT_ALIGN_CENTER);
@@ -631,6 +637,6 @@ void LoRaWanClass::displayMcuInit()
 #endif
 	Display.display();
 }
-
+#endif
 LoRaWanClass LoRaWAN;
 
