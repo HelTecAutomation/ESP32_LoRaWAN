@@ -3,9 +3,9 @@
 #include "WiFi.h"
 #include "images.h"
 
-#define USER_KEY  0
-#define YOUR_SSID     "your ssid"
-#define YOUR_PASSWORD "your password"
+#define USER_KEY                                    0
+#define YOUR_SSID                                   "your ssid"
+#define YOUR_PASSWORD                               "your password"
 
 #define RF_FREQUENCY                                868000000 // Hz
 
@@ -165,6 +165,7 @@ void setup()
   
   Serial.begin(115200);
   while (!Serial);
+  factory_test=true;
   
   uint64_t chipid=ESP.getEfuseMac();//The chip ID is essentially its MAC address(length: 6 bytes).
   Serial.printf("ESP32ChipID=%04X",(uint16_t)(chipid>>32));//print High 2 bytes
@@ -176,7 +177,7 @@ void setup()
 
   pinMode(Vext,OUTPUT);
   digitalWrite(Vext,LOW);
-  delay(50);
+  delay(20);
   Display.init();
   
   logo();
@@ -221,46 +222,47 @@ void loop()
     case STATUS_TX:
       delay(1000);
       txNumber++;
-        sprintf(txpacket,"%s","hello");
-        sprintf(txpacket+strlen(txpacket),"%d",txNumber);
-        sprintf(txpacket+strlen(txpacket),"%s"," Rssi : ");
-        sprintf(txpacket+strlen(txpacket),"%d",Rssi);
+      sprintf(txpacket,"%s","hello");
+      sprintf(txpacket+strlen(txpacket),"%d",txNumber);
+      sprintf(txpacket+strlen(txpacket),"%s"," Rssi : ");
+      sprintf(txpacket+strlen(txpacket),"%d",Rssi);
 
-        Serial.printf("\r\nsending packet \"%s\" , length %d\r\n",txpacket, strlen(txpacket));
+      Serial.printf("\r\nsending packet \"%s\" , length %d\r\n",txpacket, strlen(txpacket));
 
-        Radio.Send( (uint8_t *)txpacket, strlen(txpacket) );
-        state=STATUS_LOWPOWER;
-        break;
+      Radio.Send( (uint8_t *)txpacket, strlen(txpacket) );
+      state=STATUS_LOWPOWER;
+      break;
     case STATUS_RX:
       Serial.println("into RX mode");
-        Radio.Rx( 0 );
-        state=STATUS_LOWPOWER;
-        break;
+      Radio.Rx( 0 );
+      state=STATUS_LOWPOWER;
+      break;
     case STATUS_LOWPOWER:
+      LoRaWAN.sleep(CLASS_C,0);
+      if(deepsleepflag)
+      {
+        delay(200);
         LoRaWAN.sleep(CLASS_C,0);
-        if(deepsleepflag)
-        {
-          Serial.println("lowpower");
-          Radio.Sleep();
-          delay(100);
-          pinMode(LED,INPUT);
-          pinMode(4,INPUT);
-          pinMode(5,INPUT);
-          pinMode(14,INPUT);
-          pinMode(15,INPUT);
-          pinMode(16,INPUT);
-          pinMode(17,INPUT);
-          pinMode(18,INPUT);
-          pinMode(19,INPUT);
-          pinMode(26,INPUT);
-          pinMode(27,INPUT);
-          digitalWrite(Vext,HIGH);
-          delay(2);
-          esp_deep_sleep_start();
-        }
-        break;
+        Serial.println("lowpower");
+        Radio.Sleep();
+        pinMode(LED,INPUT);
+        pinMode(4,INPUT);
+        pinMode(5,INPUT);
+        pinMode(14,INPUT);
+        pinMode(15,INPUT);
+        pinMode(16,INPUT);
+        pinMode(17,INPUT);
+        pinMode(18,INPUT);
+        pinMode(19,INPUT);
+        pinMode(26,INPUT);
+        pinMode(27,INPUT);
+        digitalWrite(Vext,HIGH);
+        delay(2);
+        esp_deep_sleep_start();
+      }
+      break;
     default:
-        break;
+      break;
   }
 }
 

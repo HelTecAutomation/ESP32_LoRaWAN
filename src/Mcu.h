@@ -44,6 +44,7 @@ private:
 };
 extern TimerEvent_t TxNextPacketTimer;
 
+extern bool factory_test;
 #ifdef __cplusplus
 extern "C" void write0(uint16_t address, uint8_t value);
 extern "C" uint8_t read0(uint16_t address);

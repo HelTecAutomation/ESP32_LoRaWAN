@@ -3,9 +3,9 @@
 #include "WiFi.h"
 #include "images.h"
 
-#define USER_KEY  0
-#define YOUR_SSID     "your ssid"
-#define YOUR_PASSWORD "your password"
+#define USER_KEY                                    0
+#define YOUR_SSID                                   "your ssid"
+#define YOUR_PASSWORD                               "your password"
 
 #define RF_FREQUENCY                                868000000 // Hz
 
@@ -143,6 +143,7 @@ void setup()
   
   Serial.begin(115200);
   while (!Serial);
+  factory_test=true;
   
   uint64_t chipid=ESP.getEfuseMac();//The chip ID is essentially its MAC address(length: 6 bytes).
   Serial.printf("ESP32ChipID=%04X",(uint16_t)(chipid>>32));//print High 2 bytes
@@ -217,9 +218,10 @@ void loop()
       LoRaWAN.sleep(CLASS_C,0);
       if(deepsleepflag)
       {
+        delay(200);
+        LoRaWAN.sleep(CLASS_C,0);
         Serial.println("lowpower");
         Radio.Sleep();
-        delay(100);
         pinMode(LED,INPUT);
         pinMode(4,INPUT);
         pinMode(5,INPUT);
