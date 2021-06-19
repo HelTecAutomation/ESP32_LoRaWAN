@@ -39,6 +39,7 @@ public:
   void displaySending();
   void displayAck();
   void displayMcuInit();
+  void generateDeveuiByChipID();
 };
 
 extern enum eDeviceState deviceState;
