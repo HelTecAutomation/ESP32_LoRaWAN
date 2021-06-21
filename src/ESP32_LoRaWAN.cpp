@@ -360,6 +360,25 @@ static void lwan_dev_params_update( void )
 LoRaMacPrimitives_t LoRaMacPrimitive;
 LoRaMacCallback_t LoRaMacCallback;
 
+void LoRaWanClass::generateDeveuiByChipID()
+{
+	int i;
+	uint64_t chipid=ESP.getEfuseMac();//The chip ID is essentially its MAC address(length: 6 bytes).
+	
+	//Serial.printf("\nDevEui=");
+	for( i=0;i<6;i++)
+	{
+		DevEui[i] = chipid&0XFF;// (uniqueId[1]>>(8*(3-i)))&0xFF;
+		chipid = chipid >>8;
+		//Serial.printf("%02X",DevEui[i]);	
+	}
+	DevEui[6] = DevEui[1] &DevEui[2];
+	//Serial.printf("%02X",DevEui[6]);
+	DevEui[7] = DevEui[3] &DevEui[4];
+	//Serial.printf("%02X",DevEui[7]);
+
+}
+
 void LoRaWanClass::init(DeviceClass_t classMode,LoRaMacRegion_t region)
 {
 	if(classMode == CLASS_B)
@@ -394,7 +413,11 @@ void LoRaWanClass::init(DeviceClass_t classMode,LoRaMacRegion_t region)
       mibReq.Param.Class = classMode;
       LoRaMacMibSetRequestConfirm( &mibReq );
 
-
+	   Serial.printf("\nDevEui=");
+	   for(int i = 0;i<8;i++)
+	   {
+			Serial.printf("%02X",DevEui[i]);	
+	   }
   	  Serial.print("\r\nLoRaWAN ");
   	  switch(region)
   	  {
