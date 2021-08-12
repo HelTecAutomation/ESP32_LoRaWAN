@@ -17,7 +17,7 @@ SSD1306  Display(0x3c, SDA_OLED, SCL_OLED, RST_OLED,GEOMETRY_64_32);
 #include "region/RegionEU433.h"
 #endif
 /*!
- * Default datarate
+ * Default datarate for No adr
  */
 #define LORAWAN_DEFAULT_DATARATE                    DR_5
 

@@ -1517,7 +1517,8 @@ void SX1276OnDio0Irq( void )
                         break;
                     }
 
-                    SX1276.Settings.LoRaPacketHandler.SnrValue = SX1276Read( REG_LR_PKTSNRVALUE );
+                    SX1276.Settings.LoRaPacketHandler.SnrValue = ( ( ( int8_t )SX1276Read( REG_LR_PKTSNRVALUE ) ) + 2 ) >> 2;
+                    /*
                     if( SX1276.Settings.LoRaPacketHandler.SnrValue & 0x80 ) // The SNR sign bit is 1
                     {
                         // Invert and divide by 4
@@ -1528,7 +1529,7 @@ void SX1276OnDio0Irq( void )
                     {
                         // Divide by 4
                         snr = ( SX1276.Settings.LoRaPacketHandler.SnrValue & 0xFF ) >> 2;
-                    }
+                    }*/
 
                     int16_t rssi = SX1276Read( REG_LR_PKTRSSIVALUE );
                     if( snr < 0 )
