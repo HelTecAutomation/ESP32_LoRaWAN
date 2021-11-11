@@ -97,7 +97,7 @@ LoRaMacRegion_t loraWanRegion = ACTIVE_REGION;
 
 static void prepareTxFrame( uint8_t port )
 {
-    appDataSize = 4;//AppDataSize max value is 64
+    appDataSize = 4;//AppDataSize max value is 64 ( src/Commissioning.h -> 128 ) 
     appData[0] = 0x00;
     appData[1] = 0x01;
     appData[2] = 0x02;
