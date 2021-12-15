@@ -421,6 +421,9 @@ void LoRaWanClass::init(DeviceClass_t classMode,LoRaMacRegion_t region)
   	  Serial.print("\r\nLoRaWAN ");
   	  switch(region)
   	  {
+		  case LORAMAC_REGION_LA915:
+  	  		Serial.print("LA915");
+  	  		break;
   	  	  case LORAMAC_REGION_AS923:
   	  		Serial.print("AS923");
   	  		break;
