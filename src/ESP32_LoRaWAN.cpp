@@ -54,6 +54,30 @@ enum eDeviceState deviceState;
 
 static void lwan_dev_params_update( void );
 
+static OnLogMessageFunc _logMessage = NULL;
+
+static void logMessage(const char *fmt, ...)
+{
+	if (_logMessage == NULL)
+	{
+		return;
+	}
+	
+	char buffer[256];
+	
+	va_list vargs;
+	va_start(vargs, fmt);
+	vsprintf(buffer, fmt, vargs);
+	va_end(vargs);
+	
+	_logMessage(buffer);
+}
+
+void setOnLogMessage(OnLogMessageFunc onLogMessage)
+{
+	_logMessage = onLogMessage;
+}
+
 /*!
  * \brief   Prepares the payload of the frame
  *
@@ -63,22 +87,24 @@ bool SendFrame( void )
 {
 	McpsReq_t mcpsReq;
 	LoRaMacTxInfo_t txInfo;
+	LoRaMacStatus_t status;
 
 	lwan_dev_params_update();
 	
-	if( LoRaMacQueryTxPossible( appDataSize, &txInfo ) != LORAMAC_STATUS_OK )
+	if( (status = LoRaMacQueryTxPossible( appDataSize, &txInfo )) != LORAMAC_STATUS_OK )
 	{
 		// Send empty frame in order to flush MAC commands
 		mcpsReq.Type = MCPS_UNCONFIRMED;
 		mcpsReq.Req.Unconfirmed.fBuffer = NULL;
 		mcpsReq.Req.Unconfirmed.fBufferSize = 0;
 		mcpsReq.Req.Unconfirmed.Datarate = LORAWAN_DEFAULT_DATARATE;
+		logMessage("[SendFrame] LoRaMacQueryTxPossible status: %d\n", status);
 	}
 	else
 	{
 		if( isTxConfirmed == true )
 		{
-			lora_printf("confirmed uplink sending ...\r\n");
+			logMessage("confirmed uplink sending ...\r\n");
 			mcpsReq.Type = MCPS_CONFIRMED;
 			mcpsReq.Req.Confirmed.fPort = appPort;
 			mcpsReq.Req.Confirmed.fBuffer = appData;
@@ -88,7 +114,7 @@ bool SendFrame( void )
 		}
 		else
 		{
-			lora_printf("unconfirmed uplink sending ...\r\n");
+			logMessage("unconfirmed uplink sending ...\r\n");
 			mcpsReq.Type = MCPS_UNCONFIRMED;
 			mcpsReq.Req.Unconfirmed.fPort = appPort;
 			mcpsReq.Req.Unconfirmed.fBuffer = appData;
@@ -96,10 +122,12 @@ bool SendFrame( void )
 			mcpsReq.Req.Unconfirmed.Datarate = LORAWAN_DEFAULT_DATARATE;
 		}
 	}
-	if( LoRaMacMcpsRequest( &mcpsReq ) == LORAMAC_STATUS_OK )
+	if( (status = LoRaMacMcpsRequest( &mcpsReq )) == LORAMAC_STATUS_OK )
 	{
+		logMessage("[SendFrame] LoRaMacMcpsRequest status: %d\n", status);
 		return false;
 	}
+	logMessage("[SendFrame] LoRaMacMcpsRequest status: %d\n", status);
 	return true;
 }
 
@@ -115,6 +143,7 @@ static void OnTxNextPacketTimerEvent( void )
 
 	mibReq.Type = MIB_NETWORK_JOINED;
 	status = LoRaMacMibGetRequestConfirm( &mibReq );
+	logMessage("LoRaMacMibGetRequestConfirm status: %d\n", status);
 
 	if( status == LORAMAC_STATUS_OK )
 	{
@@ -133,7 +162,7 @@ static void OnTxNextPacketTimerEvent( void )
 			mlmeReq.Req.Join.AppKey = AppKey;
 			mlmeReq.Req.Join.NbTrials = 1;
 
-			if( LoRaMacMlmeRequest( &mlmeReq ) == LORAMAC_STATUS_OK )
+			if( (status = LoRaMacMlmeRequest( &mlmeReq )) == LORAMAC_STATUS_OK )
 			{
 				deviceState = DEVICE_STATE_SLEEP;
 			}
@@ -141,6 +170,8 @@ static void OnTxNextPacketTimerEvent( void )
 			{
 				deviceState = DEVICE_STATE_CYCLE;
 			}
+			
+			logMessage("LoRaMacMlmeRequest status: %d\n", status);
 		}
 	}
 }
@@ -193,14 +224,14 @@ uint16_t GetBatteryVoltage(void)
 
 void __attribute__((weak)) downLinkDataHandle(McpsIndication_t *mcpsIndication)
 {
-	lora_printf("+REV DATA:%s,RXSIZE %d,PORT %d\r\n",mcpsIndication->RxSlot?"RXWIN2":"RXWIN1",mcpsIndication->BufferSize,mcpsIndication->Port);
-	lora_printf("+REV DATA:");
+	logMessage("+REV DATA:%s,RXSIZE %d,PORT %d\r\n",mcpsIndication->RxSlot?"RXWIN2":"RXWIN1",mcpsIndication->BufferSize,mcpsIndication->Port);
+	logMessage("+REV DATA:");
 
 	for(uint8_t i=0;i<mcpsIndication->BufferSize;i++)
 	{
-		lora_printf("%02X",mcpsIndication->Buffer[i]);
+		logMessage("%02X",mcpsIndication->Buffer[i]);
 	}
-	lora_printf("\r\n");
+	logMessage("\r\n");
 }
 
 /*!
@@ -214,11 +245,12 @@ static void McpsIndication( McpsIndication_t *mcpsIndication )
 {
 	if( mcpsIndication->Status != LORAMAC_EVENT_INFO_STATUS_OK )
 	{
+		logMessage("McpsIndication error: %d\n", mcpsIndication->Status);
 		return;
 	}
 	ifDisplayAck=1;
 	ackrssi=mcpsIndication->Rssi;
-	lora_printf( "receive data: rssi = %d, snr = %d, datarate = %d\r\n", mcpsIndication->Rssi, (int)mcpsIndication->Snr,(int)mcpsIndication->RxDatarate);
+	logMessage( "receive data: rssi = %d, snr = %d, datarate = %d\r\n", mcpsIndication->Rssi, (int)mcpsIndication->Snr,(int)mcpsIndication->RxDatarate);
 	delay(10);
 	switch( mcpsIndication->McpsIndication )
 	{
@@ -275,10 +307,11 @@ static void MlmeConfirm( MlmeConfirm_t *mlmeConfirm )
 	{
 		case MLME_JOIN:
 		{
+			logMessage("MlmeConfirm MLME_JOIN status: %d\n", mlmeConfirm->Status);
 			if( mlmeConfirm->Status == LORAMAC_EVENT_INFO_STATUS_OK )
 			{
 				ifDisplayJoined++;
-				lora_printf("joined\r\n");
+				logMessage("joined\r\n");
 
 				// Status is OK, node has joined the network
 				deviceState = DEVICE_STATE_SEND;
@@ -286,7 +319,7 @@ static void MlmeConfirm( MlmeConfirm_t *mlmeConfirm )
 			else
 			{
 				uint32_t rejoin_delay = 30000;
-				lora_printf("join failed, rejoin at %d ms later\r\n",rejoin_delay);
+				logMessage("join failed, rejoin at %d ms later\r\n",rejoin_delay);
 				TimerSetValue( &TxNextPacketTimer, rejoin_delay );
 				TimerStart( &TxNextPacketTimer );
 			}
@@ -294,11 +327,17 @@ static void MlmeConfirm( MlmeConfirm_t *mlmeConfirm )
 		}
 		case MLME_LINK_CHECK:
 		{
+			logMessage("MlmeConfirm MLME_LINK_CHECK status: %d\n", mlmeConfirm->Status);
 			if( mlmeConfirm->Status == LORAMAC_EVENT_INFO_STATUS_OK )
 			{
 				// Check DemodMargin
 				// Check NbGateways
 			}
+			break;
+		}
+		case MLME_SCHEDULE_UPLINK:
+		{
+			logMessage("MlmeConfirm MLME_SCHEDULE_UPLINK status: %d\n", mlmeConfirm->Status);
 			break;
 		}
 		default:
@@ -318,7 +357,18 @@ static void MlmeIndication( MlmeIndication_t *mlmeIndication )
 	{
 		case MLME_SCHEDULE_UPLINK:
 		{// The MAC signals that we shall provide an uplink as soon as possible
+			logMessage("MlmeIndication MLME_SCHEDULE_UPLINK status: %d\n", mlmeIndication->Status);
 			OnTxNextPacketTimerEvent( );
+			break;
+		}
+		case MLME_JOIN:
+		{
+			logMessage("MlmeIndication MLME_JOIN status: %d\n", mlmeIndication->Status);
+			break;
+		}
+		case MLME_LINK_CHECK:
+		{
+			logMessage("MlmeIndication MLME_LINK_CHECK status: %d\n", mlmeIndication->Status);
 			break;
 		}
 		default:
@@ -365,17 +415,17 @@ void LoRaWanClass::generateDeveuiByChipID()
 	int i;
 	uint64_t chipid=ESP.getEfuseMac();//The chip ID is essentially its MAC address(length: 6 bytes).
 	
-	//Serial.printf("\nDevEui=");
+	//logMessage("\nDevEui=");
 	for( i=0;i<6;i++)
 	{
 		DevEui[i] = chipid&0XFF;// (uniqueId[1]>>(8*(3-i)))&0xFF;
 		chipid = chipid >>8;
-		//Serial.printf("%02X",DevEui[i]);	
+		//logMessage("%02X",DevEui[i]);	
 	}
 	DevEui[6] = DevEui[1] &DevEui[2];
-	//Serial.printf("%02X",DevEui[6]);
+	//logMessage("%02X",DevEui[6]);
 	DevEui[7] = DevEui[3] &DevEui[4];
-	//Serial.printf("%02X",DevEui[7]);
+	//logMessage("%02X",DevEui[7]);
 
 }
 
@@ -383,11 +433,12 @@ void LoRaWanClass::init(DeviceClass_t classMode,LoRaMacRegion_t region)
 {
 	if(classMode == CLASS_B)
 	{
-		Serial.println("Class B is not supported, switch to Class A");
+		logMessage("Class B is not supported, switch to Class A");
 		classMode = CLASS_A;
 	}
 
 	MibRequestConfirm_t mibReq;
+	LoRaMacStatus_t status;
 
 	LoRaMacPrimitive.MacMcpsConfirm = McpsConfirm;
 	LoRaMacPrimitive.MacMcpsIndication = McpsIndication;
@@ -395,7 +446,8 @@ void LoRaWanClass::init(DeviceClass_t classMode,LoRaMacRegion_t region)
 	LoRaMacPrimitive.MacMlmeIndication = MlmeIndication;
 	LoRaMacCallback.GetBatteryLevel = BoardGetBatteryLevel;
 	LoRaMacCallback.GetTemperatureLevel = NULL;
-	LoRaMacInitialization( &LoRaMacPrimitive, &LoRaMacCallback,region);
+	status = LoRaMacInitialization( &LoRaMacPrimitive, &LoRaMacCallback,region);
+	logMessage("LoRaMacInitialization status: %d\n", (int) status);
 	TimerStop( &TxNextPacketTimer );
 	TimerInit( &TxNextPacketTimer, OnTxNextPacketTimerEvent );
 
@@ -403,59 +455,59 @@ void LoRaWanClass::init(DeviceClass_t classMode,LoRaMacRegion_t region)
     {
 	  mibReq.Type = MIB_ADR;
 	  mibReq.Param.AdrEnable = loraWanAdr;
-	  LoRaMacMibSetRequestConfirm( &mibReq );
+	  status = LoRaMacMibSetRequestConfirm( &mibReq );
 
 	  mibReq.Type = MIB_PUBLIC_NETWORK;
 	  mibReq.Param.EnablePublicNetwork = LORAWAN_PUBLIC_NETWORK;
-	  LoRaMacMibSetRequestConfirm( &mibReq );
+	  status = LoRaMacMibSetRequestConfirm( &mibReq );
 
       mibReq.Type = MIB_DEVICE_CLASS;
       mibReq.Param.Class = classMode;
-      LoRaMacMibSetRequestConfirm( &mibReq );
+      status = LoRaMacMibSetRequestConfirm( &mibReq );
 
-	   Serial.printf("\nDevEui=");
+	   logMessage("\nDevEui=");
 	   for(int i = 0;i<8;i++)
 	   {
-			Serial.printf("%02X",DevEui[i]);	
+			logMessage("%02X",DevEui[i]);	
 	   }
-  	  Serial.print("\r\nLoRaWAN ");
+  	  logMessage("\r\nLoRaWAN ");
   	  switch(region)
   	  {
 		  case LORAMAC_REGION_LA915:
-  	  		Serial.print("LA915");
+			logMessage("LA915");
   	  		break;
   	  	  case LORAMAC_REGION_AS923:
-  	  		Serial.print("AS923");
+  	  		logMessage("AS923");
   	  		break;
   	  	  case LORAMAC_REGION_AU915:
-  	  		Serial.print("AU915");
+  	  		logMessage("AU915");
   	  		break;
   	  	  case LORAMAC_REGION_CN470:
-  	  		Serial.print("CN470");
+  	  		logMessage("CN470");
   	  		break;
   	  	  case LORAMAC_REGION_CN779:
-  	  		Serial.print("CN779");
+  	  		logMessage("CN779");
   	  		break;
   	  	  case LORAMAC_REGION_EU433:
-  	  		Serial.print("EU433");
+  	  		logMessage("EU433");
   	  		break;
   	  	  case LORAMAC_REGION_EU868:
-  	  		Serial.print("EU868");
+  	  		logMessage("EU868");
   	  		break;
   	  	  case LORAMAC_REGION_KR920:
-  	  		Serial.print("KR920");
+  	  		logMessage("KR920");
   	  		break;
   	  	  case LORAMAC_REGION_IN865:
-  	  		Serial.print("IN865");
+  	  		logMessage("IN865");
   	  		break;
   	  	  case LORAMAC_REGION_US915:
-  	  		Serial.print("US915");
+  	  		logMessage("US915");
   	  		break;
   	  	  case LORAMAC_REGION_US915_HYBRID:
-  	  		Serial.print("US915_HYBRID ");
+  	  		logMessage("US915_HYBRID ");
   	  		break;
   	  }
-  	  Serial.printf(" Class %X start!\r\n\r\n",loraWanClass+10);
+  	  logMessage(" Class %X start!\r\n\r\n",loraWanClass+10);
 
   	  lwan_dev_params_update();
   	  deviceState = DEVICE_STATE_JOIN;
@@ -469,9 +521,11 @@ void LoRaWanClass::init(DeviceClass_t classMode,LoRaMacRegion_t region)
 
 void LoRaWanClass::join()
 {
+	LoRaMacStatus_t status;
+	
 	if( overTheAirActivation == true )
 	{
-		Serial.println("joining...");
+		logMessage("joining...");
 		MlmeReq_t mlmeReq;
 
 		mlmeReq.Type = MLME_JOIN;
@@ -481,7 +535,7 @@ void LoRaWanClass::join()
 		mlmeReq.Req.Join.AppKey = AppKey;
 		mlmeReq.Req.Join.NbTrials = 1;
 
-		if( LoRaMacMlmeRequest( &mlmeReq ) == LORAMAC_STATUS_OK )
+		if( (status = LoRaMacMlmeRequest( &mlmeReq )) == LORAMAC_STATUS_OK )
 		{
 			deviceState = DEVICE_STATE_SLEEP;
 		}
@@ -489,6 +543,8 @@ void LoRaWanClass::join()
 		{
 			deviceState = DEVICE_STATE_CYCLE;
 		}
+		
+		Serial.printf("LoRaWAN join status: %d\n", status);
 	}
 	else
 	{
@@ -496,23 +552,23 @@ void LoRaWanClass::join()
 
 		mibReq.Type = MIB_NET_ID;
 		mibReq.Param.NetID = LORAWAN_NETWORK_ID;
-		LoRaMacMibSetRequestConfirm( &mibReq );
+		status = LoRaMacMibSetRequestConfirm( &mibReq );
 
 		mibReq.Type = MIB_DEV_ADDR;
 		mibReq.Param.DevAddr = DevAddr;
-		LoRaMacMibSetRequestConfirm( &mibReq );
+		status = LoRaMacMibSetRequestConfirm( &mibReq );
 
 		mibReq.Type = MIB_NWK_SKEY;
 		mibReq.Param.NwkSKey = NwkSKey;
-		LoRaMacMibSetRequestConfirm( &mibReq );
+		status = LoRaMacMibSetRequestConfirm( &mibReq );
 
 		mibReq.Type = MIB_APP_SKEY;
 		mibReq.Param.AppSKey = AppSKey;
-		LoRaMacMibSetRequestConfirm( &mibReq );
+		status = LoRaMacMibSetRequestConfirm( &mibReq );
 
 		mibReq.Type = MIB_NETWORK_JOINED;
 		mibReq.Param.IsNetworkJoined = true;
-		LoRaMacMibSetRequestConfirm( &mibReq );
+		status = LoRaMacMibSetRequestConfirm( &mibReq );
 
 		deviceState = DEVICE_STATE_SEND;
 	}

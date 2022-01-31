@@ -65,6 +65,9 @@ extern uint8_t idDisplayJoined;
 extern uint8_t ifDisplayAck;
 extern uint16_t userChannelsMask[6];
 
+typedef void (*OnLogMessageFunc)(const char *message);
+void setOnLogMessage(OnLogMessageFunc onLogMessage);
+
 extern LoRaWanClass LoRaWAN;
 
 #if defined( WIFI_LoRa_32 ) || defined( WIFI_LoRa_32_V2 ) || defined( Wireless_Stick )
