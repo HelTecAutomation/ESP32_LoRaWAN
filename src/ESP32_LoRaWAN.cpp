@@ -78,6 +78,50 @@ void setOnLogMessage(OnLogMessageFunc onLogMessage)
 	_logMessage = onLogMessage;
 }
 
+static void drawMessage(const char *fmt, ...)
+{
+	char buffer[128];
+	char *row1, *row2;
+	
+	va_list vargs;
+	va_start(vargs, fmt);
+	vsprintf(buffer, fmt, vargs);
+	va_end(vargs);
+	
+	row1 = buffer;
+	row2 = buffer;
+	while (*row2 != 0)
+	{
+		if (*row2 == '\n')
+		{
+			row2++;
+			break;
+		}		
+		row2++;
+	}
+	if (*row2 == 0)
+	{
+		row2 = NULL;
+	}
+	
+	#ifdef Wireless_Stick
+	Display.setFont(ArialMT_Plain_10);
+	Display.setTextAlignment(TEXT_ALIGN_CENTER);
+	Display.clear();
+	Display.drawString(32, 30, row1);
+	if (row2 != NULL)
+		Display.drawString(32, 50, row2);
+	#else
+	Display.setFont(ArialMT_Plain_16);
+	Display.setTextAlignment(TEXT_ALIGN_CENTER);
+	Display.clear();
+	Display.drawString(64, 11, row1);
+	if (row2 != NULL)
+		Display.drawString(64, 31, row2);
+	#endif
+	Display.display();
+}
+
 /*!
  * \brief   Prepares the payload of the frame
  *
@@ -94,17 +138,18 @@ bool SendFrame( void )
 	if( (status = LoRaMacQueryTxPossible( appDataSize, &txInfo )) != LORAMAC_STATUS_OK )
 	{
 		// Send empty frame in order to flush MAC commands
+		logMessage("LoRaWAN send frame failed (status %d)\n", status);
+		drawMessage("Send fail E%d", status);
 		mcpsReq.Type = MCPS_UNCONFIRMED;
 		mcpsReq.Req.Unconfirmed.fBuffer = NULL;
 		mcpsReq.Req.Unconfirmed.fBufferSize = 0;
 		mcpsReq.Req.Unconfirmed.Datarate = LORAWAN_DEFAULT_DATARATE;
-		logMessage("[SendFrame] LoRaMacQueryTxPossible status: %d\n", status);
 	}
 	else
 	{
 		if( isTxConfirmed == true )
 		{
-			logMessage("confirmed uplink sending ...\r\n");
+			logMessage("LoRaWAN confirmed uplink sending ...\r\n");
 			mcpsReq.Type = MCPS_CONFIRMED;
 			mcpsReq.Req.Confirmed.fPort = appPort;
 			mcpsReq.Req.Confirmed.fBuffer = appData;
@@ -114,7 +159,7 @@ bool SendFrame( void )
 		}
 		else
 		{
-			logMessage("unconfirmed uplink sending ...\r\n");
+			logMessage("LoRaWAN unconfirmed uplink sending ...\r\n");
 			mcpsReq.Type = MCPS_UNCONFIRMED;
 			mcpsReq.Req.Unconfirmed.fPort = appPort;
 			mcpsReq.Req.Unconfirmed.fBuffer = appData;
@@ -124,10 +169,10 @@ bool SendFrame( void )
 	}
 	if( (status = LoRaMacMcpsRequest( &mcpsReq )) == LORAMAC_STATUS_OK )
 	{
-		logMessage("[SendFrame] LoRaMacMcpsRequest status: %d\n", status);
 		return false;
 	}
-	logMessage("[SendFrame] LoRaMacMcpsRequest status: %d\n", status);
+	logMessage("LoRaWAN send frame MAC Mcps request failed (status %d)\n", status);
+	drawMessage("MAC Mcps\nfail E%d", status);
 	return true;
 }
 
@@ -143,7 +188,6 @@ static void OnTxNextPacketTimerEvent( void )
 
 	mibReq.Type = MIB_NETWORK_JOINED;
 	status = LoRaMacMibGetRequestConfirm( &mibReq );
-	logMessage("LoRaMacMibGetRequestConfirm status: %d\n", status);
 
 	if( status == LORAMAC_STATUS_OK )
 	{
@@ -171,8 +215,12 @@ static void OnTxNextPacketTimerEvent( void )
 				deviceState = DEVICE_STATE_CYCLE;
 			}
 			
-			logMessage("LoRaMacMlmeRequest status: %d\n", status);
 		}
+	}
+	else
+	{
+		logMessage("TX packet failed (status %d)\n", status);
+		drawMessage("TX fail\nE%d", status);
 	}
 }
 
@@ -184,7 +232,7 @@ static void OnTxNextPacketTimerEvent( void )
  */
 static void McpsConfirm( McpsConfirm_t *mcpsConfirm )
 {
-	if( mcpsConfirm->Status == LORAMAC_EVENT_INFO_STATUS_OK )
+	if(mcpsConfirm->Status == LORAMAC_EVENT_INFO_STATUS_OK)
 	{
 		switch( mcpsConfirm->McpsRequest )
 		{
@@ -209,6 +257,11 @@ static void McpsConfirm( McpsConfirm_t *mcpsConfirm )
 			default:
 				break;
 		}
+	}
+	else
+	{
+		logMessage("LoRaWAN MCPS-Confirm failed (status %d)\n", mcpsConfirm->Status);
+		drawMessage("MCPS-Confirm\nfail E%d", mcpsConfirm->Status);
 	}
 	NextTx = true;
 }
@@ -245,12 +298,13 @@ static void McpsIndication( McpsIndication_t *mcpsIndication )
 {
 	if( mcpsIndication->Status != LORAMAC_EVENT_INFO_STATUS_OK )
 	{
-		logMessage("McpsIndication error: %d\n", mcpsIndication->Status);
+		logMessage("LoRaWAN MCPS-Indication failed (status %d)\n", mcpsIndication->Status);
+		drawMessage("MCPS-Indic.\nfail E%d", mcpsIndication->Status);
 		return;
 	}
 	ifDisplayAck=1;
 	ackrssi=mcpsIndication->Rssi;
-	logMessage( "receive data: rssi = %d, snr = %d, datarate = %d\r\n", mcpsIndication->Rssi, (int)mcpsIndication->Snr,(int)mcpsIndication->RxDatarate);
+	logMessage("LoRaWAN receive data: rssi = %d, snr = %d, datarate = %d\r\n", mcpsIndication->Rssi, (int)mcpsIndication->Snr,(int)mcpsIndication->RxDatarate);
 	delay(10);
 	switch( mcpsIndication->McpsIndication )
 	{
@@ -307,11 +361,10 @@ static void MlmeConfirm( MlmeConfirm_t *mlmeConfirm )
 	{
 		case MLME_JOIN:
 		{
-			logMessage("MlmeConfirm MLME_JOIN status: %d\n", mlmeConfirm->Status);
 			if( mlmeConfirm->Status == LORAMAC_EVENT_INFO_STATUS_OK )
 			{
 				ifDisplayJoined++;
-				logMessage("joined\r\n");
+				logMessage("LoRaWAN joined\r\n");
 
 				// Status is OK, node has joined the network
 				deviceState = DEVICE_STATE_SEND;
@@ -319,7 +372,8 @@ static void MlmeConfirm( MlmeConfirm_t *mlmeConfirm )
 			else
 			{
 				uint32_t rejoin_delay = 30000;
-				logMessage("join failed, rejoin at %d ms later\r\n",rejoin_delay);
+				logMessage("LoRaWAN join failed (status %d). Rejoin at %d ms later\r\n", mlmeConfirm->Status, rejoin_delay);
+				drawMessage("Join fail\nE%d", mlmeConfirm->Status);
 				TimerSetValue( &TxNextPacketTimer, rejoin_delay );
 				TimerStart( &TxNextPacketTimer );
 			}
@@ -327,17 +381,20 @@ static void MlmeConfirm( MlmeConfirm_t *mlmeConfirm )
 		}
 		case MLME_LINK_CHECK:
 		{
-			logMessage("MlmeConfirm MLME_LINK_CHECK status: %d\n", mlmeConfirm->Status);
-			if( mlmeConfirm->Status == LORAMAC_EVENT_INFO_STATUS_OK )
+			if (mlmeConfirm->Status != LORAMAC_EVENT_INFO_STATUS_OK)
 			{
-				// Check DemodMargin
-				// Check NbGateways
+				logMessage("LoRaWAN link check failed (status %d)\n", mlmeConfirm->Status);
+				drawMessage("Link fail\nE%d", mlmeConfirm->Status);
 			}
 			break;
 		}
 		case MLME_SCHEDULE_UPLINK:
 		{
-			logMessage("MlmeConfirm MLME_SCHEDULE_UPLINK status: %d\n", mlmeConfirm->Status);
+			if (mlmeConfirm->Status != LORAMAC_EVENT_INFO_STATUS_OK)
+			{
+				logMessage("LoRaWAN schedule uplink failed (status %d)\n", mlmeConfirm->Status);
+				drawMessage("Schedule fail\nE%d", mlmeConfirm->Status);
+			}
 			break;
 		}
 		default:
@@ -357,18 +414,19 @@ static void MlmeIndication( MlmeIndication_t *mlmeIndication )
 	{
 		case MLME_SCHEDULE_UPLINK:
 		{// The MAC signals that we shall provide an uplink as soon as possible
-			logMessage("MlmeIndication MLME_SCHEDULE_UPLINK status: %d\n", mlmeIndication->Status);
 			OnTxNextPacketTimerEvent( );
 			break;
 		}
 		case MLME_JOIN:
 		{
-			logMessage("MlmeIndication MLME_JOIN status: %d\n", mlmeIndication->Status);
+			logMessage("LoRaWAN join indication failed (status %d)\n", mlmeIndication->Status);
+			drawMessage("Join Indic.\nfail E%d", mlmeIndication->Status);
 			break;
 		}
 		case MLME_LINK_CHECK:
 		{
-			logMessage("MlmeIndication MLME_LINK_CHECK status: %d\n", mlmeIndication->Status);
+			logMessage("LoRaWAN link check indication failed (status %d)\n", mlmeIndication->Status);
+			drawMessage("Link Indic.\nfail E%d", mlmeIndication->Status);
 			break;
 		}
 		default:
@@ -447,7 +505,7 @@ void LoRaWanClass::init(DeviceClass_t classMode,LoRaMacRegion_t region)
 	LoRaMacCallback.GetBatteryLevel = BoardGetBatteryLevel;
 	LoRaMacCallback.GetTemperatureLevel = NULL;
 	status = LoRaMacInitialization( &LoRaMacPrimitive, &LoRaMacCallback,region);
-	logMessage("LoRaMacInitialization status: %d\n", (int) status);
+	logMessage("LoRaWAN init status: %d\n", (int) status);
 	TimerStop( &TxNextPacketTimer );
 	TimerInit( &TxNextPacketTimer, OnTxNextPacketTimerEvent );
 
@@ -525,7 +583,7 @@ void LoRaWanClass::join()
 	
 	if( overTheAirActivation == true )
 	{
-		logMessage("joining...");
+		logMessage("LoRaWAN joining...");
 		MlmeReq_t mlmeReq;
 
 		mlmeReq.Type = MLME_JOIN;
@@ -541,10 +599,10 @@ void LoRaWanClass::join()
 		}
 		else
 		{
+			logMessage("LoRaWAN join failed (status %d)\n", status);
 			deviceState = DEVICE_STATE_CYCLE;
 		}
 		
-		Serial.printf("LoRaWAN join status: %d\n", status);
 	}
 	else
 	{
