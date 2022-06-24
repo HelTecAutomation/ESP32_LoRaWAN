@@ -214,6 +214,7 @@ _ZN8McuClass15setSPIFrequencyEj:
 	.literal .LC8, SPI
 	.align	4
 	.global	_ZN8McuClass14singleTransferEth
+	.literal .newsingleTransfer, _ZN8McuClass14singleTransferEth
 	.type	_ZN8McuClass14singleTransferEth, @function
 _ZN8McuClass14singleTransferEth:
 .LFB2454:
@@ -267,6 +268,11 @@ _ZN8McuClass14singleTransferEth:
 	.section	.text._ZN8McuClass12readRegisterEt,"ax",@progbits
 	.align	4
 	.global	_ZN8McuClass12readRegisterEt
+	.literal .newReadRegister, _ZN8McuClass12readRegisterEt
+
+	.global	vsnprintf
+	.literal .newvsnprintf, vsnprintf
+
 	.type	_ZN8McuClass12readRegisterEt, @function
 _ZN8McuClass12readRegisterEt:
 .LFB2452:
@@ -278,7 +284,8 @@ _ZN8McuClass12readRegisterEt:
 	movi.n	a12, 0
 	extui	a11, a3, 0, 7
 	mov.n	a10, a2
-	call8	_ZN8McuClass14singleTransferEth
+	l32r a8, .newsingleTransfer
+	callx8	a8
 .LVL25:
 	.loc 1 384 0
 	mov.n	a2, a10
@@ -289,6 +296,7 @@ _ZN8McuClass12readRegisterEt:
 	.section	.text._ZN8McuClass13writeRegisterEth,"ax",@progbits
 	.align	4
 	.global	_ZN8McuClass13writeRegisterEth
+	.literal .newWriteRegister, _ZN8McuClass13writeRegisterEth
 	.type	_ZN8McuClass13writeRegisterEth, @function
 _ZN8McuClass13writeRegisterEth:
 .LFB2453:
@@ -303,7 +311,8 @@ _ZN8McuClass13writeRegisterEth:
 	extui	a12, a4, 0, 8
 	or	a11, a11, a8
 	mov.n	a10, a2
-	call8	_ZN8McuClass14singleTransferEth
+	l32r a8, .newsingleTransfer
+	callx8	a8
 .LVL28:
 	retw.n
 .LFE2453:
@@ -448,7 +457,8 @@ write0:
 	l32r	a10, .LC13
 	extui	a12, a3, 0, 8
 	extui	a11, a2, 0, 16
-	call8	_ZN8McuClass13writeRegisterEth
+	l32r a8, .newWriteRegister
+	callx8	a8
 .LVL53:
 	retw.n
 .LFE2457:
@@ -468,7 +478,8 @@ read0:
 	.loc 1 438 0
 	l32r	a10, .LC14
 	extui	a11, a2, 0, 16
-	call8	_ZN8McuClass12readRegisterEt
+	l32r a8, .newReadRegister
+	callx8	a8
 .LVL55:
 	.loc 1 439 0
 	mov.n	a2, a10
@@ -1461,7 +1472,8 @@ lora_printf:
 	s32i.n	a13, sp, 48
 	s32i.n	a15, sp, 56
 	.loc 1 449 0
-	call8	vsnprintf
+	l32r a8, .newvsnprintf
+	callx8	a8
 .LVL170:
 	.loc 1 451 0
 	movi.n	a8, 0x3f
@@ -1488,7 +1500,8 @@ lora_printf:
 	mov.n	a12, a2
 	mov.n	a11, a4
 	mov.n	a10, a3
-	call8	vsnprintf
+	l32r a8, .newvsnprintf
+	callx8	a8
 .LVL175:
 	.loc 1 458 0
 	mov.n	a12, a10
