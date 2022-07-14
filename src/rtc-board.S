@@ -54,6 +54,7 @@ TimerGetAdjustedTimeoutValue:
 .LFE21:
 	.size	TimerGetAdjustedTimeoutValue, .-TimerGetAdjustedTimeoutValue
 	.global	__udivdi3
+	.literal .newudivdi3, __udivdi3
 	.section	.text.TimerGetTimerValue,"ax",@progbits
 	.literal_position
 	.literal .LC2, TimeSwitch
@@ -87,7 +88,8 @@ TimerGetTimerValue:
 	l32r	a2, .LC5
 	movi.n	a13, 0
 	and	a12, a12, a2
-	call8	__udivdi3
+	l32r    a8, .newudivdi3
+	callx8	a8
 .LVL5:
 	.loc 1 96 0
 	mov.n	a2, a10
@@ -219,7 +221,8 @@ TimerGetElapsedAlarmTime:
 	l32r	a11, .LC19+4
 	and	a12, a12, a8
 	movi.n	a13, 0
-	call8	__udivdi3
+	l32r    a8, .newudivdi3
+	callx8	a8
 .LVL16:
 	sub	a8, a10, a2
 	movi.n	a2, 1
@@ -322,7 +325,8 @@ TimerComputeElapsedTime:
 	l32r	a11, .LC23+4
 	and	a12, a12, a8
 	movi.n	a13, 0
-	call8	__udivdi3
+	l32r    a8, .newudivdi3
+	callx8	a8
 .LVL30:
 	sub	a2, a10, a2
 .LVL31:
