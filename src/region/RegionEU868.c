@@ -661,7 +661,7 @@ bool RegionEU868TxConfig( TxConfigParams_t* txConfig, int8_t* txPower, TimerTime
     else
     {
         modem = MODEM_LORA;
-        Radio.SetTxConfig( modem, phyTxPower, 0, bandwidth, phyDr, 1, 16, false, true, 0, 0, false, 3000 );
+        Radio.SetTxConfig( modem, phyTxPower, 0, bandwidth, phyDr, 1, LORAWAN_PREAMBLE_LENGTH, false, true, 0, 0, false, 3000 );
     }
     DBG_PRINTF("TX on freq %u Hz at DR %d\r\n", (unsigned int)Channels[txConfig->Channel].Frequency, txConfig->Datarate);
     // Setup maximum payload lenght of the radio driver
