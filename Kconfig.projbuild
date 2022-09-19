@@ -1,0 +1,9 @@
+menu "LoRaWAN library for ESP32 + LoRa boards made by heltec"
+
+config LORAWAN_PREAMBLE_LENGTH
+    int "LoRaWAN preamble length"
+    default 8
+    help
+        The length of the LoRaWAN premable.
+
+endmenu
