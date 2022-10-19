@@ -28,7 +28,6 @@
 #endif
 
 
-static GpioIrqHandler *GpioIrq[16];
 
 void GpioMcuInit( Gpio_t *obj, uint8_t pin, uint8_t mode, PinConfigs config, PinTypes type, uint32_t value )
 {

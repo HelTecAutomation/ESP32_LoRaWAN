@@ -498,7 +498,8 @@ void RegionLA915ApplyCFList( ApplyCFListParams_t* applyCFList )
 
 bool RegionLA915ChanMaskSet( ChanMaskSetParams_t* chanMaskSet )
 {
-    uint8_t nbChannels = RegionCommonCountChannels( chanMaskSet->ChannelsMaskIn, 0, 4 );
+    //uint8_t nbChannels =
+    RegionCommonCountChannels( chanMaskSet->ChannelsMaskIn, 0, 4 );
 
     // Check the number of active channels
     // According to ACMA regulation, we require at least 20 125KHz channels, if
@@ -929,7 +930,6 @@ bool RegionLA915NextChannel( NextChanParams_t* nextChanParams, uint8_t* channel,
     uint8_t delayTx = 0;
     uint8_t enabledChannels[LA915_MAX_NB_CHANNELS] = { 0 };
     TimerTime_t nextTxDelay = 0;
-    uint16_t random;
 
     // Count 125kHz channels
     if( RegionCommonCountChannels( ChannelsMaskRemaining, 0, 4 ) == 0 )
@@ -964,8 +964,6 @@ bool RegionLA915NextChannel( NextChanParams_t* nextChanParams, uint8_t* channel,
     if( nbEnabledChannels > 0 )
     {
         // We found a valid channel
-       
-        random = randr( 0, nbEnabledChannels - 1 );
         *channel = enabledChannels[randr( 0, nbEnabledChannels - 1 )];
         // Disable the channel in the mask
         RegionCommonChanDisable( ChannelsMaskRemaining, *channel, LA915_MAX_NB_CHANNELS - 8 );

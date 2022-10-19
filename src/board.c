@@ -24,48 +24,7 @@ Maintainer: Miguel Luis and Gregory Cristian
 Uart_t UartUsb;
 #endif
 
-/*!
-* Initializes the unused GPIO to a know status
-*/
-static void BoardUnusedIoInit( void );
 
-/*!
-* System Clock Configuration
-*/
-static void SystemClockConfig( void );
-
-/*!
-* Used to measure and calibrate the system wake-up time from STOP mode
-*/
-static void CalibrateSystemWakeupTime( void );
-
-/*!
-* System Clock Re-Configuration when waking up from STOP mode
-*/
-static void SystemClockReConfig( void );
-
-/*!
-* Timer used at first boot to calibrate the SystemWakeupTime
-*/
-static TimerEvent_t CalibrateSystemWakeupTimeTimer;
-
-/*!
-* Flag to indicate if the MCU is Initialized
-*/
-static bool McuInitialized = false;
-
-/*!
-* Flag to indicate if the SystemWakeupTime is Calibrated
-*/
-static bool SystemWakeupTimeCalibrated = false;
-
-/*!
-* Callback indicating the end of the system wake-up time calibration
-*/
-static void OnCalibrateSystemWakeupTimeTimerEvent( void )
-{
-  SystemWakeupTimeCalibrated = true;
-}
 
 /*!
 * Nested interrupt counter.
@@ -90,7 +49,7 @@ void BoardEnableIrq( void )
 }
 
 void BoardInitPeriph( void )
-{  
+{
 
 }
 
@@ -140,7 +99,7 @@ uint16_t BoardBatteryMeasureVolage( void )
   //    uint16_t vref = VREFINT_CAL;
   //    uint16_t vdiv = 0;
   uint16_t batteryVoltage = 0;
-  
+
   //    vdiv = AdcReadChannel( &Adc, BAT_LEVEL_CHANNEL );
   //    //vref = AdcReadChannel( &Adc, ADC_CHANNEL_VREFINT );
   //
@@ -163,34 +122,6 @@ uint8_t BoardGetBatteryLevel( void )
   return 0;
 }
 
-static void BoardUnusedIoInit( void )
-{
-
-}
-
-void SystemClockConfig( void )
-{
-  
-}
-
-void CalibrateSystemWakeupTime( void )
-{
-  if( SystemWakeupTimeCalibrated == false )
-  {
-    TimerInit( &CalibrateSystemWakeupTimeTimer, OnCalibrateSystemWakeupTimeTimerEvent );
-    TimerSetValue( &CalibrateSystemWakeupTimeTimer, 1000 );
-    TimerStart( &CalibrateSystemWakeupTimeTimer );
-    while( SystemWakeupTimeCalibrated == false )
-    {
-      TimerLowPowerHandler( );
-    }
-  }
-}
-
-void SystemClockReConfig( void )
-{
-
-}
 
 void SysTick_Handler( void )
 {
@@ -213,33 +144,6 @@ uint8_t GetBoardPowerSource( void )
 #endif
 }
 
-uint32_t HexToString(/*IN*/  const char    * pHex,  
-                     /*IN*/  uint32_t           hexLen,  
-                     /*OUT*/ char          * pByteString)  
-{  
-  unsigned long i;  
-  
-  if (pHex==NULL)  
-    return 1;  
-  
-  if(hexLen <= 0)  
-    return 2;  
-  
-  for(i=0;i<hexLen;i++)  
-  {  
-    if(((pHex[i]&0xf0)>>4)>=0 && ((pHex[i]&0xf0)>>4)<=9)  
-      pByteString[2*i]=((pHex[i]&0xf0)>>4)+0x30;  
-    else if(((pHex[i]&0xf0)>>4)>=10 && ((pHex[i]&0xf0)>>4)<=16)  
-      pByteString[2*i]=((pHex[i]&0xf0)>>4)+0x37;   //  小写：0x37 改为 0x57   
-    
-    if((pHex[i]&0x0f)>=0 && (pHex[i]&0x0f)<=9)  
-      pByteString[2*i+1]=(pHex[i]&0x0f)+0x30;  
-    else if((pHex[i]&0x0f)>=10 && (pHex[i]&0x0f)<=16)  
-      pByteString[2*i+1]=(pHex[i]&0x0f)+0x37;      //  小写：0x37 改为 0x57   
-  }  
-  return 0;  
-} 
-
 #ifdef USE_FULL_ASSERT
 /*
 * Function Name  : assert_failed
@@ -254,7 +158,7 @@ void assert_failed( uint8_t* file, uint32_t line )
 {
   /* User can add his own implementation to report the file name and line number,
   ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
-  
+
   /* Infinite loop */
   while( 1 )
   {

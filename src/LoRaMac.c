@@ -746,7 +746,6 @@ static void PrepareRxDoneAbort( void )
 
 void OnRadioRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr )
 {
-	uint8_t * temp = payload;
     LoRaMacHeader_t macHdr;
     LoRaMacFrameCtrl_t fCtrl;
     ApplyCFListParams_t applyCFList;
