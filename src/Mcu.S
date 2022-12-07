@@ -84,6 +84,7 @@ _Z12writelicensev:
 .LCFI3:
 	.loc 1 32 0
 	call8	getLicenseAddress
+	retw.n
 .LVL3:
 	.loc 1 33 0
 	l32r	a11, .LC4
