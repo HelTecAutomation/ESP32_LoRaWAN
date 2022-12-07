@@ -49,7 +49,7 @@
  */
 #ifndef __LORAMAC_H__
 #define __LORAMAC_H__
-
+#define LORAWAN_PREAMBLE_LENGTH 8 /*error with LORAWAN_PREAMBLE_LENGTH*/
 #include <stdint.h>
 #include <stdbool.h>
 #include "timer.h"
