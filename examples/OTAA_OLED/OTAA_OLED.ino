@@ -110,16 +110,12 @@ LoRaMacRegion_t loraWanRegion = ACTIVE_REGION;
 
 static void prepareTxFrame( uint8_t port )
 {
-    // Prepare upstream data transmission at the next possible time.
-    uint32_t humidity = dht.readHumidity(false) * 100;
-    uint32_t temperature = dht.readTemperature(false) * 100;
-	
     appDataSize = 4;//AppDataSize max value is 64
     // Format the data to bytes	
-    appData[0] = highByte(humidity);
-    appData[1] = lowByte(humidity);
-    appData[2] = highByte(temperature);
-    appData[3] = lowByte(temperature);
+    appData[0] = 0x00;
+    appData[1] = 0x01;
+    appData[2] = 0x02;
+    appData[3] = 0x03;
 	
 }
 
