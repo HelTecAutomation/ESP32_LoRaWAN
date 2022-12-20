@@ -1,3 +1,14 @@
+# Stop and explain.
+
+## 1.The library will stop maintenance on December 20, 2022, and will not adapt to the new environment.
+
+## 2.All functions of this library have been merged into [0.0.7](https://github.com/Heltec-Aaron-Lee/WiFi_Kit_series). You only need to install the [0.0.7](https://github.com/Heltec-Aaron-Lee/WiFi_Kit_series) environment to use the relevant examples.
+
+## 3.If you have any questions, please send an email to the technical support mailbox, support@heltec.cn.
+
+
+
+
 ## Contents
 
 - [The Overview](#the-overview)
