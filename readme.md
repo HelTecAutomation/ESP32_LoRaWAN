@@ -1,10 +1,10 @@
-# Stop and explain.
+# This Library had been Stoped to maintenance
 
-## 1.The library will stop maintenance on December 20, 2022, and will not adapt to the new environment.
+- The library had stop maintenance on December 20th, 2022, and will not adapt to the [Heltec WiFi Kit Series (V0.0.7)](https://github.com/Heltec-Aaron-Lee/WiFi_Kit_series/releases/tag/0.0.7) or newer development framework.
 
-## 2.All functions of this library have been merged into [0.0.7](https://github.com/Heltec-Aaron-Lee/WiFi_Kit_series). You only need to install the [0.0.7](https://github.com/Heltec-Aaron-Lee/WiFi_Kit_series) environment to use the relevant examples.
+- **All functions of this library have been merged into [Heltec WiFi Kite Series (V0.0.7)](https://github.com/Heltec-Aaron-Lee/WiFi_Kit_series). You only need to install the [0.0.7](https://github.com/Heltec-Aaron-Lee/WiFi_Kit_series) environment to use the relevant examples.**
 
-## 3.If you have any questions, please send an email to the technical support mailbox, support@heltec.cn.
+- If you have any questions, please send an email to the technical support mailbox, support@heltec.cn.
 
 
 
