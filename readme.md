@@ -1,10 +1,10 @@
 # This Library had been Stoped to maintenance
 
-- The library had stop maintenance on December 20th, 2022, and will not adapt to the [Heltec WiFi Kit Series (V0.0.7)](https://github.com/Heltec-Aaron-Lee/WiFi_Kit_series/releases/tag/0.0.7) or newer development framework.
+- **The library had stop maintenance on December 20th, 2022**, and will not compatible with the [Heltec WiFi Kit Series (V0.0.7)](https://github.com/Heltec-Aaron-Lee/WiFi_Kit_series/releases/tag/0.0.7) or newer development framework.
 
-- **All functions of this library have been merged into [Heltec WiFi Kite Series (V0.0.7)](https://github.com/Heltec-Aaron-Lee/WiFi_Kit_series). You only need to install the [0.0.7](https://github.com/Heltec-Aaron-Lee/WiFi_Kit_series) environment to use the relevant examples.**
+- **A full functions of LoRaWAN library already included in [Heltec ESP32 library](https://github.com/HelTecAutomation/Heltec_ESP32).** We strongly recommend using the [Heltec ESP32 library](https://github.com/HelTecAutomation/Heltec_ESP32) for your new project development.
 
-- If you have any questions, please send an email to the technical support mailbox, support@heltec.cn.
+- If you have any questions, please fell free to contact us: support@heltec.cn.
 
 
 
